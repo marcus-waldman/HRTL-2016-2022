@@ -17,7 +17,11 @@ get_cahmi_values_map <- function(rawdat, var, reverse){
                           values_raw = sjlabelled::get_values(rawdat %>% purrr::pluck(var))) %>% 
     dplyr::mutate(dv = c(1,diff(values_raw)), 
                   values_ifa = NA)
-  idx = seq(1,min(which(values_map$dv!=1))-1)
+  if(!identical(unique(values_map$dv),1)){
+    idx = seq(1,min(which(values_map$dv!=1))-1)
+  } else {
+    idx = 1:nrow(values_map)
+  }
   values_map$values_ifa[idx] = values_map$values_raw[idx]-1
   values_map = values_map %>% dplyr::select(labels,values_raw, values_ifa)
   
@@ -25,6 +29,11 @@ get_cahmi_values_map <- function(rawdat, var, reverse){
   if(reverse){
     values_map$values_ifa = with(values_map, plyr::mapvalues(values_ifa, from = values_ifa %>% na.omit(), to = sort(values_ifa, decreasing = T)))
   }
+  
+  # If raw variable statrted at zero, it will produce a negative number. Subtract off this smallest negative to start at zero.
+  values_map$values_ifa = values_map$values_ifa - min(values_map$values_ifa, na.rm = T)
+  
+  
   return(values_map)
   
 }

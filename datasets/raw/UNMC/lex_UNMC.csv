@@ -1,0 +1,63 @@
+rid,domain_22,var_cahmi_prefix,lex_ne22,label
+206,,,NOM001,"Is this child able to do the following: Understand “in,” “on,” and “under”?"
+207,Early Learning Skills,RecogBegin,NOM002,"How often can this child recognize the beginning sound of a word? For example, the word “ball” starts with the “buh” sound?"
+208,,,NOM003,"When you say a word, how often can this child come up with another word that starts with the same sound?"
+209,Early Learning Skills,RhymeWord,NOM004,Does this child repeat or sing rhymes?
+210,,,NOM005,"If you say the word “cat,” how often can this child tell you a word that rhymes with “cat”?"
+211,Social-Emotional Development,ClearExp,NOM006,How often can this child explain things they have seen or done so that you understand?
+212,,,NOM007,"Is this child able to do the following: Ask questions that start with, “who,” “what,” “where,” “when”?"
+213,,,NOM008,Is this child able to do the following: Ask questions that start with “why” and “how”?
+214,,,NOM009,Can this child sort objects by: color?
+215,,,NOM010,Can this child sort objects by: shape?
+216,,,NOM011,Can this child sort objects by: size?
+217,,,NOM012,Can this child sort objects by: length?
+218,Early Learning Skills,CountTo,NOM013,How high can this child count correctly?
+219,Early Learning Skills,CountToR,NOM014,"If asked to count objects, how high could this child count correctly?"
+220,,,NOM015,"If you had four objects, could this child divide them in half so you have two and they have two?"
+221,,,NOM016,Can this child show you with their fingers how old they are?
+222,Early Learning Skills,ReadOneDigit,NOM017,Can this child read one-digit numbers like 4 or 7?
+223,,,NOM018,"How often can this child correctly add two numbers, like 2 plus 3?"
+224,,,NOM019,"How often can this child correctly subtract two numbers, like 5 take away 2?"
+225,,,NOM020,Can this child identify: a square?
+226,,,NOM021,Can this child identify: a circle?
+227,,,NOM022,Can this child identify: a triangle?
+228,,,NOM023,"If shown two balls, could this child point to the larger ball?"
+229,Early Learning Skills,WriteName,NOM024,"Can this child consistently write his or her first name, even if some of the letters aren't quite right or are backwards?"
+230,,,NOM025,How often does this child demonstrate an interest in books by choosing a children's book and turning pages?
+231,Early Learning Skills,RecogLetter,NOM026,How many letters of the alphabet can this child recognize?
+232,Motor Development,Draw Circle,NOM027,Can this child draw a: circle?
+233,,,NOM028,Can this child draw a: triangle?
+234,,,NOM029,Can this child draw a: square?
+235,,,NOM030,Can this child feed self with a spoon with little spilling?
+236,,,NOM031,Can this child make a tower of three or more blocks?
+237,,,NOM032,Can this child open doors by turning a doorknob or handle?
+238,Motor Development,DrawFace,NOM033,Can this child draw a face with eyes and mouth?
+239,Motor Development,DrawPerson,NOM034,Can this child draw a person with arms and legs?
+240,Motor Development,UsePencil,NOM035,"When using a pencil, can he or she use fingers to hold it?"
+241,,,NOM036,Can this child climb stairs with one foot on each stair?
+242,,,NOM037,Can this child jump forward at least six inches?
+243,,,NOM038,Can this child throw a ball overhand?
+244,,,NOM039,Can this child catch a large ball with both hands?
+245,,,NOM040,Can this child stand on one foot for at least 5 seconds?
+246,,,NOM041,Can this child kick a ball?
+247,Motor Development,BounceBall,NOM042,Can this child bounce a ball for several seconds?
+248,Health,ChHlthSt,NOM043,"In general, how would you describe this child’s health?"
+249,Health,HCEXTENT,NOM044,To what extent do this child's health conditions or problems affect his or her ability to do things?
+250,Health,HCABILITY,NOM045,"During the past 12 months, how often have this child's health conditions or problems affected his or her ability to do things other children his or her age do?"
+251,Health,TeethCond,NOM046,How would you describe the condition of this child’s teeth?
+252,Social-Emotional Development,HurtSad,NOM047,How often does this child show concern when they see others are hurt or unhappy?
+253,,,NOM048,How much difficulty does this child have making or keeping friends?
+254,,,NOM049,How often does this child play well with others?
+255,,,NOM050,How often does this child physically fight with other children?
+256,,,NOM051,"How often does this child hit, kick, or bite other children?"
+257,Self-Regulation,temperR,NOM052,How often does this child lose their temper?
+258,Social-Emotional Development,NameEmotions_22,NOM053,Can this child recognize and name emotions in themselves?
+259,Self-Regulation,distracted,NOM054,How often does this child get distracted?
+260,,,NOM055,"When necessary, how often does this child listen to adults?"
+261,Self-Regulation,WaitForTurn,NOM056,How often does this child have trouble waiting for a turn?
+262,,,NOM057,How often does child take turns during games or fun activities?
+263,,,NOM058,How often does this child keep working at a task after setbacks?
+264,,,NOM059,How often does this child keep working at a task when things don’t work out?
+265,,,NOM060,How often does this child have trouble calming down?
+266,Self-Regulation,temper,NOM061,Child bounces back easily when things do not go his/her way.
+267,Self-Regulation,StartNewAct,NOM062,How often does this child have difficulty when moving between one activity and a new one?
