@@ -71,15 +71,17 @@
 8                 Missing         99         NA
 
 
-7.22) CountToR_22: If asked to count objects, how can can this child count correctly?
-                              labels values_raw values_ifa
-1 Not at all or can count up to five          1          0
-2                          Up to ten          2          1
-3                           Up to 20          3          2
-4                   Up to 30 or more          4          3
-5            Children age 6-17 years         90         NA
-6             Children age 0-2 years         95         NA
-7                            Missing         99         NA
+7.22) COUNTTO_R: If asked to count objects, how can can this child count correctly?
+                          labels values_raw values_ifa
+1        This child cannot count          1          0
+2                     Up to five          2          1
+3                      Up to ten          3          2
+4                       Up to 20          4          3
+5               Up to 30 or more          5          4
+6                Not in universe         90         NA
+7                   Logical skip         95         NA
+8 Suppressed for confidentiality         96         NA
+9              No valid response         99         NA
 
 
 8.22) GroupOfObjects_22: How often can this child tell which group of objects has more (e.g., group of 7 blocks has more than groups of 4)?
