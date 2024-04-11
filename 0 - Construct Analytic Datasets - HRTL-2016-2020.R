@@ -168,8 +168,8 @@ itemdict22 = tibble(year = 2022,
              "DrawFace_22", 
              "DrawPerson_22", 
              "BounceBall_22", 
-             "ChHlthSt_22", 
-             "TeethCond_22", 
+             "K2Q01", 
+             "K2Q01_D", 
              "DailyAct_22"
            ), 
            stem = c(
@@ -212,9 +212,18 @@ itemdict22 = itemdict22 %>%
 
 
 
-for(j in 1:length(itemdict22$var_cahmi)){itemdict22$values_map[[j]] = get_cahmi_values_map(raw22,itemdict22$var_cahmi[j], itemdict22$reverse_coded[j])}
+for(j in 1:length(itemdict22$var_cahmi)){
+  var_j = itemdict22$var_cahmi[j]
+  force_missing = NULL
+  if(var_j=="K2Q01_D"){
+    force_missing = 6
+  }
+  itemdict22$values_map[[j]] = get_cahmi_values_map(raw22,var_j, itemdict22$reverse_coded[j], force_missing)
+}
 
-sink("identify_reverse.txt")
+sink("checks/0-Recoding-Map-CAHMI-2022.txt")
+cat("Recoding Map: CAHMI 2022")
+cat("\n-----------------------")
 for(j in 1:nrow(itemdict22)){
   cat("\n")
   cat("\n")

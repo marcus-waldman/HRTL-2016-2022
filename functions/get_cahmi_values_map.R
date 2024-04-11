@@ -1,4 +1,4 @@
-get_cahmi_values_map <- function(rawdat, var, reverse){
+get_cahmi_values_map <- function(rawdat, var, reverse, force_value_missing = NULL){
   
   
   #Input: 
@@ -19,6 +19,9 @@ get_cahmi_values_map <- function(rawdat, var, reverse){
                   values_ifa = NA)
   if(!identical(unique(values_map$dv),1)){
     idx = seq(1,min(which(values_map$dv!=1))-1)
+    if(!is.null(force_value_missing)){
+      idx = setdiff(idx, which(values_map$values_raw==force_value_missing))
+    }
   } else {
     idx = 1:nrow(values_map)
   }
