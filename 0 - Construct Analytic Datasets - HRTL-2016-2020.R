@@ -220,7 +220,7 @@ for(j in 1:length(itemdict22$var_cahmi)){
   }
   itemdict22$values_map[[j]] = get_cahmi_values_map(raw22,var_j, itemdict22$reverse_coded[j], force_missing)
 }
-
+#
 sink("checks/0-Recoding-Map-CAHMI-2022.txt")
 cat("Recoding Map: CAHMI 2022")
 cat("\n-----------------------")
