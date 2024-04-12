@@ -3,14 +3,24 @@ rm(list = ls())
 library(tidyverse)
 library(haven)
 library(sjlabelled)
+library(stringr)
+library(readxl)
 
 # Change repo directory
-#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-repo_wd = "C:/repos/HRTL-2016-2022"
+repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+#repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
 for(x in list.files("functions/", full.names = T)){source(x)}
+
+# Load in scoring maps
+hrtl_tholds16 = readxl::read_xlsx("datasets/intermediate/HRTL-2016-Scoring-Thresholds.xlsx") %>% 
+  dplyr::mutate(lex_ifa = paste0("y16_",stringr::str_remove(as.character(jid),".16")))
+
+
+hrtl_tholds22 = readxl::read_xlsx("datasets/intermediate/HRTL-2022-Scoring-Thresholds.xlsx") %>% 
+  dplyr::mutate(lex_ifa = paste0("y22_",stringr::str_remove(as.character(jid),".22")))
 
 
 # Load in the raw datasets
@@ -74,6 +84,7 @@ itemdict16 = tibble(year = 2016,
                       # Self-Regulation (2022)
                         "temper_16"
                     ), 
+                    lex_ifa = paste0("y16_",1:length(jid)),
                     stem = c(
                       "How often can this child recognize the beginning sound of a word?",
                       "How many letters of the alphabet can this child recognize?",
@@ -129,18 +140,18 @@ for(j in 1:length(itemdict16$var_cahmi)){
   }
   itemdict16$values_map[[j]] = get_cahmi_values_map(raw16,var_j, itemdict16$reverse_coded[j], force_missing)
 }
-
-sink("checks/0-Recoding-Map-CAHMI-2016.txt")
-cat("Recoding Map: CAHMI 2016")
-cat("\n-----------------------")
-for(j in 1:nrow(itemdict16)){
-  cat("\n")
-  cat("\n")
-  cat(paste0(itemdict16$jid[j], ") ", itemdict16$var_cahmi[j]), ": ", itemdict16$stem[j], sep = "")
-  cat("\n")
-  print(itemdict16$values_map[[j]])
-}
-sink()
+# 
+# sink("checks/0-Recoding-Map-CAHMI-2016.txt")
+# cat("Recoding Map: CAHMI 2016")
+# cat("\n-----------------------")
+# for(j in 1:nrow(itemdict16)){
+#   cat("\n")
+#   cat("\n")
+#   cat(paste0(itemdict16$jid[j], ") ", itemdict16$var_cahmi[j]), ": ", itemdict16$stem[j], sep = "")
+#   cat("\n")
+#   print(itemdict16$values_map[[j]])
+# }
+# sink()
 
 
 # Obtain HRTL survey questions 
