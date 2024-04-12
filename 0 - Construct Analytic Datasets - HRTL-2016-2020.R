@@ -25,13 +25,13 @@ raw16$K2Q01_D = haven::labelled_spss(raw16$K2Q01_D %>% haven::zap_labels(), labe
 #
 # Obtain HRTL survey questions 
 itemdict16 = tibble(year = 2016,
-                    jid = seq(1,7+3+4+4+1, by = 1)+.16,
+                    jid = seq(1,7+3+4+4+2, by = 1)+.16,
                     domain_2016 = c(
                       rep("Early Learning Skills", 7),
                       rep("Physical Health and Motor Development", 3), 
                       rep("Social-Emotional Development", 4), 
                       rep("Self-Regulation", 4), 
-                      rep(NA,1)
+                      rep(NA,2)
                     ) %>% as.factor(), 
                     domain_2022 = c(
                       rep("Early Learning Skills", 3),
@@ -43,7 +43,8 @@ itemdict16 = tibble(year = 2016,
                       "Self-Regulation", 
                       "Social-Emotional Development",
                       rep("Self-Regulation",4),
-                      rep("Health",1)
+                      rep("Health",1), 
+                      rep("Self-Regulation",1)
                     ),
                     var_cahmi = c(
                       # Early Learning Skills
@@ -69,7 +70,9 @@ itemdict16 = tibble(year = 2016,
                          "WorkToFin_16",    #17. "How often does this child keep working at something until he or she is finished?", 
                          "SimpleInst_16",    #18. "When he or she is paying attention, how often can this child follow instructions to complete a simple task?"
                       # Health (2022)
-                        "DailyAct_16"
+                        "DailyAct_16",
+                      # Self-Regulation (2022)
+                        "temper_16"
                     ), 
                     stem = c(
                       "How often can this child recognize the beginning sound of a word?",
@@ -90,7 +93,8 @@ itemdict16 = tibble(year = 2016,
                       "Compared to other children his or her age, how often is this child able to sit still?", 
                       "How often does this child keep working at something until he or she is finished?", 
                       "When he or she is paying attention, how often can this child follow instructions to complete a simple task?",
-                      "DURING THE PAST 12 MONTHS, how often have this child's health conditions or problems affected their ability to do things other children their age can do? AND To what extend do this child's health conditions or porblems affect their ability to do things?"
+                      "DURING THE PAST 12 MONTHS, how often have this child's health conditions or problems affected their ability to do things other children their age can do? AND To what extend do this child's health conditions or porblems affect their ability to do things?", 
+                      "How often does this child lose their temper?"
                     )
 ) 
 itemdict16$reverse_coded = F 
@@ -141,19 +145,21 @@ sink()
 
 # Obtain HRTL survey questions 
 itemdict22 = tibble(year = 2022,
-           jid = seq(1,9+6+5+4+3, by = 1)+.22,
+           jid = seq(1,9+6+5+4+3+1, by = 1)+.22,
            domain_2016 = c(
              rep("Early Learning Skills", 9),
              rep("Social-Emotional Development", 6), 
              rep("Self-Regulation", 5), 
-             rep("Physical Health and Motor Development", 7)
+             rep("Physical Health and Motor Development", 7), 
+             rep("Social-Emotional Development")
            ) %>% as.factor(),
            domain_2022 = c(
                rep("Early Learning Skills", 9),
                rep("Social-Emotional Development", 6), 
                rep("Self-Regulation", 5), 
                rep("Motor Development", 4), 
-               rep("Health",3)
+               rep("Health",3), 
+               NA
              ) %>% as.factor(), 
            var_cahmi = c(
              "RecogBegin_22", 
@@ -182,7 +188,8 @@ itemdict22 = tibble(year = 2022,
              "BounceBall_22", 
              "K2Q01", 
              "K2Q01_D", 
-             "DailyAct_22"
+             "DailyAct_22", 
+             "K6Q73_R" 
            ), 
            stem = c(
              "How often can this child recognize the beginning sound of a word (e.g., 'ball' starts with 'buh' sound)?",
@@ -211,12 +218,13 @@ itemdict22 = tibble(year = 2022,
              "How well can this child bounce a ball for several seconds?", 
              "In general how would describe this child's health?", 
              "How would you describe the condition of this child's teeth?", 
-             "DURING THE PAST 12 MONTHS, how often have this child's health conditions or problems affected their ability to do things other children their age can do? AND To what extend do this child's health conditions or porblems affect their ability to do things?"
+             "DURING THE PAST 12 MONTHS, how often have this child's health conditions or problems affected their ability to do things other children their age can do? AND To what extend do this child's health conditions or porblems affect their ability to do things?", 
+             "This child bounces back quickly when things do not go his or her way?"
            )
            
 ) 
 
-items22_reverse= c(1.22, 2.22, 4.22, 5.22, 6.22, 8.22, 9.22, 10.22, 11.22, 12.22, 13.22, 14.22, 15.22, 25.22, 26.22, 27.22)
+items22_reverse= c(1.22, 2.22, 4.22, 5.22, 6.22, 8.22, 9.22, 10.22, 11.22, 12.22, 13.22, 14.22, 15.22, 25.22, 26.22, 27.22, 28.22)
 itemdict22 = itemdict22 %>% 
   dplyr::mutate(
     reverse_coded = ifelse(jid %in% items22_reverse, TRUE, FALSE)

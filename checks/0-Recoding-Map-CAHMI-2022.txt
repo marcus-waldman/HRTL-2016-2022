@@ -317,3 +317,15 @@ Recoding Map: CAHMI 2022
 3          Daily activities moderately affected some of time          2          1
 4 Daily activities consistently affected, often a great deal          3          0
 5                                      Missing to both items         99         NA
+
+
+28.22) K6Q73_R: This child bounces back quickly when things do not go his or her way?
+                          labels values_raw values_ifa
+1                         Always          1          3
+2                        Usually          2          2
+3                      Sometimes          3          1
+4                          Never          4          0
+5                Not in universe         90         NA
+6                   Logical skip         95         NA
+7 Suppressed for confidentiality         96         NA
+8              No valid response         99         NA
