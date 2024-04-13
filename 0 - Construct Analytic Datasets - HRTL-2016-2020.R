@@ -7,8 +7,8 @@ library(stringr)
 library(readxl)
 
 # Change repo directory
-repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-#repo_wd = "C:/repos/HRTL-2016-2022"
+#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
@@ -22,6 +22,11 @@ hrtl_tholds16 = readxl::read_xlsx("datasets/intermediate/HRTL-2016-Scoring-Thres
 hrtl_tholds22 = readxl::read_xlsx("datasets/intermediate/HRTL-2022-Scoring-Thresholds.xlsx") %>% 
   dplyr::mutate(lex_ifa = paste0("y22_",stringr::str_remove(as.character(jid),".22")))
 
+# Load in descriptive statistics
+descriptives_Ghandour19 = readxl::read_xlsx("datasets/intermediate/Ghandour-2019-Univariates.xlsx")
+
+# Load in the percent at-risk, needs support, or on-track by domain reported by Ghandour 2019
+fig1_Ghandour19 = readxl::read_xlsx("datasets/intermediate/Ghandour-2019-Fig1.xlsx")
 
 # Load in the raw datasets
 raw16 = haven::read_spss(file = "datasets/raw/CAHMI-2016/NSCH2016_Topical_SPSS_CAHM_DRCv2.sav")

@@ -1,4 +1,19 @@
 dat = raw16 %>% dplyr::filter(SC_AGE_YEARS==3 | SC_AGE_YEARS==4 |SC_AGE_YEARS==5)
+
+# Compare with Ghandour 19 descriptives
+items_G19 = itemdict16$var_cahmi[!is.na(itemdict16$domain_2016)]
+itemdat = dat %>% 
+  dplyr::select(dplyr::all_of(items_G19)) %>% 
+  dplyr::mutate(across(everything(), zap_all)) %>% 
+  pivot_longer(everything(), names_to = "var_cahmi", values_to = "y") %>% 
+  na.omit() %>% 
+  dplyr::group_by(var_cahmi) %>% 
+  dplyr::summarise(Min = min(y), Max = max(y), Mean = round(mean(y),1), N = length(y))
+
+descriptives_19 = descriptives_Ghandour19 %>% dplyr::left_join(itemdat, by = "var_cahmi") # Looking at the same descriptives
+
+
+
 ifadat = dplyr::bind_cols(dat %>% dplyr::select(HHID,SC_AGE_YEARS), dat %>% recode_cahmi2ifa(itemdict=itemdict16))
 
 longdat = ifadat %>% 
@@ -50,7 +65,11 @@ summdat %>%
   dplyr::summarise(pct_on_track = weighted.mean(is_on_track,FWC), 
                    pct_at_risk = weighted.mean(is_at_risk,FWC)) %>% 
   dplyr::mutate(pct_needs_support = 1-pct_on_track-pct_at_risk) %>% 
-  dplyr::select(domain_2016, pct_at_risk, pct_needs_support, pct_on_track)
+  dplyr::mutate(at_risk = round(100*pct_at_risk,1), 
+                needs_support = round(100*pct_needs_support, 1), 
+                on_track = round(100*pct_on_track, 1)) %>% 
+  dplyr::select(domain_2016, at_risk:on_track) %>% 
+  dplyr::left_join(fig1_Ghandour19, by = "domain_2016")
 
 
 
