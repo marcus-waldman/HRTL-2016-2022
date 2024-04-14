@@ -26,7 +26,7 @@ get_itemdict22<-function(verbose = T){
                         "RecogLetter_22", 
                         "WriteName_22", 
                         "ReadOneDigit_22", 
-                        "CountToR_22",
+                        "COUNTTO_R",
                         "GroupOfObjects_22",
                         "SimpleAddition_22", 
                         "ClearExp_22", 
@@ -49,6 +49,7 @@ get_itemdict22<-function(verbose = T){
                         "DailyAct_22", 
                         "K6Q73_R" 
                       ), 
+                      lex_ifa = paste0("y22_",1:length(jid)),
                       stem = c(
                         "How often can this child recognize the beginning sound of a word (e.g., 'ball' starts with 'buh' sound)?",
                         "How often can this child come up with words that start with the same sound (e.g., 'sock' and 'sun')?",
