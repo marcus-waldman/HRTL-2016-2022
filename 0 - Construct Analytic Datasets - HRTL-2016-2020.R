@@ -27,6 +27,9 @@ labels_teeth = sjlabelled::get_values(raw22$K2Q01_D)
 names(labels_teeth)= sjlabelled::get_labels(raw22$K2Q01_D)
 raw16$K2Q01_D = haven::labelled_spss(raw16$K2Q01_D %>% haven::zap_labels(), labels = labels_teeth)
 
+# Correct the value labels for DailyAct_22
+raw22$DailyAct_22[raw22$HCABILITY==1] = 0
+
 
 # Check 2016 item responses for correctness
 gt_Table2_Ghandour19 = 
