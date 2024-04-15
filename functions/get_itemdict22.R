@@ -1,4 +1,4 @@
-get_itemdict22<-function(verbose = T){
+get_itemdict22<-function(raw22, verbose = T){
   
   
   # Obtain HRTL survey questions 
@@ -87,7 +87,8 @@ get_itemdict22<-function(verbose = T){
   items22_reverse= c(1.22, 2.22, 4.22, 5.22, 6.22, 8.22, 9.22, 10.22, 11.22, 12.22, 13.22, 14.22, 15.22, 25.22, 26.22, 27.22, 28.22)
   itemdict22 = itemdict22 %>% 
     dplyr::mutate(
-      reverse_coded = ifelse(jid %in% items22_reverse, TRUE, FALSE)
+      reverse_coded = ifelse(jid %in% items22_reverse, TRUE, FALSE), 
+      reverse_only_in_mplus = (startsWith(var_cahmi, "DailyAct"))
     )
   
   
@@ -98,7 +99,10 @@ get_itemdict22<-function(verbose = T){
     if(var_j=="K2Q01_D"){
       force_missing = 6
     }
-    itemdict22$values_map[[j]] = get_cahmi_values_map(raw22,var_j, itemdict22$reverse_coded[j], force_missing)
+    itemdict22$values_map[[j]] = get_cahmi_values_map(raw22,var_j, 
+                                                      itemdict22$reverse_coded[j], 
+                                                      itemdict22$reverse_only_in_mplus[j],
+                                                      force_missing)
   }
   #
   

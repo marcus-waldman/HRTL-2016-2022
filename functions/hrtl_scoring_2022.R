@@ -5,7 +5,6 @@
 
 hrtl_scoring_2022<-function(rawdat, itemdict, coding_tholds){
 
-  
   # Initialize domain summary cutscores  (See Ghandhour 2021)
   cutscore_22 = 2.5
   
@@ -14,9 +13,9 @@ hrtl_scoring_2022<-function(rawdat, itemdict, coding_tholds){
   #nrow(dat) #11,121 -- Matches Ghandour (2021)
    
   # Recode HHRTL items into IFA coding 
-  ifadat = dplyr::bind_cols(dat %>% dplyr::select(HHID,SC_AGE_YEARS), dat %>% recode_cahmi2ifa(itemdict=itemdict))
+  ifadat = dplyr::bind_cols(dat %>% dplyr::select(HHID,SC_AGE_YEARS), recode_cahmi2ifa(inputdat=dat, itemdict=itemdict))
   
-  
+
   # Code individual items into 3-point scale based on age gradients (see Ghandour 2024 )
   longdat = ifadat %>% 
     tidyr::pivot_longer(starts_with("y22_"), names_to = "lex_ifa", values_to = "y") %>% 
@@ -46,5 +45,14 @@ hrtl_scoring_2022<-function(rawdat, itemdict, coding_tholds){
   determine_hrtl = summdat %>% dplyr::ungroup() %>% dplyr::group_by(HHID) %>% dplyr::summarise(n_on_track = sum(code=="On-Track"), n_needs_support = sum(code=="Needs Support")) %>% 
     dplyr::mutate(hrtl = (n_on_track>=4 & n_needs_support==0) ) # "Children “on track” in 4 to 5 domains with no domain that “needs support” were considered HRTL, forming the definition for the Title V National Outcome Measure for School Readiness." (Ghandour, 2024, p. 2)
   
-  return(list(overall = determine_hrtl, by_domain = summdat))
+  return(
+    list(
+      overall = determine_hrtl %>% 
+                    dplyr::left_join(dat %>% dplyr::select(HHID,FWC), by = "HHID") %>% 
+                    dplyr::mutate(across(everything(), zap_all)), 
+      by_domain = summdat %>% 
+                    dplyr::left_join(dat %>% dplyr::select(HHID,FWC), by = "HHID") %>% 
+                    dplyr::mutate(across(everything(), zap_all))
+    )
+  )
 }

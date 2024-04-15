@@ -1,4 +1,4 @@
-get_cahmi_values_map <- function(rawdat, var, reverse, force_value_missing = NULL){
+get_cahmi_values_map <- function(rawdat, var, reverse, reverse_in_mplus, force_value_missing = NULL){
   
   
   #Input: 
@@ -35,6 +35,10 @@ get_cahmi_values_map <- function(rawdat, var, reverse, force_value_missing = NUL
   
   # If raw variable statrted at zero, it will produce a negative number. Subtract off this smallest negative to start at zero.
   values_map$values_ifa = values_map$values_ifa - min(values_map$values_ifa, na.rm = T)
+  
+  # Get an mplus codes
+  values_map$values_mplus = values_map$values_ifa
+  if(reverse_in_mplus){values_map$values_mplus = with(values_map, abs(values_ifa-max(values_ifa, na.rm = T)))}
   
   
   return(values_map)

@@ -1,7 +1,7 @@
 compare_Figure1_Ghandour19<-function(rawdat, coding_tholds, fig1_Ghandour19){
   
   # Get domain_codes
-  score_hrtl = hrtl_scoring_2016(rawdat = rawdat, itemdict = get_itemdict16(F), coding_tholds = coding_tholds)
+  score_hrtl = hrtl_scoring_2016(rawdat = rawdat, itemdict = get_itemdict16(rawdat, F), coding_tholds = coding_tholds)
   
   # Obtain prevalence by domain
   domain_summary = score_hrtl %>%

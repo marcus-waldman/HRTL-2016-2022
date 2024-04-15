@@ -7,16 +7,17 @@ library(stringr)
 library(readxl)
 
 # Change repo directory
-#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-repo_wd = "C:/repos/HRTL-2016-2022"
+repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+#repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
-for(x in list.files("functions/", full.names = T)){source(x)}
+for(x in list.files("functions/", full.names = T)){cat(paste0("\n",x, " successfully sourced")); source(x)}
 
 # Load in scoring maps
-hrtl_tholds22 = readxl::read_xlsx("datasets/intermediate/HRTL-2022-Scoring-Thresholds.xlsx") %>% 
-  dplyr::mutate(lex_ifa = paste0("y22_",stringr::str_remove(as.character(jid),".22")))
+
+
+
 
 # Load in the raw datasets
 raw16 = haven::read_spss(file = "datasets/raw/CAHMI-2016/NSCH2016_Topical_SPSS_CAHM_DRCv2.sav")
@@ -35,12 +36,12 @@ raw22$DailyAct_22[raw22$HCABILITY==1] = 0
 gt_Table2_Ghandour19 = 
   compare_Table2_Ghandour19(
     rawdat = raw16, 
-    itemdict = get_itemdict16(verbose = F), 
+    itemdict = get_itemdict16(raw16, verbose = F), 
     tbl2_Ghandour19 = readxl::read_xlsx("datasets/intermediate/Ghandour-2019-Tbl2.xlsx") 
 )
 print(gt_Table2_Ghandour19)
 
-# Check domain scoring/coding for correctness; 
+# Check 2022 domain scoring/coding for correctness; 
 gt_Figure1_Ghandour19 = compare_Figure1_Ghandour19(
   rawdat=raw16, 
   coding_tholds = readxl::read_xlsx("datasets/intermediate/HRTL-2016-Scoring-Thresholds.xlsx") %>% 
@@ -48,3 +49,18 @@ gt_Figure1_Ghandour19 = compare_Figure1_Ghandour19(
   fig1_Ghandour19 = readxl::read_xlsx("datasets/intermediate/Ghandour-2019-Fig1.xlsx")
   )
 print(gt_Figure1_Ghandour19)
+
+# Gheck 2022 item responses for correctness
+gt_SuppMat_Ghandour24 = 
+    compare_SuppTable1_Ghandour24(rawdat = raw22, 
+                                  suppmat_Ghandour24 = read_excel(path = "datasets/intermediate/Ghandour-2024-Supplementary-Data.xlsx"), 
+                                  itemdict = get_itemdict22(raw22, F)
+                                  )
+
+# Check 2024 domain scoring/coding for correctness
+gt_prevalences_Ghandour24<-
+  compare_prevalences_Ghandour24(rawdat = raw22, 
+                                 coding_tholds = readxl::read_xlsx("datasets/intermediate/HRTL-2022-Scoring-Thresholds.xlsx") %>% 
+                                   dplyr::mutate(lex_ifa = paste0("y22_",stringr::str_remove(as.character(jid),".22")))
+  )
+

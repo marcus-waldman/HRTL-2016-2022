@@ -1,4 +1,4 @@
-get_itemdict16<-function(verbose = T){
+get_itemdict16<-function(raw16, verbose = T){
   
   
   # Construct a data dictionary
@@ -98,7 +98,8 @@ get_itemdict16<-function(verbose = T){
                       19.16)
   itemdict16 = itemdict16 %>% 
     dplyr::mutate(
-      reverse_coded = ifelse(jid %in% items16_reverse, TRUE, FALSE)
+      reverse_coded = ifelse(jid %in% items16_reverse, TRUE, FALSE), 
+      reverse_only_in_mplus = (startsWith(var_cahmi, "DailyAct"))
     )
   
 
@@ -109,9 +110,13 @@ get_itemdict16<-function(verbose = T){
     if(var_j=="K2Q01_D"){
       force_missing = 6
     }
-    itemdict16$values_map[[j]] = get_cahmi_values_map(raw16,var_j, itemdict16$reverse_coded[j], force_missing)
+    itemdict16$values_map[[j]] = get_cahmi_values_map(raw16,var_j, 
+                                                      itemdict16$reverse_coded[j], 
+                                                      itemdict16$reverse_only_in_mplus[j], 
+                                                      force_missing)
   }
-  
+    
+    
   # Print out recoding to to assess correctness
   if(verbose){
     (cat("Recoding Map: CAHMI 2016"))

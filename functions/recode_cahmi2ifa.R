@@ -1,11 +1,11 @@
-recode_cahmi2ifa<-function(rawdat,itemdict){
+recode_cahmi2ifa<-function(inputdat,itemdict){
   
   require(dplyr)
-  
+
   ifadat = sapply(1:nrow(itemdict), function(j){
     var = itemdict$var_cahmi[j]
     map_v = itemdict$values_map[itemdict$var_cahmi==var][[1]]
-    ifa_v = rawdat %>% 
+    ifa_v = inputdat %>% 
       purrr::pluck(var) %>% 
       zap_all() %>% 
       plyr::mapvalues(from = map_v$values_raw, to = map_v$values_ifa, warn_missing = F)
