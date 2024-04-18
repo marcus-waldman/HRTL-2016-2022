@@ -1,7 +1,7 @@
 recode_it<-function(rawdat, year, lex, var_cahmi, reverse=F, reverse_in_mplus=F, force_value_missing = NULL) {
   
   rawdat%>% 
-    dplyr::select(HHID) %>% 
+    dplyr::select(HHID, FWC, SC_AGE_YEARS) %>% 
     dplyr::mutate(year = year) %>% 
     dplyr::relocate(year) %>% 
     dplyr::bind_cols(
