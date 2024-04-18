@@ -49,19 +49,10 @@ e7<-function(raw_datasets, dprior){ # 7-COUNTTO
   
 
   # Create a plot to look at differnces in cumulative item percentages
-  xtab = weighted_twoway(df = df_e7, var = "e7_1621") %>% 
+  plot_e7 = weighted_twoway(df = df_e7, var = "e7_1621") %>% 
     bind_rows(weighted_twoway(df_e7, var = "e7_22")) %>% 
-    dplyr::arrange(sc_age_years) 
-  
- xtab =  xtab %>% dplyr::group_by(year,sc_age_years) %>% dplyr::summarise(item = item, k = k, cumsum = cumsum(p), tau = c(NA,diff(cumsum))) %>% 
-   dplyr::ungroup()
-  
-  plot_e7 = ggplot(xtab %>% mutate(year = as.ordered(year)) , aes(x=k, y = tau, fill = item, col = year)) + 
-    geom_line() +
-    geom_point() +
-    facet_grid(sc_age_years~., scale = "free_y") + 
-    labs(title = "e7: tau plot", y = "Pr(y<=k)-Pr(y<=k-1)", x = "Threshold") +
-    theme_bw() 
+    dplyr::arrange(sc_age_years) %>% 
+    tau_plot(item="e7")
   
   return(list(data = df_e7 %>% dplyr::select(year,hhid,starts_with("e7")), syntax = syntax_e7, plot = plot_e7))
   

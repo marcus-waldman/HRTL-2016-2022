@@ -7,8 +7,8 @@ library(stringr)
 library(readxl)
 
 # Change repo directory
-#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-repo_wd = "C:/repos/HRTL-2016-2022"
+repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+#repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
@@ -98,13 +98,25 @@ syntax_list = list(
 
 
 
-#### Motor Development: ####
-# 7-COUNTTO
-  e7_list = e7(raw_datasets,dprior)
-  
-  # Update the dataset
-  dat = dat %>% safe_left_join(e7_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, e7_list$syntax)
-  
+# 
+# 
+# #### Early Learning Skills ####
+# # e7-COUNTTO
+#   e7_list = e7(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(e7_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, e7_list$syntax)
+#   
+# 
+# #### Health ####
+# # h1-K2Q01
+#   h1_list=h1(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(h1_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, h1_list$syntax)
+# h2-K2Q01_D
+  # h2_list=h2(raw_datasets,dprior)
+  # dat = dat %>% safe_left_join(h2_list$data, by = c("year","hhid"))
+  # syntax_list = update_syntax(syntax_list, h2_list$syntax)
+# h2-DailyAct
+#Note you will need to correct for raw22$DailyAct_22[raw22$HCABILITY==1] = 0
 
 
