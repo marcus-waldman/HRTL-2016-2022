@@ -101,22 +101,47 @@ syntax_list = list(
 # 
 # 
 # #### Early Learning Skills ####
-# # e7-COUNTTO
-#   e7_list = e7(raw_datasets,dprior)
-#   dat = dat %>% safe_left_join(e7_list$data, by = c("year","hhid"))
-#   syntax_list = update_syntax(syntax_list, e7_list$syntax)
-#   
-# 
-# #### Health ####
-# # h1-K2Q01
-#   h1_list=h1(raw_datasets,dprior)
-#   dat = dat %>% safe_left_join(h1_list$data, by = c("year","hhid"))
-#   syntax_list = update_syntax(syntax_list, h1_list$syntax)
+# e7-COUNTTO
+  e7_list = e7(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e7_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e7_list$syntax)
+
+
+#### Health ####
+# h1-K2Q01
+  h1_list=h1(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(h1_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, h1_list$syntax)
 # h2-K2Q01_D
-  # h2_list=h2(raw_datasets,dprior)
-  # dat = dat %>% safe_left_join(h2_list$data, by = c("year","hhid"))
-  # syntax_list = update_syntax(syntax_list, h2_list$syntax)
-# h2-DailyAct
-#Note you will need to correct for raw22$DailyAct_22[raw22$HCABILITY==1] = 0
+  h2_list=h2(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(h2_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, h2_list$syntax)
+# h3-DailyAct
+  h3_list=h3(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(h3_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, h3_list$syntax)
+  
+
+#### Motor Development ###
+  #m1-DRAWACIRCLE
+  m1_list=m1(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(m1_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, m1_list$syntax)
+  #m2-DRAWAFACE
+  m2_list=m2(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(m2_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, m2_list$syntax)
+  #m3-DRAWAPERSON
+  m3_list=m3(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(m3_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, m3_list$syntax)
+  #m4-BOUNCEABALL
+  m4_list=m4(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(m4_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, m4_list$syntax)
+  #m5-USEPENCIL
+  m5_list=m5(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(m5_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, m5_list$syntax)
 
 
