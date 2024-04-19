@@ -7,8 +7,8 @@ library(stringr)
 library(readxl)
 
 # Change repo directory
-#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-repo_wd = "C:/repos/HRTL-2016-2022"
+repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+#repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
@@ -103,20 +103,73 @@ syntax_list = list(
 
 
 ##### Early Learning Skills ####
+# e1-RECOGBEGIN How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?
+  e1_list = e1(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e1_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e1_list$syntax)  
+# e2-SAMESOUND
+  e2_list = e2(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e2_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e2_list$syntax)
+# e3-RECOGABC How often can this child write their first name, even if some of the letters aren't quite right or are backwards?
+  e3_list = e3(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e3_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e3_list$syntax)  
+  
+# e6-READONEDIGIT
+  e6_list = e6(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e6_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e6_list$syntax)
+
+# e5-WRITENAME How often can this child write their first name, even if some of the letters aren't quite right or are backwards?
+  
 # e7-COUNTTO
   e7_list = e7(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e7_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e7_list$syntax)
-
-
+# e8-GROUPOFOBJECTS
+  e8_list = e8(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e8_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e8_list$syntax)
+# e9-SIMPLEADDITION
+  e9_list = e9(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e9_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e9_list$syntax)
+  
 #### Social Emotional Development ####
-
-    
+# o1-CLEAREXP How often can this child explain things he or she has seen or done so that you get a very good idea what happened?
+  o1_list = o1(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(o1_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, o1_list$syntax)
+  
+# o3-SHARETOYS
+  o3_list = o3(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(o3_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, o3_list$syntax)
+# o4-PLAYWELL: How often does this child play well with others?
+  o4_list = o4(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(o4_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, o4_list$syntax)
+# o5-HURTSAD
+  o5_list = o5(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(o5_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, o5_list$syntax)
+# o6-FOCUSON: How often can this child focus on a task you give them for at least a few minutes? For example, can this child focus on simple chores?
+  o6_list = o6(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(o6_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, o6_list$syntax)
+  
 
 #### Self-Regulation ####
-
-  
-      
+# r3-WAITFORTURN
+  r3_list = r3(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(r3_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, r3_list$syntax)
+# r4-DISTRACTED: How often is this child easily distracted?
+  r4_list = r4(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(r4_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, r4_list$syntax)
+        
 #### Motor Development ####
   #m1-DRAWACIRCLE
   m1_list=m1(raw_datasets,dprior)
