@@ -1,0 +1,62 @@
+e5<-function(raw_datasets, dprior){ # 5-WRITENAME
+  
+  require(tidyverse)
+
+  #Recode 
+  df_e5 = lapply(2017:2022, function(x){
+    var = paste0("WriteName_",x-2000)
+    recode_it(rawdat = raw_datasets[[as.character(x)]], 
+              year = x, 
+              lex = "e5", 
+              var_cahmi = var, 
+              reverse=T) 
+  })  %>% dplyr::bind_rows()
+  
+  #Recode 
+  df_e5_16 =  raw_datasets[["2016"]] %>% 
+    recode_it(rawdat = ., 
+              year = 2016, 
+              lex = "e5_16", 
+              var_cahmi = "WriteName_16", 
+              reverse=T) 
+  
+  #Bind the recoded item response data
+  df_e5 = df_e5_16 %>% 
+    dplyr::bind_rows(df_e5) %>% 
+    dplyr::mutate(across(everything(), zap_all)) %>% 
+    as.data.frame() %>% 
+    dplyr::rename_all(tolower)
+  
+  #Construct Mplus syntax
+  syntax_e5 = list(
+    TITLE = c("!e5_16 & e5 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?"),
+    VARIABLE = list(USEV = c("e5_16", "e5"), 
+                    CATEGORICAL = c("e5_16", "e5")
+    ),
+    MODEL= c("!e5_16 & e5 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?",
+             " EL by e5_16*1 (le5) e5*1 (le5)",
+             " [e5_16$1*] (t1e5_1) [e5$1*] (t1e5_2)", 
+             " [e5_16$2*] (t2e5_1)", 
+             " [e5_16$3*] (t3e5_1) [e5$2*] (t2e5_2)",
+             " [e5_16$4*] (t4e5_1) [e5$3*] (t3e5_2)"
+    ),
+    `MODEL PRIORS` = c("!e5_16 & e5 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?",
+                       paste0(" diff(t1e5_1, t1e5_2)~", dprior), 
+                       paste0(" diff(t3e5_1, t2e5_2)~", dprior),
+                       paste0(" diff(t4e5_1, t3e5_2)~", dprior)
+    )
+  )
+  
+
+  # Create a plot to look at differnces in cumulative item percentages
+  plot_e5 = weighted_twoway(df = df_e5, var = "e5_16") %>% 
+    bind_rows(weighted_twoway(df_e5, var = "e5")) %>% 
+    dplyr::mutate(k = ifelse(year==2016&k>1, k+1, k)) %>% 
+    dplyr::arrange(sc_age_years) %>% 
+    tau_plot(item="e5")
+  
+  return(list(data = df_e5 %>% dplyr::select(year,hhid,starts_with("e5")), syntax = syntax_e5, plot = plot_e5))
+  
+}
+
+

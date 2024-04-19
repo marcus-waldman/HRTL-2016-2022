@@ -7,8 +7,8 @@ library(stringr)
 library(readxl)
 
 # Change repo directory
-repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-#repo_wd = "C:/repos/HRTL-2016-2022"
+#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
@@ -111,18 +111,20 @@ syntax_list = list(
   e2_list = e2(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e2_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e2_list$syntax)
-# e3-RECOGABC How often can this child write their first name, even if some of the letters aren't quite right or are backwards?
-  e3_list = e3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(e3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, e3_list$syntax)  
+# e3-   How well can this child come up with words that rhyme (e.g., "cat" and "mat")
   
+# e4-RECOGABC 
+  e4_list = e4(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e4_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e4_list$syntax)  
+# e5-WRITENAME How often can this child write their first name, even if some of the letters aren't quite right or are backwards?
+  e5_list = e5(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e5_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e5_list$syntax) 
 # e6-READONEDIGIT
   e6_list = e6(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e6_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e6_list$syntax)
-
-# e5-WRITENAME How often can this child write their first name, even if some of the letters aren't quite right or are backwards?
-  
 # e7-COUNTTO
   e7_list = e7(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e7_list$data, by = c("year","hhid"))
@@ -141,7 +143,8 @@ syntax_list = list(
   o1_list = o1(raw_datasets,dprior)
   dat = dat %>% safe_left_join(o1_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, o1_list$syntax)
-  
+# o2- :How often can this child recognize and name their own emotions?
+    
 # o3-SHARETOYS
   o3_list = o3(raw_datasets,dprior)
   dat = dat %>% safe_left_join(o3_list$data, by = c("year","hhid"))
@@ -161,6 +164,10 @@ syntax_list = list(
   
 
 #### Self-Regulation ####
+# r1- :How often does this child have difficulty when asked to end one activity and start a new activity
+
+# r2- : How often does this child have trouble calming down?
+  
 # r3-WAITFORTURN
   r3_list = r3(raw_datasets,dprior)
   dat = dat %>% safe_left_join(r3_list$data, by = c("year","hhid"))
@@ -169,6 +176,7 @@ syntax_list = list(
   r4_list = r4(raw_datasets,dprior)
   dat = dat %>% safe_left_join(r4_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, r4_list$syntax)
+# r5- :How often does this child lose their temper?
         
 #### Motor Development ####
   #m1-DRAWACIRCLE
