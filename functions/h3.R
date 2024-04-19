@@ -27,19 +27,36 @@ h3<-function(raw_datasets, dprior){ # 3-DailyAct
     dplyr::mutate(across(everything(), zap_all)) %>% 
     as.data.frame() %>% 
     dplyr::rename_all(tolower)
-
+  
+  # Make discrete time survival variables
+  df_h3 = df_h3 %>% 
+    dplyr::mutate(h3_0 = NA, h3_1 = NA, h3_2 = NA)
+  
+  #h3_0
+  df_h3$h3_0[df_h3$h3==0] = 0
+  df_h3$h3_0[df_h3$h3>0] = 1
+  
+  #h3_1
+  df_h3$h3_1[df_h3$h3<1] = NA
+  df_h3$h3_1[df_h3$h3==1] = 0
+  df_h3$h3_1[df_h3$h3>1] = 1
+  
+  #h3_2
+  df_h3$h3_2[df_h3$h3<2] = NA
+  df_h3$h3_2[df_h3$h3==2] = 0
+  df_h3$h3_2[df_h3$h3>2] = 1
+  
+  
   #Construct Mplus syntax
   syntax_h3 = list(
-    TITLE = "!h3 (DailyAct): Extent to which children's health conditions affect their daily activities, among children who have any condition?",
+    TITLE = "!h3_* (DailyAct): Extent to which children's health conditions affect their daily activities, among children who have any condition? Note: Treated using DTS.",
     VARIABLE = list(USEV = c("h3"), 
                     CATEGORICAL = c("h3")
                     )
     ,
     MODEL= c("!h3 (DailyAct)",
-             " HE by h3*1 (ah3)",
-             " [h3$1*] (t1h3);", 
-             " [h3$2*] (t2h3);", 
-             " [h3$3*] (t3h3);"
+             " HE by h3_0*1 (ah3a) h3_1*1 (ah3b) h3_2*1 (ah3c)",
+             " [h3_0$1*] (t1h3a) [h3_1$1*] (t1h3b) [h3_2$1*] (t1h3c)"
             ),
     `MODEL PRIORS` = NULL
   )
@@ -50,7 +67,7 @@ h3<-function(raw_datasets, dprior){ # 3-DailyAct
     dplyr::arrange(sc_age_years) %>% 
     tau_plot(item="h3")
   
-  return(list(data = df_h3 %>% dplyr::select(year,hhid,h3), syntax = syntax_h3, plot = plot_h3))
+  return(list(data = df_h3 %>% dplyr::select(year,hhid,h3_0, h3_1, h3_2), syntax = syntax_h3, plot = plot_h3))
   
 }
 

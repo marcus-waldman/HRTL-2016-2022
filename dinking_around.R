@@ -7,8 +7,8 @@ library(stringr)
 library(readxl)
 
 # Change repo directory
-repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-#repo_wd = "C:/repos/HRTL-2016-2022"
+#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
@@ -50,7 +50,7 @@ dat = lapply(2016:2022, function(x){
   raw_datasets[[as.character(x)]] %>% 
     dplyr::select(FIPSST,STRATUM,HHID,FWC,SC_AGE_YEARS) %>% 
     dplyr::filter(SC_AGE_YEARS == 3 | SC_AGE_YEARS == 4 | SC_AGE_YEARS == 5) %>% 
-    dplyr::rename(SC_AGE = SC_AGE_YEARS) %>% 
+    dplyr::rename(AGE = SC_AGE_YEARS) %>% 
     dplyr::rename_all(tolower) %>% 
     mutate(across(everything(), zap_all)) %>% 
     mutate(across(where(is.character), as.numeric))%>% 
@@ -61,7 +61,10 @@ dat = lapply(2016:2022, function(x){
   dplyr::bind_rows() %>% 
   dplyr::mutate(recnum = 1:nrow(.)) %>% 
   dplyr::relocate(recnum) %>% 
-  as.data.frame()
+  as.data.frame() %>% 
+  dplyr::mutate(stratfip = paste0(stratum,"000",fipsst)) %>% 
+  dplyr::relocate(recnum,year,stratfip) %>% 
+  dplyr::select(-fipsst,-stratum)
 
 # Create skeleton syntax
 title_list = NULL
@@ -98,31 +101,23 @@ syntax_list = list(
 
 
 
-# 
-# 
-# #### Early Learning Skills ####
+
+##### Early Learning Skills ####
 # e7-COUNTTO
   e7_list = e7(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e7_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e7_list$syntax)
 
 
-#### Health ####
-# h1-K2Q01
-  h1_list=h1(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h1_list$syntax)
-# h2-K2Q01_D
-  h2_list=h2(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h2_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h2_list$syntax)
-# h3-DailyAct
-  h3_list=h3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h3_list$syntax)
-  
+#### Social Emotional Development ####
 
-#### Motor Development ###
+    
+
+#### Self-Regulation ####
+
+  
+      
+#### Motor Development ####
   #m1-DRAWACIRCLE
   m1_list=m1(raw_datasets,dprior)
   dat = dat %>% safe_left_join(m1_list$data, by = c("year","hhid"))
@@ -143,5 +138,22 @@ syntax_list = list(
   m5_list=m5(raw_datasets,dprior)
   dat = dat %>% safe_left_join(m5_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, m5_list$syntax)
+
+#### Health ####
+# h1-K2Q01
+  h1_list=h1(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(h1_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, h1_list$syntax)
+# h2-K2Q01_D
+  h2_list=h2(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(h2_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, h2_list$syntax)
+# h3-DailyAct
+  h3_list=h3(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(h3_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, h3_list$syntax)
+  
+
+
 
 
