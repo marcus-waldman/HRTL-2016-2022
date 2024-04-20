@@ -31,7 +31,7 @@ m1<-function(raw_datasets, dprior){ # m1-DRAWACIRCLE
              " [m1$2*] (t2m1);", 
              " [m1$3*] (t3m1);"
             ),
-    `MODEL PRIORS` = NULL
+    `MODEL PRIORS` = "!m1 (DRAWACIRCLE)"
   )
   
 
