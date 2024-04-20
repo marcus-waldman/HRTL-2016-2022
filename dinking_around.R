@@ -111,13 +111,15 @@ syntax_list = list(
   e2_list = e2(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e2_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e2_list$syntax)
-# e3-   How well can this child come up with words that rhyme (e.g., "cat" and "mat")
-  
+# e3-RHYMEWORD: How well can this child come up with words that rhyme (e.g., "cat" and "mat")
+  e3_list = e3(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(e3_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, e3_list$syntax)
 # e4-RECOGABC 
   e4_list = e4(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e4_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e4_list$syntax)  
-# e5-WRITENAME How often can this child write their first name, even if some of the letters aren't quite right or are backwards?
+# e5-WRITENAME: How often can this child write their first name, even if some of the letters aren't quite right or are backwards?
   e5_list = e5(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e5_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e5_list$syntax) 
@@ -143,8 +145,10 @@ syntax_list = list(
   o1_list = o1(raw_datasets,dprior)
   dat = dat %>% safe_left_join(o1_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, o1_list$syntax)
-# o2- :How often can this child recognize and name their own emotions?
-    
+# o2-NAMEEMOTIONS: How often can this child recognize and name their own emotions?
+  o2_list = o2(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(o2_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, o2_list$syntax) 
 # o3-SHARETOYS
   o3_list = o3(raw_datasets,dprior)
   dat = dat %>% safe_left_join(o3_list$data, by = c("year","hhid"))
@@ -164,10 +168,15 @@ syntax_list = list(
   
 
 #### Self-Regulation ####
-# r1- :How often does this child have difficulty when asked to end one activity and start a new activity
-
-# r2- : How often does this child have trouble calming down?
-  
+# r1-NEWACTIVITY (2016-21): How often does this child have difficulty when asked to end one activity and start a new activity
+#    STARTNEWACT (2022): How often does this child have difficulty when asked to end one activity and start a new activity?
+  r1_list = r1(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(r1_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, r1_list$syntax)
+# r2-: CALMDOWN: How often does this child have trouble calming down?
+  r2_list = r2(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(r2_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, r2_list$syntax)
 # r3-WAITFORTURN
   r3_list = r3(raw_datasets,dprior)
   dat = dat %>% safe_left_join(r3_list$data, by = c("year","hhid"))
@@ -177,6 +186,9 @@ syntax_list = list(
   dat = dat %>% safe_left_join(r4_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, r4_list$syntax)
 # r5- :How often does this child lose their temper?
+  r5_list_list = r5(raw_datasets,dprior)
+  dat = dat %>% safe_left_join(r5_list_list$data, by = c("year","hhid"))
+  syntax_list = update_syntax(syntax_list, r5_list_list$syntax)
         
 #### Motor Development ####
   #m1-DRAWACIRCLE

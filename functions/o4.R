@@ -1,7 +1,7 @@
 o4<-function(raw_datasets, dprior){ # 4-PLAYWELL
   
   require(tidyverse)
-
+  
   #Recode 
   df_o4 = lapply(2017:2022, function(x){
     var = paste0("PlayWell_",x-2000)
@@ -47,7 +47,7 @@ o4<-function(raw_datasets, dprior){ # 4-PLAYWELL
     )
   )
   
-
+  
   # Create a plot to look at differnces in cumulative item percentages
   plot_o4 = weighted_twoway(df = df_o4, var = "o4_16") %>% 
     bind_rows(weighted_twoway(df_o4, var = "o4")) %>% 
@@ -58,5 +58,3 @@ o4<-function(raw_datasets, dprior){ # 4-PLAYWELL
   return(list(data = df_o4 %>% dplyr::select(year,hhid,starts_with("o4")), syntax = syntax_o4, plot = plot_o4))
   
 }
-
-
