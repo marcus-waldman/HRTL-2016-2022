@@ -1,4 +1,8 @@
 r1<-function(raw_datasets, dprior){ 
+  
+  #FIX MODEL PRIOR (SEE E.G. E1)  (This one may be correct already)
+  
+  
   # r1-NEWACTIVITY (2016-21): How often does this child become angry or anxious when going from one activity to another?
   #    STARTNEWACT (2022): How often does this child have difficulty when asked to end one activity and start a new activity?
   

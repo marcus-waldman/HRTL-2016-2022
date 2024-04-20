@@ -1,5 +1,5 @@
 o1<-function(raw_datasets, dprior){ # 1-CLEAREXP
-  
+#FIX MODEL PRIOR (SEE E.G. E1)  
   require(tidyverse)
 
   #Recode 

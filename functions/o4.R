@@ -1,4 +1,5 @@
 o4<-function(raw_datasets, dprior){ # 4-PLAYWELL
+  #FIX MODEL PRIOR (SEE E.G. E1)  
   
   require(tidyverse)
   

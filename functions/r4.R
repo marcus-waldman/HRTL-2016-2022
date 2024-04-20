@@ -1,7 +1,7 @@
 r4<-function(raw_datasets, dprior){ # 4-DISTRACTED
   
-  require(tidyverse)
-
+  #FIX MODEL PRIOR (SEE E.G. E1)  
+  
   #Recode 
   df_r4 = lapply(2017:2022, function(x){
     var = paste0("distracted_",x-2000)

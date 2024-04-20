@@ -1,7 +1,7 @@
 o5<-function(raw_datasets, dprior){ # 5-HURTSAD
   
-  require(tidyverse)
-
+  #FIX MODEL PRIOR (SEE E.G. E1)  
+  
   #Recode 
   df_o5 = lapply(2017:2022, function(x){
     var = paste0("HurtSad_",x-2000)

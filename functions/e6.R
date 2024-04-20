@@ -1,15 +1,21 @@
 e6<-function(raw_datasets, dprior){ # e6-READONEDIGIT
   
-  require(tidyverse)
+  # e6-READONEDIGIT: How often can this child read one-digit numbers? For example, can this child read the numbers 2 or 8?
+    # (2022)
+      # 1                         Always
+      # 2               Most of the time
+      # 3            About half the time
+      # 4                      Sometimes
+      # 5                          Never
   
   
-  #Recode 2016-2022: K2Q01_D
+  #Recode 22 K2Q01_D
   df_e6 = lapply(2022, function(x){
     
     var_cahmi = "READONEDIGIT"
     recode_it(rawdat = raw_datasets[[as.character(x)]], 
               year = x, 
-              lex = "e6", 
+              lex = "e6_22", 
               var_cahmi = var_cahmi, 
               reverse=T) 
   })  %>% 
@@ -20,28 +26,28 @@ e6<-function(raw_datasets, dprior){ # e6-READONEDIGIT
 
   #Construct Mplus syntax
   syntax_e6 = list(
-    TITLE = "!e6 (READONEDIGIT): How often can this child read one-digit numbers? For example, can this child read the numbers 2 or 8?",
-    VARIABLE = list(USEV = c("e6"), 
-                    CATEGORICAL = c("e6")
+    TITLE = "!e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can this child read the numbers 2 or 8?",
+    VARIABLE = list(USEV = c("e6_22"), 
+                    CATEGORICAL = c("e6_22")
                     )
     ,
-    MODEL= c("!e6 (READONEDIGIT)",
-             " EL by e6*1 (ae6)",
-             " [e6$1*] (t1e6);", 
-             " [e6$2*] (t2e6);", 
-             " [e6$3*] (t3e6);",
-             " [e6$4*] (t4e6);"
+    MODEL= c("!e6_22 (READONEDIGIT)",
+             " EL by e6_22*1 (ae6)",
+             " [e6_22$1*] (t1e6);", 
+             " [e6_22$2*] (t2e6);", 
+             " [e6_22$3*] (t3e6);",
+             " [e6_22$4*] (t4e6);"
             ),
     `MODEL PRIORS` = NULL
   )
   
 
   # Create a plot to look at differnces in cumulative item percentages
-  plot_e6 = weighted_twoway(df = df_e6, var = "e6") %>% 
+  plot_e6 = weighted_twoway(df = df_e6, var = "e6_22") %>% 
     dplyr::arrange(sc_age_years) %>% 
     tau_plot(item="e6")
   
-  return(list(data = df_e6 %>% dplyr::select(year,hhid,e6), syntax = syntax_e6, plot = plot_e6))
+  return(list(data = df_e6 %>% dplyr::select(year,hhid,e6_22), syntax = syntax_e6, plot = plot_e6))
   
 }
 

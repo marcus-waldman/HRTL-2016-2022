@@ -1,6 +1,19 @@
 e7<-function(raw_datasets, dprior){ # 7-COUNTTO
   
-  require(tidyverse)
+  # COUNTTO (2016-21): How high can this child count?
+    # 1 Not at all
+    # 2 Up to five
+    # 3  Up to ten
+    # 4   Up to 20
+    # 5   Up to 50
+    # 6  Up to 100
+    
+  # COUNTTO_R (2022): If asked to count objects, how high can this child count correctly?
+    # 1        This child cannot count
+    # 2                     Up to five
+    # 3                      Up to ten
+    # 4                       Up to 20
+    # 5               Up to 30 or more
 
   #Recode 2016-2021: COUNTTO
   df_e7_1621 = lapply(2016:2021, function(x){
@@ -15,7 +28,7 @@ e7<-function(raw_datasets, dprior){ # 7-COUNTTO
   df_e7 =  raw_datasets[["2022"]] %>% 
     recode_it(rawdat = ., 
               year = 2022, 
-              lex = "e7", 
+              lex = "e7_22", 
               var_cahmi = "COUNTTO_R", 
               reverse=F) 
   
@@ -29,30 +42,33 @@ e7<-function(raw_datasets, dprior){ # 7-COUNTTO
   #Construct Mplus syntax
   syntax_e7 = list(
     TITLE = c("!e7_1621 (COUNTTO): How high can this child count?",
-              "!e7 (COUNTTO_R): If asked to count objects, how high can this child count correctly?"),
-    VARIABLE = list(USEV = c("e7_1621", "e7"), 
-                    CATEGORICAL = c("e7_1621", "e7")
+              "!e7_22 (COUNTTO_R): If asked to count objects, how high can this child count correctly?"),
+    VARIABLE = list(USEV = c("e7_1621", "e7_22"), 
+                    CATEGORICAL = c("e7_1621", "e7_22")
     ),
-    MODEL= c("!e7: COUNTTO (2016-2021) & COUNTTO_R (2022)",
+    MODEL= c("!e7: COUNTTO (2016-2021) 
+              ! COUNTTO_R (2022)",
              " EL by e7_1621*1 (le7_1) e7*1 (le7_2)",
-             " [e7_1621$1*] (t1e7_1) [e7$1*] (t1e7_2)", 
-             " [e7_1621$2*] (t2e7_1) [e7$2*] (t2e7_2)", 
-             " [e7_1621$3*] (t3e7_1) [e7$3*] (t3e7_2)",
-             " [e7_1621$4*] (t4e7_1) [e7$4*] (t4e7_2)"
+             "   [e7_1621$1*] (t1e7_1) [e7$1*] (t1e7_2)", 
+             "   [e7_1621$2*] (t2e7_1) [e7$2*] (t2e7_2)", 
+             "   [e7_1621$3*] (t3e7_1) [e7$3*] (t3e7_2)",
+             "   [e7_1621$4*] (t4e7_1) [e7$4*] (t4e7_2)", 
+             "   [e7_1621$5*] (t5e7_1)"
     ),
     `MODEL PRIORS` = c("!e7: COUNTTO (2016-2021) & COUNTTO_R (2022)",
                        paste0(" diff(le7_1,le7_2)~", dprior), 
                        paste0(" diff(t1e7_1, t1e7_2)~", dprior), 
-                       paste0(" diff(t2e7_1, t2e7_2)~", dprior)
+                       paste0(" diff(t2e7_1, t2e7_2)~", dprior), 
+                       paste0(" diff(t3e7_1, t3e7_2)~", dprior)
     )
   )
   
 
-  # Create a plot to look at differnces in cumulative item percentages
+  # Create a plot to look at differences in cumulative item percentages
   plot_e7 = weighted_twoway(df = df_e7, var = "e7_1621") %>% 
-    bind_rows(weighted_twoway(df_e7, var = "e7")) %>% 
+    bind_rows(weighted_twoway(df_e7, var = "e7_22")) %>% 
     dplyr::arrange(sc_age_years) %>% 
-    tau_plot(item="e7")
+    tau_plot(item="e7", what = "cumulative", syntax = syntax_e7)
   
   return(list(data = df_e7 %>% dplyr::select(year,hhid,starts_with("e7")), syntax = syntax_e7, plot = plot_e7))
   
