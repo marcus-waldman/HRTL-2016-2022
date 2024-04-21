@@ -57,13 +57,13 @@ e4<-function(raw_datasets, dprior){ # 4-RECOGABC
     ),
     `MODEL PRIORS` = c("\n!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2",
                        paste0("   diff(t1e4_1, t1e4_2)~", dprior), 
-                       paste0("   diff(t2e4_1, t2e4_2)~", dprior),
+#                      paste0("   diff(t2e4_1, t2e4_2)~", dprior),
                        paste0("   diff(t3e4_1, t4e4_2)~", dprior)
     ), 
     `MODEL CONSTRAINT` = c("\n!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2",
-                           "   new(dt1e4*0 dt2e4*0 dt3e4*0)",
+                           "   new(dt1e4* dt3e4*)",
                            "   dt1e4 = t1e4_1-t1e4_2", 
-                           "   dt2e4 = t2e4_1-t2e4_2", 
+#                          "   dt2e4 = t2e4_1-t2e4_2", 
                            "   dt3e4 = t3e4_1-t4e4_2"
     )
   )

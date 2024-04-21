@@ -9,7 +9,7 @@ o3<-function(raw_datasets, dprior){ # o3-SHARETOYS
     var_cahmi = "SHARETOYS"
     recode_it(rawdat = raw_datasets[[as.character(x)]], 
               year = x, 
-              lex = "o3", 
+              lex = "o3_22", 
               var_cahmi = var_cahmi, 
               reverse=T) 
   })  %>% 
@@ -20,29 +20,25 @@ o3<-function(raw_datasets, dprior){ # o3-SHARETOYS
 
   #Construct Mplus syntax
   syntax_o3 = list(
-    TITLE = "!o3 (SHARETOYS): How often does this child have difficulty waiting for their turn?",
+    TITLE = "!o3_22 (SHARETOYS): How often does this child have difficulty waiting for their turn?",
 
-    VARIABLE = list(USEV = c("o3"), 
-                    CATEGORICAL = c("o3")
+    VARIABLE = list(NAMES = c("o3_22"),
+                    USEV = c("o3_22"), 
+                    CATEGORICAL = c("o3_22")
                     ),
     
-    MODEL= c("!o3 (SHARETOYS)",
-             " EL by o3*1 (ao3)",
-             " [o3$1*] (t1o3);", 
-             " [o3$2*] (t2o3);", 
-             " [o3$3*] (t3o3);",
-             " [o3$4*] (t4o3);"
+    MODEL= c("\n!o3_22 (SHARETOYS)",
+             "   EM by o3_22*1 (lo3)",
+             "   [o3_22$1*] (t1o3)", 
+             "   [o3_22$2*] (t2o3)", 
+             "   [o3_22$3*] (t3o3)",
+             "   [o3_22$4*] (t4o3)"
             ),
     `MODEL PRIORS` = NULL
   )
   
-
-  # Create a plot to look at differnces in cumulative item percentages
-  plot_o3 = weighted_twoway(df = df_o3, var = "o3") %>% 
-    dplyr::arrange(sc_age_years) %>% 
-    tau_plot(item="o3")
   
-  return(list(data = df_o3 %>% dplyr::select(year,hhid,o3), syntax = syntax_o3, plot = plot_o3))
+  return(list(data = df_o3 %>% dplyr::select(year,hhid,o3_22), syntax = syntax_o3))
   
 }
 

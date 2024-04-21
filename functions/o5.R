@@ -7,7 +7,7 @@ o5<-function(raw_datasets, dprior){ # 5-HURTSAD
     var = paste0("HurtSad_",x-2000)
     recode_it(rawdat = raw_datasets[[as.character(x)]], 
               year = x, 
-              lex = "o5", 
+              lex = "o5_1722", 
               var_cahmi = var, 
               reverse=T) 
   })  %>% dplyr::bind_rows()
@@ -29,33 +29,32 @@ o5<-function(raw_datasets, dprior){ # 5-HURTSAD
   
   #Construct Mplus syntax
   syntax_o5 = list(
-    TITLE = c("!o5_16 & o5 (HurtSad): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?"),
-    VARIABLE = list(USEV = c("o5_16", "o5"), 
-                    CATEGORICAL = c("o5_16", "o5")
+    TITLE = c("!o5_16 & o5_1722 (HurtSad): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?"),
+    VARIABLE = list(NAMES = c("o5_16", "o5_1722"), 
+                    USEV = c("o5_16", "o5_1722"), 
+                    CATEGORICAL = c("o5_16", "o5_1722")
     ),
-    MODEL= c("!o5_16 & o5 (HurtSad): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?",
-             " EL by o5_16*1 (lo5) o5*1 (lo5)",
-             " [o5_16$1*] (t1o5_1) [o5$1*] (t1o5_2)", 
-             " [o5_16$2*] (t2o5_1)", 
-             " [o5_16$3*] (t3o5_1) [o5$2*] (t2o5_2)",
-             " [o5_16$4*] (t4o5_1) [o5$3*] (t3o5_2)"
+    MODEL= c("\n!o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2)",
+             "   EM by o5_16*1 o5_1722*1 (lo5)",
+             "   [o5_16$1* o5_1722$1*] (t1o5_1 t1o5_2)", 
+             "            [o5_1722$2*]          (t2o5_1)", 
+             "   [o5_16$2* o5_1722$3*] (t2o5_1 t3o5_2)",
+             "   [o5_16$3* o5_1722$4*] (t3o5_1 t4o5_2)"
     ),
-    `MODEL PRIORS` = c("!o5_16 & o5 (HurtSad): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?",
-                       paste0(" diff(t1o5_1, t1o5_2)~", dprior), 
-                       paste0(" diff(t3o5_1, t2o5_2)~", dprior),
-                       paste0(" diff(t4o5_1, t3o5_2)~", dprior)
+    `MODEL PRIORS` = c("\n!o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2)",
+                       paste0("   diff(t1o5_1, t1o5_2)~", dprior), 
+#                      paste0("   diff(t2o5_1, t3o5_2)~", dprior),
+                       paste0("   diff(t3o5_1, t4o5_2)~", dprior)
+    ), 
+    `MODEL CONSTRAINT` = c("\n!o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2)",
+                           "   new(dt1o5* dt4o5*)", 
+                           "   dt1o5=t1o5_1-t1o5_2", 
+                           "   dt4o5=t3o5_1-t4o5_2"
     )
   )
   
-
-  # Create a plot to look at differnces in cumulative item percentages
-  plot_o5 = weighted_twoway(df = df_o5, var = "o5_16") %>% 
-    bind_rows(weighted_twoway(df_o5, var = "o5")) %>% 
-    dplyr::mutate(k = ifelse(year==2016&k>1, k+1, k)) %>% 
-    dplyr::arrange(sc_age_years) %>% 
-    tau_plot(item="o5")
   
-  return(list(data = df_o5 %>% dplyr::select(year,hhid,starts_with("o5")), syntax = syntax_o5, plot = plot_o5))
+  return(list(data = df_o5 %>% dplyr::select(year,hhid,starts_with("o5")), syntax = syntax_o5))
   
 }
 

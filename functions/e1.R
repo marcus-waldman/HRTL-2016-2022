@@ -58,13 +58,13 @@ e1<-function(raw_datasets, dprior){ # e1-RECOGBEGIN
     ),
     `MODEL PRIORS` = c("\n!e1_16 & e1_1722 (RecogBegin)" ,
                        paste0("   diff(t1e1_1, t1e1_2)~", dprior), 
-                       paste0("   diff(t2e1_1, t2e1_2)~", dprior), 
+#                      paste0("   diff(t2e1_1, t2e1_2)~", dprior), 
                        paste0("   diff(t3e1_1, t4e1_2)~", dprior)
     ),
     `MODEL CONSTRAINT` = c("\n!e1_16 & e1_1722 (RecogBegin)",
-                           "   new(dt1e1*0 dt2e1*0 dt3e1*0)",
+                           "   new(dt1e1* dt3e1*)",
                            "   dt1e1 = t1e1_1-t1e1_2",
-                           "   dt2e1 = t2e1_1-t2e1_2", 
+#                          "   dt2e1 = t2e1_1-t2e1_2", 
                            "   dt3e1 = t3e1_1-t4e1_2")
   )
   
