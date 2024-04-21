@@ -3,6 +3,14 @@ o5<-function(raw_datasets, dprior){ # 5-HURTSAD
   #FIX MODEL PRIOR (SEE E.G. E1)  
   
   #Recode 
+  df_o5_16 =  raw_datasets[["2016"]] %>% 
+    recode_it(rawdat = ., 
+              year = 2016, 
+              lex = "o5_16", 
+              var_cahmi = "HurtSad_16", 
+              reverse=T) 
+  
+  #Recode 
   df_o5 = lapply(2017:2022, function(x){
     var = paste0("HurtSad_",x-2000)
     recode_it(rawdat = raw_datasets[[as.character(x)]], 
@@ -12,13 +20,6 @@ o5<-function(raw_datasets, dprior){ # 5-HURTSAD
               reverse=T) 
   })  %>% dplyr::bind_rows()
   
-  #Recode 
-  df_o5_16 =  raw_datasets[["2016"]] %>% 
-    recode_it(rawdat = ., 
-              year = 2016, 
-              lex = "o5_16", 
-              var_cahmi = "HurtSad_16", 
-              reverse=T) 
   
   #Bind the recoded item response data
   df_o5 = df_o5_16 %>% 
@@ -47,14 +48,14 @@ o5<-function(raw_datasets, dprior){ # 5-HURTSAD
                        paste0("   diff(t3o5_1, t4o5_2)~", dprior)
     ), 
     `MODEL CONSTRAINT` = c("\n!o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2)",
-                           "   new(dt1o5* dt4o5*)", 
+                           "   new(dt1o5* dt3o5*)", 
                            "   dt1o5=t1o5_1-t1o5_2", 
-                           "   dt4o5=t3o5_1-t4o5_2"
+                           "   dt3o5=t3o5_1-t4o5_2"
     )
   )
   
   
-  return(list(data = df_o5 %>% dplyr::select(year,hhid,starts_with("o5")), syntax = syntax_o5))
+  return(list(data = df_o5 %>% dplyr::select(year,hhid,o5_16, o5_1722), syntax = syntax_o5))
   
 }
 

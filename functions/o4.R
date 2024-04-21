@@ -4,6 +4,14 @@ o4<-function(raw_datasets, dprior){ # 4-PLAYWELL
   require(tidyverse)
   
   #Recode 
+  df_o4_16 =  raw_datasets[["2016"]] %>% 
+    recode_it(rawdat = ., 
+              year = 2016, 
+              lex = "o4_16", 
+              var_cahmi = "PlayWell_16", 
+              reverse=T) 
+  
+  #Recode 
   df_o4 = lapply(2017:2022, function(x){
     var = paste0("PlayWell_",x-2000)
     recode_it(rawdat = raw_datasets[[as.character(x)]], 
@@ -13,13 +21,6 @@ o4<-function(raw_datasets, dprior){ # 4-PLAYWELL
               reverse=T) 
   })  %>% dplyr::bind_rows()
   
-  #Recode 
-  df_o4_16 =  raw_datasets[["2016"]] %>% 
-    recode_it(rawdat = ., 
-              year = 2016, 
-              lex = "o4_16", 
-              var_cahmi = "PlayWell_16", 
-              reverse=T) 
   
   #Bind the recoded item response data
   df_o4 = df_o4_16 %>% 
@@ -57,6 +58,6 @@ o4<-function(raw_datasets, dprior){ # 4-PLAYWELL
   
   
 
-  return(list(data = df_o4 %>% dplyr::select(year,hhid,starts_with("o4")), syntax = syntax_o4))
+  return(list(data = df_o4 %>% dplyr::select(year,hhid,o4_16,o4_1722), syntax = syntax_o4))
   
 }

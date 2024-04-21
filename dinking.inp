@@ -34,12 +34,9 @@ CATEGORICAL = e1_16 e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16 e5_1722
    o5_1722 o6_22;
 MISSING = .;
 IDVARIABLE = recnum;
-STRATIFICATION = stratfip;
-CLUSTER = hhid;
-WEIGHT = fwc;
 
 ANALYSIS:
-TYPE = complex;
+TYPE = general;
 ESTIMATOR = mlr;
 ALGORITHM = integration;
 INTEGRATION = gauss(8);
@@ -173,80 +170,34 @@ MODEL:
 MODEL PRIORS:
 
 !e1_16 & e1_1722 (RecogBegin);
-   diff(t1e1_1, t1e1_2)~N(0,1);
-   diff(t3e1_1, t4e1_2)~N(0,1);
-
-!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
-   diff(le3_1,le3_2)~N(0,1);
+   diff(t3e1_1, t4e1_2)~ALF(0,1);
 
 !e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2;
-   diff(t1e4_1, t1e4_2)~N(0,1);
-   diff(t3e4_1, t4e4_2)~N(0,1);
+   diff(t3e4_1, t4e4_2)~ALF(0,1);
 
 !e5_16 & e5 (WriteName);
-   diff(t1e5_1, t1e5_2)~N(0,1);
-   diff(t3e5_1, t4e5_2)~N(0,1);
-
-!e7: COUNTTO (2016-2021) & COUNTTO_R (2022);
-   diff(le7_1,le7_2)~N(0,1);
-   diff(t1e7_1, t1e7_2)~N(0,1);
-   diff(t2e7_1, t2e7_2)~N(0,1);
-   diff(t3e7_1, t3e7_2)~N(0,1);
+   diff(t3e5_1, t4e5_2)~ALF(0,1);
 
 !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
-   diff(t1o1_1, t1o1_2)~N(0,1);
-   diff(t3o1_1, t4o1_2)~N(0,1);
+   diff(t3o1_1, t4o1_2)~ALF(0,1);
 
 !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
-   diff(t1o4_1, t1o4_2)~N(0,1);
-   diff(t3o4_1, t4o4_2)~N(0,1);
+   diff(t3o4_1, t4o4_2)~ALF(0,1);
 
 !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
-   diff(t1o5_1, t1o5_2)~N(0,1);
-   diff(t3o5_1, t4o5_2)~N(0,1);
+   diff(t3o5_1, t4o5_2)~ALF(0,1);
 
-MODEL CONSTRAINT:
+MODEL CONSTRAINT: 
 
-!e1_16 & e1_1722 (RecogBegin);
-   new(dt1e1* dt3e1*);
-   dt1e1 = t1e1_1-t1e1_2;
-   dt3e1 = t3e1_1-t4e1_2;
+0 = (t3e1_1 - t4e1_2)/le1 + 
+    (t3e4_1 - t4e4_2)/le4 + 
+    (t3e5_1 - t4e5_2)/le5;
+0 = (t3o1_1 - t4o1_2)/lo1 + 
+    (t3o4_1 - t4o4_2)/lo4 + 
+    (t3o5_1 - t4o5_2)/lo5;
+    
 
-!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
-   new(dle3*0);
-   dle3 = le3_1-le3_2;
 
-!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2;
-   new(dt1e4* dt3e4*);
-   dt1e4 = t1e4_1-t1e4_2;
-   dt3e4 = t3e4_1-t4e4_2;
-
-!e5_16 & e5 (WriteName);
-   new(dt1e5* dt3e5*);
-   dt1e5 = t1e5_1-t1e5_2;
-   dt3e5 = t3e5_1-t4e5_2;
-
-!e7: COUNTTO (2016-2021) & COUNTTO_R (2022);
-   new(dle7*0 dt1e7*0 dt2e7*0 dt3e7*0);
-   dle7 = le7_1-le7_2;
-   dt1e7 = t1e7_1-t1e7_2;
-   dt2e7 = t2e7_1-t2e7_2;
-   dt3e7 = t3e7_1-t3e7_2;
-
-!o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
-   new(dt1o1* dt3o1*);
-   dt1o1=t1o1_1-t1o1_2;
-   dt3o1=t3o1_1-t4o1_2;
-
-!o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
-   new(dt1o4* dt3o4*);
-   dt1o4=t1o4_1-t1o4_2;
-   dt3o4=t3o4_1-t4o4_2;
-
-!o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
-   new(dt1o5* dt4o5*);
-   dt1o5=t1o5_1-t1o5_2;
-   dt4o5=t3o5_1-t4o5_2;
 
 OUTPUT:
 svalues;

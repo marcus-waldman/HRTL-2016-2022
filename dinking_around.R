@@ -38,7 +38,7 @@ for(x in list.files("functions/", full.names = T)){cat(paste0("\n",x, " successf
 
 raw_datasets = read_rds(file = "datasets/intermediate/raw_datasets.rds")
 
-dprior = "ALF(0,1)"
+dprior = "N(0,1E-6)"
 estimator = "mlr"
 type = "complex"
 link = "probit"

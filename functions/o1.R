@@ -15,6 +15,14 @@ o1<-function(raw_datasets, dprior){ # 1-CLEAREXP
       # 5                   Never
 
   #Recode 
+  df_o1_16 =  raw_datasets[["2016"]] %>% 
+    recode_it(rawdat = ., 
+              year = 2016, 
+              lex = "o1_16", 
+              var_cahmi = "ClearExp_16", 
+              reverse=T) 
+  
+  #Recode 
   df_o1 = lapply(2017:2022, function(x){
     var = paste0("ClearExp_",x-2000)
     recode_it(rawdat = raw_datasets[[as.character(x)]], 
@@ -24,13 +32,6 @@ o1<-function(raw_datasets, dprior){ # 1-CLEAREXP
               reverse=T) 
   })  %>% dplyr::bind_rows()
   
-  #Recode 
-  df_o1_16 =  raw_datasets[["2016"]] %>% 
-    recode_it(rawdat = ., 
-              year = 2016, 
-              lex = "o1_16", 
-              var_cahmi = "ClearExp_16", 
-              reverse=T) 
   
   #Bind the recoded item response data
   df_o1 = df_o1_16 %>% 
@@ -66,7 +67,7 @@ o1<-function(raw_datasets, dprior){ # 1-CLEAREXP
                            )
   )
   
-  return(list(data = df_o1 %>% dplyr::select(year,hhid,starts_with("o1")), syntax = syntax_o1))
+  return(list(data = df_o1 %>% dplyr::select(year,hhid,o1_16,o1_1722), syntax = syntax_o1))
   
 }
 
