@@ -101,6 +101,9 @@ MODEL:
    [e9_22$3*] (t3e9);
    [e9_22$4*] (t4e9);
 
+EL@1;
+[EL@0];
+
 MODEL PRIORS:
 
 !e1_16 & e1_1722 (RecogBegin);
@@ -126,6 +129,45 @@ MODEL PRIORS:
    diff(t1e7_1, t1e7_2)~ALF(0,1);
    diff(t2e7_1, t2e7_2)~ALF(0,1);
    diff(t3e7_1, t3e7_2)~ALF(0,1);
+
+MODEL CONSTRAINT:
+
+!e1_16 & e1_1722 (RecogBegin);
+   new(dt1e1*0 dt2e1*0 dt3e1*0);
+   dt1e1 = t1e1_1-t1e1_2;
+   dt2e1 = t2e1_1-t2e1_2;
+   dt3e1 = t3e1_1-t4e1_2;
+
+!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+   new(dle3*0);
+   dle3 = le3_1-le3_2;
+
+!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2;
+   new(dt1e4*0 dt2e4*0 dt3e4*0);
+   dt1e4 = t1e4_1-t1e4_2;
+   dt2e4 = t2e4_1-t2e4_2;
+   dt3e4 = t3e4_1-t4e4_2;
+
+!e5_16 & e5 (WriteName);
+   new(dt1e5* dt2e5* dt3e5*);
+   dt1e5 = t1e5_1-t1e5_2;
+   dt2e5 = t2e5_1-t2e5_2;
+   dt3e5 = t3e5_1-t4e5_2;
+
+!e7: COUNTTO (2016-2021) & COUNTTO_R (2022);
+   new(dle7*0 dt1e7*0 dt2e7*0 dt3e7*0);
+   dle7 = le7_1-le7_2;
+   dt1e7 = t1e7_1-t1e7_2;
+   dt2e7 = t2e7_1-t2e7_2;
+   dt3e7 = t3e7_1-t3e7_2;
+
+
+   Model Test: 
+   0=dt1e1;
+   0=dt1e4;
+   0=dt3e4;
+   0=dt1e5;
+   0=dt3e5;
 
 OUTPUT:
 svalues;

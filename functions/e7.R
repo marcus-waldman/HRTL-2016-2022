@@ -60,6 +60,13 @@ e7<-function(raw_datasets, dprior){ # 7-COUNTTO
                        paste0("   diff(t1e7_1, t1e7_2)~", dprior), 
                        paste0("   diff(t2e7_1, t2e7_2)~", dprior), 
                        paste0("   diff(t3e7_1, t3e7_2)~", dprior)
+    ), 
+    `MODEL CONSTRAINT` = c("\n!e7: COUNTTO (2016-2021) & COUNTTO_R (2022)",
+                           "   new(dle7*0 dt1e7*0 dt2e7*0 dt3e7*0)", 
+                           "   dle7 = le7_1-le7_2",
+                           "   dt1e7 = t1e7_1-t1e7_2", 
+                           "   dt2e7 = t2e7_1-t2e7_2", 
+                           "   dt3e7 = t3e7_1-t3e7_2"
     )
   )
   

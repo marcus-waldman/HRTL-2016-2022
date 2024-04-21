@@ -99,6 +99,7 @@ syntax_list = list(
   ANALYSIS = analysis_list,
   MODEL = model_list, 
   `MODEL PRIORS` = NULL,
+  `MODEL CONSTRAINT`=NULL,
   OUTPUT = "svalues"
 )
 

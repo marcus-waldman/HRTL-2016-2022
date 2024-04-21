@@ -59,7 +59,14 @@ e5<-function(raw_datasets, dprior){ # 5-WRITENAME
                        paste0("   diff(t1e5_1, t1e5_2)~", dprior), 
                        paste0("   diff(t2e5_1, t2e5_2)~", dprior),
                        paste0("   diff(t3e5_1, t4e5_2)~", dprior)
+    ), 
+    `MODEL CONSTRAINT` = c("\n!e5_16 & e5 (WriteName)", 
+                           "   new(dt1e5* dt2e5* dt3e5*)", 
+                           "   dt1e5 = t1e5_1-t1e5_2", 
+                           "   dt2e5 = t2e5_1-t2e5_2", 
+                           "   dt3e5 = t3e5_1-t4e5_2"
     )
+                           
   )
   
   

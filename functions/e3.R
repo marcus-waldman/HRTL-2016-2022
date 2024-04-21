@@ -54,6 +54,10 @@ e3<-function(raw_datasets, dprior){ # 3-RHYMEWORD
     ),
     `MODEL PRIORS` = c("\n!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2)",
                        paste0("   diff(le3_1,le3_2)~", dprior) 
+                       ), 
+    `MODEL CONSTRAINT` = c("\n!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2)",
+                           "   new(dle3*0)",
+                           "   dle3 = le3_1-le3_2"
                        )
   )
   
