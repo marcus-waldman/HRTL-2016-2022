@@ -31,7 +31,7 @@ o2<-function(raw_datasets, dprior){ # o2-NAMEEMOTIONS
              "   [o2_22$1*] (t1o2)", 
              "   [o2_22$2*] (t2o2)", 
              "   [o2_22$3*] (t3o2)", 
-             "   [o2_22$3*] (t3o2)"
+             "   [o2_22$4*] (t4o2)"
             ),
     `MODEL PRIORS` = NULL, 
     `MODEL CONSTRAINT` = NULL
