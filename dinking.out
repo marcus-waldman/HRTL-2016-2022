@@ -1,0 +1,673 @@
+Mplus VERSION 8.10
+MUTHEN & MUTHEN
+04/20/2024   6:05 PM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE:
+  !e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a
+  !e2_22 (SAMESOUND): How often can this child come up with words that start with the same s
+  !e3_1621 (RHYMEWORD): How well can this child come up with words that rhyme? For example,
+  !e3_22 (RHYMEWORD_R): Can this child rhyme words?;
+  !e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recogni
+  !e5_16 & e5 (WriteName): How often can this child write their first name, even if some of
+  !e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can t
+  !e7_1621 (COUNTTO): How high can this child count?;
+  !e7_22 (COUNTTO_R): If asked to count objects, how high can this child count correctly?;
+  !e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? Fo
+  !e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For exampl
+
+  DATA:
+  FILE = dinking.dat;
+
+  VARIABLE:
+  NAMES = recnum year stratfip hhid fwc age e1_16 e1_1722 e2_22 e3_1621 e3_22
+     e4_16 e4_1722 e5_16 e5_1722 e6_22 e7_1621 e7_22 e8_22 e9_22;
+  USEV = e1_16 e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16 e5_1722 e6_22
+     e7_1621 e7_22 e8_22 e9_22;
+  CATEGORICAL = e1_16 e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16 e5_1722
+     e6_22 e7_1621 e7_22 e8_22 e9_22;
+  MISSING = .;
+  IDVARIABLE = recnum;
+  STRATIFICATION = stratfip;
+  CLUSTER = hhid;
+  WEIGHT = fwc;
+
+  ANALYSIS:
+  TYPE = complex;
+  ESTIMATOR = mlr;
+  ALGORITHM = integration;
+  INTEGRATION = gauss(8);
+  LINK = probit;
+  PROCESSORS = 4;
+
+  MODEL:
+
+  !e1_16 & e1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2);
+     EL by e1_16*1 e1_1722*1 (le1);
+     [e1_16$1* e1_1722$1*] (t1e1_1 t1e1_2);
+     [e1_16$2* e1_1722$2*] (t2e1_1 t2e1_2);
+              [e1_1722$3*] (t3e1_2);
+     [e1_16$3* e1_1722$4*] (t3e1_1 t4e1_2);
+
+  !e2_22 (SAMESOUND);
+     EL by e2_22*1 (le2);
+     [e2_22$1*] (t1e2);
+     [e2_22$2*] (t2e2);
+     [e2_22$3*] (t3e2);
+     [e2_22$4*] (t4e2);
+
+  !e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+     EL by e3_1621*1 e3_22*1 (le3_1 le3_2);
+     [e3_1621$1* e3_22$1*] (t1e3_1 t1e3_2);
+                [e3_22$2*] (t2e3_2);
+                [e3_22$3*] (t3e3_2);
+
+  !e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2);
+     EL by e4_16*1 e4_1722*1 (le4);
+     [e4_16$1* e4_1722$1*] (t1e4_1 t1e4_2);
+     [e4_16$2* e4_1722$2*] (t2e4_1 t2e4_2);
+              [e4_1722$3*] (t3e4_2);
+     [e4_16$3* e4_1722$4*] (t3e4_1 t4e4_2);
+
+  !e5_16 & e5 (WriteName):;
+     EL by e5_16*1 e5_1722*1 (le5);
+     [e5_16$1* e5_1722$1*] (t1e5_1 t1e5_2);
+     [e5_16$2* e5_1722$2*] (t2e5_1 t2e5_2);
+              [e5_1722$3*] (t3e5_2);
+     [e5_16$3* e5_1722$4*] (t3e5_1 t4e5_2);
+
+  !e6_22 (READONEDIGIT);
+     EL by e6_22*1 (le6);
+     [e6_22$1*] (t1e6);
+     [e6_22$2*] (t2e6);
+     [e6_22$3*] (t3e6);
+     [e6_22$4*] (t4e6);
+
+  !e7: COUNTTO (2016-2021) COUNTTO_R (2022);
+     EL by e7_1621*1 e7_22*1 (le7_1 le7_2);
+     [e7_1621$1* e7_22$1*] (t1e7_1 t1e7_2);
+     [e7_1621$2* e7_22$2*] (t2e7_1 t2e7_2);
+     [e7_1621$3* e7_22$3*] (t3e7_1 t3e7_2);
+     [e7_1621$4* e7_22$4*] (t4e7_1 t4e7_2);
+     [e7_1621$5*] (t5e7_1);
+
+  !e8_22 (GROUPOFOBJECTS);
+     EL by e8_22*1 (le8);
+     [e8_22$1*] (t1e8);
+     [e8_22$2*] (t2e8);
+     [e8_22$3*] (t3e8);
+     [e8_22$4*] (t4e8);
+
+  !e9 (SIMPLEADDITION);
+     EL by e9_22*1 (le9);
+     [e9_22$1*] (t1e9);
+     [e9_22$2*] (t2e9);
+     [e9_22$3*] (t3e9);
+     [e9_22$4*] (t4e9);
+
+  MODEL PRIORS:
+
+  !e1_16 & e1_1722 (RecogBegin);
+     diff(t1e1_1, t1e1_2)~ALF(0,1);
+     diff(t2e1_1, t2e1_2)~ALF(0,1);
+     diff(t3e1_1, t4e1_2)~ALF(0,1);
+
+  !e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+     diff(le3_1,le3_2)~ALF(0,1);
+
+  !e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2;
+     diff(t1e4_1, t1e4_2)~ALF(0,1);
+     diff(t2e4_1, t2e4_2)~ALF(0,1);
+     diff(t3e4_1, t4e4_2)~ALF(0,1);
+
+  !e5_16 & e5 (WriteName);
+     diff(t1e5_1, t1e5_2)~ALF(0,1);
+     diff(t2e5_1, t2e5_2)~ALF(0,1);
+     diff(t3e5_1, t4e5_2)~ALF(0,1);
+
+  !e7: COUNTTO (2016-2021) & COUNTTO_R (2022);
+     diff(le7_1,le7_2)~ALF(0,1);
+     diff(t1e7_1, t1e7_2)~ALF(0,1);
+     diff(t2e7_1, t2e7_2)~ALF(0,1);
+     diff(t3e7_1, t3e7_2)~ALF(0,1);
+
+  OUTPUT:
+  svalues;
+
+
+
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e2_22 (SAMESOUND): How often can this child come up with words that start with the same so
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e3_1621 (RHYMEWORD): How well can this child come up with words that rhyme? For example, c
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recogniz
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e5_16 & e5 (WriteName): How often can this child write their first name, even if some of t
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can th
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? For
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For example
+*** WARNING
+  Data set contains cases with missing on all variables.
+  These cases were not included in the analysis.
+  Number of cases with missing on all variables:  977
+   8 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                       49017
+
+Number of dependent variables                                   14
+Number of independent variables                                  0
+Number of continuous latent variables                            1
+
+Observed dependent variables
+
+  Binary and ordered categorical (ordinal)
+   E1_16       E1_1722     E2_22       E3_1621     E3_22       E4_16
+   E4_1722     E5_16       E5_1722     E6_22       E7_1621     E7_22
+   E8_22       E9_22
+
+Continuous latent variables
+   EL
+
+Variables with special functions
+
+  Stratification        STRATFIP
+  Cluster variable      HHID
+  Weight variable       FWC
+  ID variable           RECNUM
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Optimization Specifications for the Quasi-Newton Algorithm for
+Continuous Outcomes
+  Maximum number of iterations                                 100
+  Convergence criterion                                  0.100D-05
+Optimization Specifications for the EM Algorithm
+  Maximum number of iterations                                 500
+  Convergence criteria
+    Loglikelihood change                                 0.100D-02
+    Relative loglikelihood change                        0.100D-05
+    Derivative                                           0.100D-02
+Optimization Specifications for the M step of the EM Algorithm for
+Categorical Latent variables
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+Optimization Specifications for the M step of the EM Algorithm for
+Censored, Binary or Ordered Categorical (Ordinal), Unordered
+Categorical (Nominal) and Count Outcomes
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+  Maximum value for logit thresholds                            10
+  Minimum value for logit thresholds                           -10
+  Minimum expected cell size for chi-square              0.100D-01
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Optimization algorithm                                         EMA
+Integration Specifications
+  Type                                                GAUSSHERMITE
+  Number of integration points                                   8
+  Dimensions of numerical integration                            1
+  Adaptive quadrature                                           ON
+Link                                                        PROBIT
+Cholesky                                                        ON
+
+Input data file(s)
+  dinking.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            91
+     Number of y missing data patterns           0
+     Number of u missing data patterns          91
+     Number of strata                          102
+     Number of clusters                      49017
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT FOR U
+
+
+           Covariance Coverage
+              E1_16         E1_1722       E2_22         E3_1621       E3_22
+              ________      ________      ________      ________      ________
+ E1_16          0.149
+ E1_1722        0.000         0.846
+ E2_22          0.000         0.220         0.221
+ E3_1621        0.149         0.622         0.000         0.773
+ E3_22          0.000         0.220         0.220         0.000         0.221
+ E4_16          0.149         0.000         0.000         0.149         0.000
+ E4_1722        0.000         0.844         0.220         0.623         0.220
+ E5_16          0.149         0.000         0.000         0.149         0.000
+ E5_1722        0.000         0.844         0.221         0.621         0.220
+ E6_22          0.000         0.220         0.220         0.000         0.220
+ E7_1621        0.149         0.624         0.000         0.771         0.000
+ E7_22          0.000         0.220         0.220         0.000         0.220
+ E8_22          0.000         0.220         0.219         0.000         0.220
+ E9_22          0.000         0.220         0.220         0.000         0.220
+
+
+           Covariance Coverage
+              E4_16         E4_1722       E5_16         E5_1722       E6_22
+              ________      ________      ________      ________      ________
+ E4_16          0.150
+ E4_1722        0.000         0.847
+ E5_16          0.149         0.000         0.150
+ E5_1722        0.000         0.844         0.000         0.846
+ E6_22          0.000         0.220         0.000         0.221         0.221
+ E7_1621        0.149         0.625         0.149         0.624         0.000
+ E7_22          0.000         0.220         0.000         0.221         0.220
+ E8_22          0.000         0.220         0.000         0.220         0.220
+ E9_22          0.000         0.220         0.000         0.220         0.220
+
+
+           Covariance Coverage
+              E7_1621       E7_22         E8_22         E9_22
+              ________      ________      ________      ________
+ E7_1621        0.776
+ E7_22          0.000         0.221
+ E8_22          0.000         0.220         0.220
+ E9_22          0.000         0.220         0.220         0.221
+
+
+UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+
+    E1_16
+      Category 1    0.057          397.104
+      Category 2    0.127          883.244
+      Category 3    0.285         1980.629
+      Category 4    0.531         3688.176
+    E1_1722
+      Category 1    0.069         2892.084
+      Category 2    0.109         4558.630
+      Category 3    0.074         3099.723
+      Category 4    0.301        12601.693
+      Category 5    0.446        18652.924
+    E2_22
+      Category 1    0.095          649.840
+      Category 2    0.138          941.499
+      Category 3    0.080          548.825
+      Category 4    0.300         2048.591
+      Category 5    0.387         2643.584
+    E3_1621
+      Category 1    0.334        13994.888
+      Category 2    0.666        27868.836
+    E3_22
+      Category 1    0.226         1545.015
+      Category 2    0.137          933.902
+      Category 3    0.392         2672.146
+      Category 4    0.245         1670.755
+    E4_16
+      Category 1    0.041          285.218
+      Category 2    0.192         1334.541
+      Category 3    0.252         1756.798
+      Category 4    0.515         3583.290
+    E4_1722
+      Category 1    0.056         2336.965
+      Category 2    0.183         7652.093
+      Category 3    0.084         3524.758
+      Category 4    0.216         9052.251
+      Category 5    0.461        19273.163
+    E5_16
+      Category 1    0.255         1771.126
+      Category 2    0.154         1070.448
+      Category 3    0.117          815.790
+      Category 4    0.474         3289.711
+    E5_1722
+      Category 1    0.310        12936.571
+      Category 2    0.117         4891.705
+      Category 3    0.047         1966.623
+      Category 4    0.106         4440.404
+      Category 5    0.420        17539.360
+    E6_22
+      Category 1    0.095          645.295
+      Category 2    0.118          807.597
+      Category 3    0.058          398.322
+      Category 4    0.170         1163.174
+      Category 5    0.558         3810.456
+    E7_1621
+      Category 1    0.025         1048.874
+      Category 2    0.047         1982.596
+      Category 3    0.218         9155.676
+      Category 4    0.400        16780.827
+      Category 5    0.122         5115.733
+      Category 6    0.188         7900.932
+    E7_22
+      Category 1    0.048          330.173
+      Category 2    0.073          500.724
+      Category 3    0.280         1911.783
+      Category 4    0.276         1888.318
+      Category 5    0.322         2200.006
+    E8_22
+      Category 1    0.109          742.551
+      Category 2    0.115          784.229
+      Category 3    0.062          421.530
+      Category 4    0.235         1598.232
+      Category 5    0.479         3260.315
+    E9_22
+      Category 1    0.292         1990.225
+      Category 2    0.196         1336.460
+      Category 3    0.083          564.064
+      Category 4    0.199         1354.683
+      Category 5    0.230         1563.656
+
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     THE CHI-SQUARE TEST CANNOT BE COMPUTED BECAUSE THE FREQUENCY TABLE FOR THE
+     CATEGORICAL VARIABLES IS TOO LARGE.
+
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       62
+
+Loglikelihood
+
+          H0 Value                     -292307.667
+          H0 Scaling Correction Factor      4.6092
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                  584739.334
+          Bayesian (BIC)                585284.929
+          Sample-Size Adjusted BIC      585087.892
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ EL       BY
+    E1_16              1.024      0.027     38.405      0.000
+    E1_1722            1.024      0.027     38.405      0.000
+    E2_22              1.333      0.053     25.044      0.000
+    E3_1621            1.252      0.040     31.003      0.000
+    E3_22              1.309      0.055     23.843      0.000
+    E4_16              1.670      0.035     48.008      0.000
+    E4_1722            1.670      0.035     48.008      0.000
+    E5_16              1.626      0.044     36.705      0.000
+    E5_1722            1.626      0.044     36.705      0.000
+    E6_22              1.864      0.085     22.004      0.000
+    E7_1621            1.706      0.039     44.163      0.000
+    E7_22              1.298      0.055     23.540      0.000
+    E8_22              1.390      0.057     24.549      0.000
+    E9_22              1.662      0.069     24.180      0.000
+
+ Thresholds
+    E1_16$1           -2.053      0.067    -30.549      0.000
+    E1_16$2           -1.075      0.042    -25.771      0.000
+    E1_16$3            0.020      0.041      0.491      0.624
+    E1_1722$1         -2.058      0.034    -61.352      0.000
+    E1_1722$2         -1.253      0.024    -52.724      0.000
+    E1_1722$3         -0.889      0.021    -41.838      0.000
+    E1_1722$4          0.181      0.021      8.815      0.000
+    E2_22$1           -2.128      0.057    -37.265      0.000
+    E2_22$2           -1.178      0.037    -31.884      0.000
+    E2_22$3           -0.792      0.035    -22.465      0.000
+    E2_22$4            0.378      0.034     11.019      0.000
+    E3_1621$1         -0.622      0.025    -24.542      0.000
+    E3_22$1           -1.211      0.046    -26.163      0.000
+    E3_22$2           -0.589      0.038    -15.442      0.000
+    E3_22$3            0.981      0.040     24.344      0.000
+    E4_16$1           -3.004      0.088    -34.164      0.000
+    E4_16$2           -1.091      0.052    -20.979      0.000
+    E4_16$3            0.118      0.048      2.435      0.015
+    E4_1722$1         -2.898      0.060    -48.377      0.000
+    E4_1722$2         -1.279      0.031    -41.551      0.000
+    E4_1722$3         -0.816      0.029    -28.304      0.000
+    E4_1722$4          0.158      0.026      6.150      0.000
+    E5_16$1           -0.976      0.048    -20.298      0.000
+    E5_16$2           -0.235      0.046     -5.055      0.000
+    E5_16$3            0.286      0.042      6.770      0.000
+    E5_1722$1         -0.898      0.029    -31.281      0.000
+    E5_1722$2         -0.361      0.025    -14.183      0.000
+    E5_1722$3         -0.152      0.025     -6.109      0.000
+    E5_1722$4          0.322      0.026     12.523      0.000
+    E6_22$1           -2.664      0.088    -30.261      0.000
+    E6_22$2           -1.629      0.063    -25.792      0.000
+    E6_22$3           -1.251      0.052    -23.989      0.000
+    E6_22$4           -0.361      0.040     -9.117      0.000
+    E7_1621$1         -3.540      0.083    -42.655      0.000
+    E7_1621$2         -2.610      0.055    -47.385      0.000
+    E7_1621$3         -0.995      0.032    -30.913      0.000
+    E7_1621$4          0.910      0.029     31.069      0.000
+    E7_1621$5          1.635      0.037     44.544      0.000
+    E7_22$1           -2.590      0.102    -25.293      0.000
+    E7_22$2           -1.845      0.065    -28.408      0.000
+    E7_22$3           -0.459      0.034    -13.609      0.000
+    E7_22$4            0.633      0.032     19.593      0.000
+    E8_22$1           -2.051      0.059    -34.706      0.000
+    E8_22$2           -1.279      0.043    -29.573      0.000
+    E8_22$3           -0.959      0.039    -24.330      0.000
+    E8_22$4            0.017      0.035      0.501      0.616
+    E9_22$1           -1.049      0.041    -25.569      0.000
+    E9_22$2           -0.127      0.036     -3.500      0.000
+    E9_22$3            0.246      0.038      6.555      0.000
+    E9_22$4            1.225      0.054     22.634      0.000
+
+ Variances
+    EL                 0.798      0.010     78.134      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.786E-06
+       (ratio of smallest to largest eigenvalue)
+
+
+RESULTS IN PROBABILITY SCALE
+
+                    Estimate
+
+ E1_16
+    Category 1         0.065
+    Category 2         0.149
+    Category 3         0.292
+    Category 4         0.494
+ E1_1722
+    Category 1         0.064
+    Category 2         0.113
+    Category 3         0.078
+    Category 4         0.297
+    Category 5         0.447
+ E2_22
+    Category 1         0.086
+    Category 2         0.139
+    Category 3         0.081
+    Category 4         0.291
+    Category 5         0.404
+ E3_1621
+    Category 1         0.339
+    Category 2         0.661
+ E3_22
+    Category 1         0.216
+    Category 2         0.135
+    Category 3         0.387
+    Category 4         0.262
+ E4_16
+    Category 1         0.047
+    Category 2         0.225
+    Category 3         0.254
+    Category 4         0.474
+ E4_1722
+    Category 1         0.053
+    Category 2         0.185
+    Category 3         0.087
+    Category 4         0.210
+    Category 5         0.465
+ E5_16
+    Category 1         0.290
+    Category 2         0.157
+    Category 3         0.117
+    Category 4         0.436
+ E5_1722
+    Category 1         0.305
+    Category 2         0.114
+    Category 3         0.047
+    Category 4         0.107
+    Category 5         0.428
+ E6_22
+    Category 1         0.085
+    Category 2         0.116
+    Category 3         0.059
+    Category 4         0.167
+    Category 5         0.574
+ E7_1621
+    Category 1         0.026
+    Category 2         0.050
+    Category 3         0.216
+    Category 4         0.399
+    Category 5         0.124
+    Category 6         0.185
+ E7_22
+    Category 1         0.045
+    Category 2         0.069
+    Category 3         0.268
+    Category 4         0.278
+    Category 5         0.340
+ E8_22
+    Category 1         0.099
+    Category 2         0.112
+    Category 3         0.062
+    Category 4         0.231
+    Category 5         0.496
+ E9_22
+    Category 1         0.279
+    Category 2         0.193
+    Category 3         0.083
+    Category 4         0.198
+    Category 5         0.247
+
+
+MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES
+
+     el BY e1_16*1.02355 (le1);
+     el BY e1_1722*1.02355 (le1);
+     el BY e2_22*1.33298 (le2);
+     el BY e3_1621*1.25155 (le3_1);
+     el BY e3_22*1.30936 (le3_2);
+     el BY e4_16*1.67049 (le4);
+     el BY e4_1722*1.67049 (le4);
+     el BY e5_16*1.62599 (le5);
+     el BY e5_1722*1.62599 (le5);
+     el BY e6_22*1.86397 (le6);
+     el BY e7_1621*1.70614 (le7_1);
+     el BY e7_22*1.29788 (le7_2);
+     el BY e8_22*1.38992 (le8);
+     el BY e9_22*1.66241 (le9);
+
+     [ e1_16$1*-2.05283 ] (t1e1_1);
+     [ e1_16$2*-1.07483 ] (t2e1_1);
+     [ e1_16$3*0.01990 ] (t3e1_1);
+     [ e1_1722$1*-2.05846 ] (t1e1_2);
+     [ e1_1722$2*-1.25335 ] (t2e1_2);
+     [ e1_1722$3*-0.88866 ] (t3e1_2);
+     [ e1_1722$4*0.18100 ] (t4e1_2);
+     [ e2_22$1*-2.12809 ] (t1e2);
+     [ e2_22$2*-1.17810 ] (t2e2);
+     [ e2_22$3*-0.79195 ] (t3e2);
+     [ e2_22$4*0.37771 ] (t4e2);
+     [ e3_1621$1*-0.62249 ] (t1e3_1);
+     [ e3_22$1*-1.21062 ] (t1e3_2);
+     [ e3_22$2*-0.58939 ] (t2e3_2);
+     [ e3_22$3*0.98107 ] (t3e3_2);
+     [ e4_16$1*-3.00377 ] (t1e4_1);
+     [ e4_16$2*-1.09134 ] (t2e4_1);
+     [ e4_16$3*0.11761 ] (t3e4_1);
+     [ e4_1722$1*-2.89761 ] (t1e4_2);
+     [ e4_1722$2*-1.27875 ] (t2e4_2);
+     [ e4_1722$3*-0.81588 ] (t3e4_2);
+     [ e4_1722$4*0.15784 ] (t4e4_2);
+     [ e5_16$1*-0.97641 ] (t1e5_1);
+     [ e5_16$2*-0.23452 ] (t2e5_1);
+     [ e5_16$3*0.28611 ] (t3e5_1);
+     [ e5_1722$1*-0.89793 ] (t1e5_2);
+     [ e5_1722$2*-0.36062 ] (t2e5_2);
+     [ e5_1722$3*-0.15213 ] (t3e5_2);
+     [ e5_1722$4*0.32157 ] (t4e5_2);
+     [ e6_22$1*-2.66368 ] (t1e6);
+     [ e6_22$2*-1.62922 ] (t2e6);
+     [ e6_22$3*-1.25108 ] (t3e6);
+     [ e6_22$4*-0.36103 ] (t4e6);
+     [ e7_1621$1*-3.54034 ] (t1e7_1);
+     [ e7_1621$2*-2.61033 ] (t2e7_1);
+     [ e7_1621$3*-0.99515 ] (t3e7_1);
+     [ e7_1621$4*0.91019 ] (t4e7_1);
+     [ e7_1621$5*1.63472 ] (t5e7_1);
+     [ e7_22$1*-2.59030 ] (t1e7_2);
+     [ e7_22$2*-1.84490 ] (t2e7_2);
+     [ e7_22$3*-0.45860 ] (t3e7_2);
+     [ e7_22$4*0.63272 ] (t4e7_2);
+     [ e8_22$1*-2.05092 ] (t1e8);
+     [ e8_22$2*-1.27864 ] (t2e8);
+     [ e8_22$3*-0.95908 ] (t3e8);
+     [ e8_22$4*0.01741 ] (t4e8);
+     [ e9_22$1*-1.04907 ] (t1e9);
+     [ e9_22$2*-0.12693 ] (t2e9);
+     [ e9_22$3*0.24622 ] (t3e9);
+     [ e9_22$4*1.22527 ] (t4e9);
+
+     el*0.79821;
+
+
+
+DIFFERENCE OUTPUT
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\repos\hrtl-2016-2022\dinking.dgm
+
+     Beginning Time:  18:05:34
+        Ending Time:  18:05:45
+       Elapsed Time:  00:00:11
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2023 Muthen & Muthen

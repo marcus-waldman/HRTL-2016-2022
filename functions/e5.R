@@ -44,31 +44,26 @@ e5<-function(raw_datasets, dprior){ # 5-WRITENAME
   #Construct Mplus syntax
   syntax_e5 = list(
     TITLE = c("!e5_16 & e5 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?"),
-    VARIABLE = list(USEV = c("e5_16", "e5_1722"), 
+    VARIABLE = list(NAMES = c("e5_16", "e5_1722"),
+                    USEV = c("e5_16", "e5_1722"), 
                     CATEGORICAL = c("e5_16", "e5_1722")
     ),
-    MODEL= c("!e5_16 & e5 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?",
-             " EL by e5_16*1 (le5) e5_1722*1 (le5)",
-             " [e5_16$1*] (t1e5_1) [e5_1722$1*] (t1e5_2)", 
-             " [e5_16$2*] (t2e5_1) [e5_1722$2*] (t2e5_2)", 
-             "                     [e5_1722$3*] (t3e5_2)",
-             " [e5_16$3*] (t3e5_1) [e5_1722$4*] (t4e5_2)"
+    MODEL= c("\n!e5_16 & e5 (WriteName):",
+             "   EL by e5_16*1 e5_1722*1 (le5)",
+             "   [e5_16$1* e5_1722$1*] (t1e5_1 t1e5_2)", 
+             "   [e5_16$2* e5_1722$2*] (t2e5_1 t2e5_2)", 
+             "            [e5_1722$3*] (t3e5_2)",
+             "   [e5_16$3* e5_1722$4*] (t3e5_1 t4e5_2)"
     ),
-    `MODEL PRIORS` = c("!e5_16 & e5 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?",
-                       paste0(" diff(t1e5_1, t1e5_2)~", dprior), 
-                       paste0(" diff(t2e5_1, t2e5_2)~", dprior),
-                       paste0(" diff(t3e5_1, t4e5_2)~", dprior)
+    `MODEL PRIORS` = c("\n!e5_16 & e5 (WriteName)",
+                       paste0("   diff(t1e5_1, t1e5_2)~", dprior), 
+                       paste0("   diff(t2e5_1, t2e5_2)~", dprior),
+                       paste0("   diff(t3e5_1, t4e5_2)~", dprior)
     )
   )
   
-
-  # Create a plot to look at differnces in cumulative item percentages
-  plot_e5 = weighted_twoway(df = df_e5, var = "e5_16") %>% 
-    bind_rows(weighted_twoway(df_e5, var = "e5_1722")) %>% 
-    dplyr::arrange(sc_age_years) %>% 
-    tau_plot(item="e5", what = "cumulative", syntax = syntax_e5)
   
-  return(list(data = df_e5 %>% dplyr::select(year,hhid,starts_with("e5")), syntax = syntax_e5, plot = plot_e5))
+  return(list(data = df_e5 %>% dplyr::select(year,hhid,starts_with("e5")), syntax = syntax_e5))
   
 }
 

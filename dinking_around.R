@@ -44,6 +44,7 @@ type = "complex"
 link = "probit"
 algorithm = "integration"
 integration = "gauss(8)"
+ncores = 4;
 
 # Construct skeleton of analytic dataset
 dat = lapply(2016:2022, function(x){
@@ -71,12 +72,14 @@ title_list = NULL
 data_list = list(FILE = NULL)
 variable_list = 
   list(
-    NAMES = NULL,
+    NAMES = names(dat),
     USEV = NULL, 
-    CATEGORICAL = NULL, 
+    CATEGORICAL = NULL,
+    MISSING = ".",
     IDVARIABLE = "recnum", 
-    STRATIFICATION = c("fipsst","stratum"), 
-    CLUSTER = c("hhid")
+    STRATIFICATION = "stratfip", 
+    CLUSTER = "hhid", 
+    WEIGHT = "fwc"
 )
 analysis_list = 
   list(
@@ -84,7 +87,8 @@ analysis_list =
     ESTIMATOR = estimator,
     ALGORITHM = algorithm,
     INTEGRATION = integration, 
-    LINK = link
+    LINK = link, 
+    PROCESSORS = as.character(ncores)
 )
 model_list = list(MODEL = NULL)
 
@@ -94,8 +98,8 @@ syntax_list = list(
   VARIABLE = variable_list, 
   ANALYSIS = analysis_list,
   MODEL = model_list, 
-  `MODEL PRIORS` = NULL, 
-  `MODEL CONSTRAINT` = NULL
+  `MODEL PRIORS` = NULL,
+  OUTPUT = "svalues"
 )
 
 
@@ -139,92 +143,100 @@ syntax_list = list(
   e9_list = e9(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e9_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e9_list$syntax)
-  
-#### Social Emotional Development ####
-# !o1-CLEAREXP How often can this child explain things he or she has seen or done so that you get a very good idea what happened?
-  o1_list = o1(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(o1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, o1_list$syntax)
-# o2-NAMEEMOTIONS: How often can this child recognize and name their own emotions?
-  o2_list = o2(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(o2_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, o2_list$syntax) 
-# o3-SHARETOYS
-  o3_list = o3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(o3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, o3_list$syntax)
-# !o4-PLAYWELL: How often does this child play well with others?
-  o4_list = o4(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(o4_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, o4_list$syntax)
-# !o5-HURTSAD
-  o5_list = o5(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(o5_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, o5_list$syntax)
-# o6-FOCUSON: How often can this child focus on a task you give them for at least a few minutes? For example, can this child focus on simple chores?
-  o6_list = o6(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(o6_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, o6_list$syntax)
-  
 
-#### Self-Regulation ####
-# !r1-NEWACTIVITY (2016-21): How often does this child have difficulty when asked to end one activity and start a new activity
-#    STARTNEWACT (2022): How often does this child have difficulty when asked to end one activity and start a new activity?
-  r1_list = r1(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r1_list$syntax)
-# r2-: CALMDOWN: How often does this child have trouble calming down?
-  r2_list = r2(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r2_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r2_list$syntax)
-# r3-WAITFORTURN
-  r3_list = r3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r3_list$syntax)
-# !r4-DISTRACTED: How often is this child easily distracted?
-  r4_list = r4(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r4_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r4_list$syntax)
-# r5- :How often does this child lose their temper?
-  r5_list_list = r5(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r5_list_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r5_list_list$syntax)
-        
-#### Motor Development ####
-  #m1-DRAWACIRCLE
-  m1_list=m1(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m1_list$syntax)
-  #m2-DRAWAFACE
-  m2_list=m2(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m2_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m2_list$syntax)
-  #m3-DRAWAPERSON
-  m3_list=m3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m3_list$syntax)
-  #m4-BOUNCEABALL
-  m4_list=m4(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m4_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m4_list$syntax)
-  #m5-USEPENCIL
-  m5_list=m5(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m5_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m5_list$syntax)
 
-#### Health ####
-# h1-K2Q01
-  h1_list=h1(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h1_list$syntax)
-# h2-K2Q01_D
-  h2_list=h2(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h2_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h2_list$syntax)
-# h3-DailyAct
-  h3_list=h3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h3_list$syntax)
+require(MplusAutomation)
+prepareMplusData(df = dat, filename = "dinking.dat")
+syntax_list$DATA$FILE = "dinking.dat"
+mplus_syntax = paste_syntax(syntax_list)
+writeLines(mplus_syntax, con = "dinking.inp")
+  
+#     
+# #### Social Emotional Development ####
+# # !o1-CLEAREXP How often can this child explain things he or she has seen or done so that you get a very good idea what happened?
+#   o1_list = o1(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(o1_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, o1_list$syntax)
+# # o2-NAMEEMOTIONS: How often can this child recognize and name their own emotions?
+#   o2_list = o2(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(o2_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, o2_list$syntax) 
+# # o3-SHARETOYS
+#   o3_list = o3(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(o3_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, o3_list$syntax)
+# # !o4-PLAYWELL: How often does this child play well with others?
+#   o4_list = o4(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(o4_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, o4_list$syntax)
+# # !o5-HURTSAD
+#   o5_list = o5(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(o5_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, o5_list$syntax)
+# # o6-FOCUSON: How often can this child focus on a task you give them for at least a few minutes? For example, can this child focus on simple chores?
+#   o6_list = o6(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(o6_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, o6_list$syntax)
+#   
+# 
+# #### Self-Regulation ####
+# # !r1-NEWACTIVITY (2016-21): How often does this child have difficulty when asked to end one activity and start a new activity
+# #    STARTNEWACT (2022): How often does this child have difficulty when asked to end one activity and start a new activity?
+#   r1_list = r1(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(r1_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, r1_list$syntax)
+# # r2-: CALMDOWN: How often does this child have trouble calming down?
+#   r2_list = r2(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(r2_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, r2_list$syntax)
+# # r3-WAITFORTURN
+#   r3_list = r3(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(r3_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, r3_list$syntax)
+# # !r4-DISTRACTED: How often is this child easily distracted?
+#   r4_list = r4(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(r4_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, r4_list$syntax)
+# # r5- :How often does this child lose their temper?
+#   r5_list_list = r5(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(r5_list_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, r5_list_list$syntax)
+#         
+# #### Motor Development ####
+#   #m1-DRAWACIRCLE
+#   m1_list=m1(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(m1_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, m1_list$syntax)
+#   #m2-DRAWAFACE
+#   m2_list=m2(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(m2_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, m2_list$syntax)
+#   #m3-DRAWAPERSON
+#   m3_list=m3(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(m3_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, m3_list$syntax)
+#   #m4-BOUNCEABALL
+#   m4_list=m4(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(m4_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, m4_list$syntax)
+#   #m5-USEPENCIL
+#   m5_list=m5(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(m5_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, m5_list$syntax)
+# 
+# #### Health ####
+# # h1-K2Q01
+#   h1_list=h1(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(h1_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, h1_list$syntax)
+# # h2-K2Q01_D
+#   h2_list=h2(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(h2_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, h2_list$syntax)
+# # h3-DailyAct
+#   h3_list=h3(raw_datasets,dprior)
+#   dat = dat %>% safe_left_join(h3_list$data, by = c("year","hhid"))
+#   syntax_list = update_syntax(syntax_list, h3_list$syntax)
   
 
 

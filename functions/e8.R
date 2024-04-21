@@ -21,27 +21,23 @@ e8<-function(raw_datasets, dprior){ # e8-GROUPOFOBJECTS
   #Construct Mplus syntax
   syntax_e8 = list(
     TITLE = "!e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? For example, can this child tell you a group of seven blocks has more than a group of four blocks?",
-    VARIABLE = list(USEV = c("e8_22"), 
+    VARIABLE = list(NAMES = c("e8_22"),
+                    USEV = c("e8_22"), 
                     CATEGORICAL = c("e8_22")
                     )
     ,
-    MODEL= c("!e8_22 (GROUPOFOBJECTS): : How often can this child tell which group of objects has more? For example, can this child tell you a group of seven blocks has more than a group of four blocks?",
-             " EL by e8_22*1 (ae8)",
-             " [e8_22$1*] (t1e8);", 
-             " [e8_22$2*] (t2e8);", 
-             " [e8_22$3*] (t3e8);",
-             " [e8_22$4*] (t4e8);"
+    MODEL= c("\n!e8_22 (GROUPOFOBJECTS)",
+             "   EL by e8_22*1 (le8)",
+             "   [e8_22$1*] (t1e8)", 
+             "   [e8_22$2*] (t2e8)", 
+             "   [e8_22$3*] (t3e8)",
+             "   [e8_22$4*] (t4e8)"
             ),
     `MODEL PRIORS` = NULL
   )
   
-
-  # Create a plot to look at differnces in cumulative item percentages
-  plot_e8 = weighted_twoway(df = df_e8, var = "e8_22") %>% 
-    dplyr::arrange(sc_age_years) %>% 
-    tau_plot(item="e8")
   
-  return(list(data = df_e8 %>% dplyr::select(year,hhid,e8_22), syntax = syntax_e8, plot = plot_e8))
+  return(list(data = df_e8 %>% dplyr::select(year,hhid,e8_22), syntax = syntax_e8))
   
 }
 

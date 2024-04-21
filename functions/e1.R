@@ -44,33 +44,27 @@ e1<-function(raw_datasets, dprior){ # e1-RECOGBEGIN
   
   #Construct Mplus syntax
   syntax_e1 = list(
-    TITLE = c("!e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?"),
-    VARIABLE = list(USEV = c("e1_16", "e1_1722"), 
+    TITLE = c("!e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?" ),
+    VARIABLE = list(NAMES = c("e1_16", "e1_1722"),
+                    USEV = c("e1_16", "e1_1722"), 
                     CATEGORICAL = c("e1_16", "e1_1722")
     ),
-    MODEL= c("!e1_16 & e1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?",
-             " EL by e1_16*1 (le1) e1_1722*1 (le1)",
-             " [e1_16$1*] (t1e1_1) [e1_1722$1*] (t1e1_2)", 
-             " [e1_16$2*] (t2e1_1) [e1_1722$2*] (t2e1_2)", 
-             "                     [e1_1722$3*] (t3e1_2)",
-             " [e1_16$4*] (t3e1_1) [e1_1722$3*] (t4e1_2)"
+    MODEL= c("\n!e1_16 & e1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2)",
+             "   EL by e1_16*1 e1_1722*1 (le1)",
+             "   [e1_16$1* e1_1722$1*] (t1e1_1 t1e1_2)", 
+             "   [e1_16$2* e1_1722$2*] (t2e1_1 t2e1_2)", 
+             "            [e1_1722$3*] (t3e1_2)",
+             "   [e1_16$3* e1_1722$4*] (t3e1_1 t4e1_2)"
     ),
-    `MODEL PRIORS` = c("!e1_16 & e1_1722 (RecogBegin): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?",
-                       paste0(" diff(t1e1_1, t1e1_2)~", dprior), 
-                       paste0(" diff(t2e1_1, t2e1_2)~", dprior), 
-                       paste0(" diff(t3e1_1, t4e1_2)~", dprior)
+    `MODEL PRIORS` = c("\n!e1_16 & e1_1722 (RecogBegin)" ,
+                       paste0("   diff(t1e1_1, t1e1_2)~", dprior), 
+                       paste0("   diff(t2e1_1, t2e1_2)~", dprior), 
+                       paste0("   diff(t3e1_1, t4e1_2)~", dprior)
     )
   )
   
 
-  # Create a plot to look at differnces in cumulative item percentages
-  plot_e1 = weighted_twoway(df = df_e1, var = "e1_16") %>% 
-    bind_rows(weighted_twoway(df_e1, var = "e1_1722")) %>% 
-    dplyr::mutate(k = ifelse(year==2016&k>1, k+1, k)) %>% 
-    dplyr::arrange(sc_age_years) %>% 
-    tau_plot(item="e1", what = "cumulative", syntax = syntax_e1)
-  
-  return(list(data = df_e1 %>% dplyr::select(year,hhid,starts_with("e1")), syntax = syntax_e1, plot = plot_e1))
+  return(list(data = df_e1 %>% dplyr::select(year,hhid,starts_with("e1")), syntax = syntax_e1))
   
 }
 
