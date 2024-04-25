@@ -68,8 +68,15 @@ e1<-function(raw_datasets, dprior){ # e1-RECOGBEGIN
                            "   dt3e1 = t3e1_1-t4e1_2")
   )
   
-
-  return(list(data = df_e1 %>% dplyr::select(year,hhid,starts_with("e1")), syntax = syntax_e1))
+  
+  # Let's transfer recode for for similar response options across administrations
+  df_e1 = df_e1 %>% safe_left_join(
+    transfer_never_always(., var_from = "e1_16", var_to = "e1_1722", values_from = c(0,3), values_to = c(0,4)), 
+    by = c("year","hhid")
+  )
+  
+  
+  return(list(data = df_e1 %>% dplyr::select(year,hhid,starts_with("e1"), starts_with("ee1")), syntax = syntax_e1))
   
 }
 

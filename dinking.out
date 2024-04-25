@@ -1,22 +1,11 @@
 Mplus VERSION 8.10
 MUTHEN & MUTHEN
-04/21/2024   4:20 PM
+04/24/2024   4:21 PM
 
 INPUT INSTRUCTIONS
 
 
   TITLE:
-  !e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a
-  !e2_22 (SAMESOUND): How often can this child come up with words that start with the same s
-  !e3_1621 (RHYMEWORD): How well can this child come up with words that rhyme? For example,
-  !e3_22 (RHYMEWORD_R): Can this child rhyme words?;
-  !e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recogni
-  !e5_16 & e5 (WriteName): How often can this child write their first name, even if some of
-  !e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can t
-  !e7_1621 (COUNTTO): How high can this child count?;
-  !e7_22 (COUNTTO_R): If asked to count objects, how high can this child count correctly?;
-  !e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? Fo
-  !e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For exampl
   !o1_16 & o1_1722 (ClearExp): How often can this child explain things he or she has seen or
   !o2_22 (NAMEEMOTIONS): How often can this child recognize and name their own emotions?;
   !o3_22 (SHARETOYS): How often does this child have difficulty waiting for their turn?;
@@ -28,21 +17,21 @@ INPUT INSTRUCTIONS
   FILE = dinking.dat;
 
   VARIABLE:
-  NAMES = recnum year stratfip hhid fwc age male yr16 yr17 yr18 yr19 yr20 yr21
-     e1_16 e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16 e5_1722 e6_22 e7_1621
-     e7_22 e8_22 e9_22 o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722
+  NAMES = recnum year stratfip hhid fwc age male t d tXd o1_16 o1_1722 o2_22 o3_22
+     o4_16 o4_1722 o5_16 o5_1722 o6_22;
+  USEV = age male t d tXd o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722
      o6_22;
-  USEV = age male yr16 yr17 yr18 yr19 yr20 yr21 e1_16 e1_1722 e2_22 e3_1621 e3_22
-     e4_16 e4_1722 e5_16 e5_1722 e6_22 e7_1621 e7_22 e8_22 e9_22 o1_16 o1_1722
-     o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
-  CATEGORICAL = e1_16 e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16 e5_1722
-     e6_22 e7_1621 e7_22 e8_22 e9_22 o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16
-     o5_1722 o6_22;
+  CATEGORICAL = o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
   MISSING = .;
   IDVARIABLE = recnum;
+  !STRATIFICATION = stratfip;
+  !CLUSTER = hhid;
+  WEIGHT = fwc;
+  CLUSTER = stratfip;
+  WITHIN = age male t d txd;
 
   ANALYSIS:
-  TYPE = general;
+  TYPE = TWOLEVEL RANDOM;
   ESTIMATOR = mlr;
   ALGORITHM = integration;
   INTEGRATION = gauss(8);
@@ -51,72 +40,11 @@ INPUT INSTRUCTIONS
 
   MODEL:
 
+  %WITHIN%
+
   !------------------------------------;
   !     Measurement parameters;
   !------------------------------------;
-
-  !e1_16 & e1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2);
-     EL by e1_16*1 e1_1722*1 (le1);
-     [e1_16$1* e1_1722$1*] (t1e1_1 t1e1_2);
-     [e1_16$2* e1_1722$2*] (t2e1_1 t2e1_2);
-              [e1_1722$3*] (t3e1_2);
-     [e1_16$3* e1_1722$4*] (t3e1_1 t4e1_2);
-
-  !e2_22 (SAMESOUND);
-     EL by e2_22*1 (le2);
-     [e2_22$1*] (t1e2);
-     [e2_22$2*] (t2e2);
-     [e2_22$3*] (t3e2);
-     [e2_22$4*] (t4e2);
-
-  !e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
-     EL by e3_1621*1 e3_22*1 (le3_1 le3_2);
-     [e3_1621$1* e3_22$1*] (t1e3_1 t1e3_2);
-                [e3_22$2*] (t2e3_2);
-                [e3_22$3*] (t3e3_2);
-
-  !e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2);
-     EL by e4_16*1 e4_1722*1 (le4);
-     [e4_16$1* e4_1722$1*] (t1e4_1 t1e4_2);
-     [e4_16$2* e4_1722$2*] (t2e4_1 t2e4_2);
-              [e4_1722$3*] (t3e4_2);
-     [e4_16$3* e4_1722$4*] (t3e4_1 t4e4_2);
-
-  !e5_16 & e5 (WriteName):;
-     EL by e5_16*1 e5_1722*1 (le5);
-     [e5_16$1* e5_1722$1*] (t1e5_1 t1e5_2);
-     [e5_16$2* e5_1722$2*] (t2e5_1 t2e5_2);
-              [e5_1722$3*] (t3e5_2);
-     [e5_16$3* e5_1722$4*] (t3e5_1 t4e5_2);
-
-  !e6_22 (READONEDIGIT);
-     EL by e6_22*1 (le6);
-     [e6_22$1*] (t1e6);
-     [e6_22$2*] (t2e6);
-     [e6_22$3*] (t3e6);
-     [e6_22$4*] (t4e6);
-
-  !e7: COUNTTO (2016-2021) COUNTTO_R (2022);
-     EL by e7_1621*1 e7_22*1 (le7_1 le7_2);
-     [e7_1621$1* e7_22$1*] (t1e7_1 t1e7_2);
-     [e7_1621$2* e7_22$2*] (t2e7_1 t2e7_2);
-     [e7_1621$3* e7_22$3*] (t3e7_1 t3e7_2);
-     [e7_1621$4* e7_22$4*] (t4e7_1 t4e7_2);
-     [e7_1621$5*] (t5e7_1);
-
-  !e8_22 (GROUPOFOBJECTS);
-     EL by e8_22*1 (le8);
-     [e8_22$1*] (t1e8);
-     [e8_22$2*] (t2e8);
-     [e8_22$3*] (t3e8);
-     [e8_22$4*] (t4e8);
-
-  !e9 (SIMPLEADDITION);
-     EL by e9_22*1 (le9);
-     [e9_22$1*] (t1e9);
-     [e9_22$2*] (t2e9);
-     [e9_22$3*] (t3e9);
-     [e9_22$4*] (t4e9);
 
   !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
      EM by o1_16*1 o1_1722*1 (lo1);
@@ -163,74 +91,71 @@ INPUT INSTRUCTIONS
   !        Structural parameters;
   !------------------------------------;
   !1. Early Learning Skills;
-     EL@1;
-     [EL@0];
-     EL on age-yr21*;
+  !   EL@1;
+  !   [EL@0];
+  !   EL on age* male* t* d* tXd*;
   !2. Social Emotional Development;
      EM@1;
      [EM@0];
-     EM on age-yr21*;
+     EM on age male;
+     s1 | EM on t;
+     s2 | EM on d;
+     s3 | EM on tXd;
   !Factor covariances;
-     EM with EL*;
+  !   EM with EL*;
+
+
+  !---------------------------------
+  !        MNLFA item parameters
+  !--------------------------------
+  o1_1722 on d* (b0);
+  o4_1722 on d* (b1);
+  o5_1722 on d* (b2);
+
+
+  %BETWEEN%
+
+
 
   MODEL PRIORS:
 
-  !e1_16 & e1_1722 (RecogBegin);
-     diff(t3e1_1, t4e1_2)~ALF(0,1);
-
-  !e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2;
-     diff(t3e4_1, t4e4_2)~ALF(0,1);
-
-  !e5_16 & e5 (WriteName);
-     diff(t3e5_1, t4e5_2)~ALF(0,1);
-
   !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
+     diff(t1o1_1, t1o1_2)~ALF(0,1);
      diff(t3o1_1, t4o1_2)~ALF(0,1);
 
   !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+     diff(t1o4_1, t1o4_2)~ALF(0,1);
      diff(t3o4_1, t4o4_2)~ALF(0,1);
 
   !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+     diff(t1o5_1, t1o5_2)~ALF(0,1);
      diff(t3o5_1, t4o5_2)~ALF(0,1);
+
+  ! MNFLA
+  b0~ALF(0,1);
+  b1~ALF(0,1);
+  b2~ALF(0,1);
 
   MODEL CONSTRAINT:
 
-  0 = (t3e1_1 - t4e1_2)/le1 +
-      (t3e4_1 - t4e4_2)/le4 +
-      (t3e5_1 - t4e5_2)/le5;
-  0 = (t3o1_1 - t4o1_2)/lo1 +
-      (t3o4_1 - t4o4_2)/lo4 +
-      (t3o5_1 - t4o5_2)/lo5;
+  !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
+     new(dt1o1* dt3o1*);
+     dt1o1=t1o1_1-t1o1_2;
+     dt3o1=t3o1_1-t4o1_2;
 
+  !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+     new(dt1o4* dt3o4*);
+     dt1o4=t1o4_1-t1o4_2;
+     dt3o4=t3o4_1-t4o4_2;
 
-
+  !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+     new(dt1o5* dt3o5*);
+     dt1o5=t1o5_1-t1o5_2;
+     dt3o5=t3o5_1-t4o5_2;
 
   OUTPUT:
   svalues;
 
-
-
-*** WARNING
-  Input line exceeded 90 characters. Some input may be truncated.
-  !e2_22 (SAMESOUND): How often can this child come up with words that start with the same so
-*** WARNING
-  Input line exceeded 90 characters. Some input may be truncated.
-  !e3_1621 (RHYMEWORD): How well can this child come up with words that rhyme? For example, c
-*** WARNING
-  Input line exceeded 90 characters. Some input may be truncated.
-  !e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recogniz
-*** WARNING
-  Input line exceeded 90 characters. Some input may be truncated.
-  !e5_16 & e5 (WriteName): How often can this child write their first name, even if some of t
-*** WARNING
-  Input line exceeded 90 characters. Some input may be truncated.
-  !e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can th
-*** WARNING
-  Input line exceeded 90 characters. Some input may be truncated.
-  !e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? For
-*** WARNING
-  Input line exceeded 90 characters. Some input may be truncated.
-  !e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For example
 *** WARNING
   Input line exceeded 90 characters. Some input may be truncated.
   !o5_16 & o5_1722 (HurtSad): How often can this child explain things he or she has seen or d
@@ -238,814 +163,157 @@ INPUT INSTRUCTIONS
   Input line exceeded 90 characters. Some input may be truncated.
   !o6_22 (FOCUSON): How often can this child focus on a task you give them for at least a few
 *** WARNING
+  One or more individual-level variables have no variation within a
+  cluster for the following clusters.
+
+     Variable   Cluster IDs with no within-cluster variation
+
+      O2_22       88 53 96 54
+      O3_22       76 59 96 75
+      O4_16       74 85
+      O6_22       66 74 88 55
+
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O1_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O1_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O1_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O1_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O1_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O1_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O1_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O2_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O2_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O2_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O2_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O3_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O3_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O3_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O3_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O4_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O4_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O4_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O4_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O4_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O4_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O4_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O5_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O5_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O5_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O5_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O5_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O5_16
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O5_1722
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O6_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O6_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O6_22
+*** ERROR in MODEL command
+  The thresholds of variables on the between and within levels exist only on
+  the between level.  Variable used:  O6_22
+*** ERROR
+  The following MODEL statements are ignored:
+  * Statements in the WITHIN level:
+    [ O1_16$1 ]
+    [ O1_1722$1 ]
+    [ O1_1722$2 ]
+    [ O1_16$2 ]
+    [ O1_1722$3 ]
+    [ O1_16$3 ]
+    [ O1_1722$4 ]
+    [ O2_22$1 ]
+    [ O2_22$2 ]
+    [ O2_22$3 ]
+    [ O2_22$4 ]
+    [ O3_22$1 ]
+    [ O3_22$2 ]
+    [ O3_22$3 ]
+    [ O3_22$4 ]
+    [ O4_16$1 ]
+    [ O4_1722$1 ]
+    [ O4_1722$2 ]
+    [ O4_16$2 ]
+    [ O4_1722$3 ]
+    [ O4_16$3 ]
+    [ O4_1722$4 ]
+    [ O5_16$1 ]
+    [ O5_1722$1 ]
+    [ O5_1722$2 ]
+    [ O5_16$2 ]
+    [ O5_1722$3 ]
+    [ O5_16$3 ]
+    [ O5_1722$4 ]
+    [ O6_22$1 ]
+    [ O6_22$2 ]
+    [ O6_22$3 ]
+    [ O6_22$4 ]
+*** ERROR
+  Unknown parameter label in MODEL CONSTRAINT:  T1O1_1
+*** WARNING
   Data set contains cases with missing on all variables except
   x-variables.  These cases were not included in the analysis.
-  Number of cases with missing on all variables except x-variables:  848
-  10 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
-
-
-
-
-SUMMARY OF ANALYSIS
-
-Number of groups                                                 1
-Number of observations                                       49146
-
-Number of dependent variables                                   23
-Number of independent variables                                  8
-Number of continuous latent variables                            2
-
-Observed dependent variables
-
-  Binary and ordered categorical (ordinal)
-   E1_16       E1_1722     E2_22       E3_1621     E3_22       E4_16
-   E4_1722     E5_16       E5_1722     E6_22       E7_1621     E7_22
-   E8_22       E9_22       O1_16       O1_1722     O2_22       O3_22
-   O4_16       O4_1722     O5_16       O5_1722     O6_22
-
-Observed independent variables
-   AGE         MALE        YR16        YR17        YR18        YR19
-   YR20        YR21
-
-Continuous latent variables
-   EL          EM
-
-Variables with special functions
-
-  ID variable           RECNUM
-
-Estimator                                                      MLR
-Information matrix                                        OBSERVED
-Optimization Specifications for the Quasi-Newton Algorithm for
-Continuous Outcomes
-  Maximum number of iterations                                 100
-  Convergence criterion                                  0.100D-05
-Optimization Specifications for the EM Algorithm
-  Maximum number of iterations                                 500
-  Convergence criteria
-    Loglikelihood change                                 0.100D-02
-    Relative loglikelihood change                        0.100D-05
-    Derivative                                           0.100D-02
-Optimization Specifications for the M step of the EM Algorithm for
-Categorical Latent variables
-  Number of M step iterations                                    1
-  M step convergence criterion                           0.100D-02
-  Basis for M step termination                           ITERATION
-Optimization Specifications for the M step of the EM Algorithm for
-Censored, Binary or Ordered Categorical (Ordinal), Unordered
-Categorical (Nominal) and Count Outcomes
-  Number of M step iterations                                    1
-  M step convergence criterion                           0.100D-02
-  Basis for M step termination                           ITERATION
-  Maximum value for logit thresholds                            10
-  Minimum value for logit thresholds                           -10
-  Minimum expected cell size for chi-square              0.100D-01
-Maximum number of iterations for H1                           2000
-Convergence criterion for H1                             0.100D-03
-Optimization algorithm                                         EMA
-Integration Specifications
-  Type                                                GAUSSHERMITE
-  Number of integration points                                   8
-  Dimensions of numerical integration                            2
-  Adaptive quadrature                                           ON
-Link                                                        PROBIT
-Cholesky                                                        ON
-
-Input data file(s)
-  dinking.dat
-Input data format  FREE
-
-
-SUMMARY OF DATA
-
-     Number of missing data patterns           193
-     Number of y missing data patterns           0
-     Number of u missing data patterns         193
-
-
-COVARIANCE COVERAGE OF DATA
-
-Minimum covariance coverage value   0.100
-
-
-     PROPORTION OF DATA PRESENT FOR U
-
-
-           Covariance Coverage
-              E1_16         E1_1722       E2_22         E3_1621       E3_22
-              ________      ________      ________      ________      ________
- E1_16          0.149
- E1_1722        0.000         0.844
- E2_22          0.000         0.220         0.220
- E3_1621        0.148         0.620         0.000         0.771
- E3_22          0.000         0.219         0.219         0.000         0.220
- E4_16          0.149         0.000         0.000         0.149         0.000
- E4_1722        0.000         0.842         0.219         0.621         0.220
- E5_16          0.148         0.000         0.000         0.148         0.000
- E5_1722        0.000         0.841         0.220         0.620         0.220
- E6_22          0.000         0.220         0.219         0.000         0.220
- E7_1621        0.149         0.622         0.000         0.769         0.000
- E7_22          0.000         0.220         0.219         0.000         0.220
- E8_22          0.000         0.219         0.219         0.000         0.219
- E9_22          0.000         0.219         0.219         0.000         0.219
- O1_16          0.148         0.000         0.000         0.148         0.000
- O1_1722        0.000         0.841         0.220         0.620         0.219
- O2_22          0.000         0.219         0.219         0.000         0.219
- O3_22          0.000         0.219         0.218         0.000         0.219
- O4_16          0.148         0.000         0.000         0.148         0.000
- O4_1722        0.000         0.840         0.219         0.619         0.219
- O5_16          0.149         0.000         0.000         0.149         0.000
- O5_1722        0.000         0.840         0.219         0.620         0.219
- O6_22          0.000         0.220         0.219         0.000         0.220
-
-
-           Covariance Coverage
-              E4_16         E4_1722       E5_16         E5_1722       E6_22
-              ________      ________      ________      ________      ________
- E4_16          0.149
- E4_1722        0.000         0.845
- E5_16          0.149         0.000         0.149
- E5_1722        0.000         0.842         0.000         0.844
- E6_22          0.000         0.220         0.000         0.220         0.220
- E7_1621        0.149         0.623         0.149         0.622         0.000
- E7_22          0.000         0.220         0.000         0.220         0.220
- E8_22          0.000         0.219         0.000         0.220         0.219
- E9_22          0.000         0.219         0.000         0.220         0.220
- O1_16          0.149         0.000         0.149         0.000         0.000
- O1_1722        0.000         0.841         0.000         0.841         0.219
- O2_22          0.000         0.219         0.000         0.220         0.219
- O3_22          0.000         0.219         0.000         0.219         0.219
- O4_16          0.149         0.000         0.149         0.000         0.000
- O4_1722        0.000         0.841         0.000         0.840         0.219
- O5_16          0.149         0.000         0.149         0.000         0.000
- O5_1722        0.000         0.841         0.000         0.841         0.219
- O6_22          0.000         0.220         0.000         0.220         0.220
-
-
-           Covariance Coverage
-              E7_1621       E7_22         E8_22         E9_22         O1_16
-              ________      ________      ________      ________      ________
- E7_1621        0.774
- E7_22          0.000         0.220
- E8_22          0.000         0.219         0.220
- E9_22          0.000         0.220         0.219         0.220
- O1_16          0.149         0.000         0.000         0.000         0.149
- O1_1722        0.622         0.220         0.219         0.219         0.000
- O2_22          0.000         0.220         0.219         0.219         0.000
- O3_22          0.000         0.219         0.218         0.219         0.000
- O4_16          0.149         0.000         0.000         0.000         0.149
- O4_1722        0.622         0.220         0.219         0.219         0.000
- O5_16          0.149         0.000         0.000         0.000         0.149
- O5_1722        0.623         0.219         0.219         0.219         0.000
- O6_22          0.000         0.220         0.219         0.220         0.000
-
-
-           Covariance Coverage
-              O1_1722       O2_22         O3_22         O4_16         O4_1722
-              ________      ________      ________      ________      ________
- O1_1722        0.844
- O2_22          0.219         0.220
- O3_22          0.219         0.219         0.222
- O4_16          0.000         0.000         0.000         0.149
- O4_1722        0.840         0.219         0.219         0.000         0.843
- O5_16          0.000         0.000         0.000         0.149         0.000
- O5_1722        0.840         0.219         0.219         0.000         0.842
- O6_22          0.220         0.220         0.219         0.000         0.220
-
-
-           Covariance Coverage
-              O5_16         O5_1722       O6_22
-              ________      ________      ________
- O5_16          0.150
- O5_1722        0.000         0.844
- O6_22          0.000         0.219         0.221
-
-
-UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
-
-    E1_16
-      Category 1    0.046          339.000
-      Category 2    0.130          954.000
-      Category 3    0.292         2139.000
-      Category 4    0.532         3896.000
-    E1_1722
-      Category 1    0.056         2322.000
-      Category 2    0.105         4343.000
-      Category 3    0.071         2934.000
-      Category 4    0.317        13142.000
-      Category 5    0.452        18745.000
-    E2_22
-      Category 1    0.083          900.000
-      Category 2    0.126         1368.000
-      Category 3    0.079          850.000
-      Category 4    0.299         3234.000
-      Category 5    0.413         4471.000
-    E3_1621
-      Category 1    0.293        11108.000
-      Category 2    0.707        26794.000
-    E3_22
-      Category 1    0.195         2105.000
-      Category 2    0.132         1427.000
-      Category 3    0.389         4210.000
-      Category 4    0.285         3080.000
-    E4_16
-      Category 1    0.031          226.000
-      Category 2    0.186         1365.000
-      Category 3    0.237         1738.000
-      Category 4    0.547         4013.000
-    E4_1722
-      Category 1    0.042         1738.000
-      Category 2    0.170         7068.000
-      Category 3    0.082         3421.000
-      Category 4    0.222         9204.000
-      Category 5    0.484        20080.000
-    E5_16
-      Category 1    0.266         1950.000
-      Category 2    0.126          921.000
-      Category 3    0.103          757.000
-      Category 4    0.505         3708.000
-    E5_1722
-      Category 1    0.289        11994.000
-      Category 2    0.111         4623.000
-      Category 3    0.046         1925.000
-      Category 4    0.106         4412.000
-      Category 5    0.447        18523.000
-    E6_22
-      Category 1    0.081          875.000
-      Category 2    0.102         1106.000
-      Category 3    0.055          595.000
-      Category 4    0.176         1909.000
-      Category 5    0.586         6343.000
-    E7_1621
-      Category 1    0.017          654.000
-      Category 2    0.035         1334.000
-      Category 3    0.196         7464.000
-      Category 4    0.417        15847.000
-      Category 5    0.126         4807.000
-      Category 6    0.208         7922.000
-    E7_22
-      Category 1    0.034          364.000
-      Category 2    0.055          594.000
-      Category 3    0.264         2855.000
-      Category 4    0.291         3152.000
-      Category 5    0.357         3869.000
-    E8_22
-      Category 1    0.076          821.000
-      Category 2    0.105         1140.000
-      Category 3    0.059          637.000
-      Category 4    0.248         2677.000
-      Category 5    0.512         5532.000
-    E9_22
-      Category 1    0.279         3016.000
-      Category 2    0.198         2146.000
-      Category 3    0.084          911.000
-      Category 4    0.208         2246.000
-      Category 5    0.231         2501.000
-    O1_16
-      Category 1    0.018          134.000
-      Category 2    0.074          541.000
-      Category 3    0.388         2848.000
-      Category 4    0.520         3816.000
-    O1_1722
-      Category 1    0.027         1125.000
-      Category 2    0.039         1629.000
-      Category 3    0.051         2098.000
-      Category 4    0.379        15707.000
-      Category 5    0.504        20904.000
-    O2_22
-      Category 1    0.033          354.000
-      Category 2    0.091          979.000
-      Category 3    0.088          957.000
-      Category 4    0.441         4766.000
-      Category 5    0.348         3760.000
-    O3_22
-      Category 1    0.011          120.000
-      Category 2    0.102         1113.000
-      Category 3    0.182         1986.000
-      Category 4    0.518         5638.000
-      Category 5    0.186         2029.000
-    O4_16
-      Category 1    0.002           17.000
-      Category 2    0.057          417.000
-      Category 3    0.542         3979.000
-      Category 4    0.399         2927.000
-    O4_1722
-      Category 1    0.005          191.000
-      Category 2    0.032         1337.000
-      Category 3    0.052         2161.000
-      Category 4    0.533        22101.000
-      Category 5    0.378        15642.000
-    O5_16
-      Category 1    0.011           83.000
-      Category 2    0.118          871.000
-      Category 3    0.477         3508.000
-      Category 4    0.394         2895.000
-    O5_1722
-      Category 1    0.013          556.000
-      Category 2    0.070         2886.000
-      Category 3    0.075         3116.000
-      Category 4    0.446        18483.000
-      Category 5    0.396        16424.000
-    O6_22
-      Category 1    0.012          131.000
-      Category 2    0.075          816.000
-      Category 3    0.096         1042.000
-      Category 4    0.434         4703.000
-      Category 5    0.383         4146.000
-
-
-
-UNIVARIATE SAMPLE STATISTICS
-
-
-     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
-
-         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
-        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
-
-     AGE                   4.001      -0.001       3.000   33.35%       3.000      4.000      4.000
-           49146.000       0.667      -1.502       5.000   33.40%       4.000      5.000
-     MALE                  0.516      -0.065       0.000   48.37%       0.000      0.000      1.000
-           49146.000       0.250      -1.996       1.000   51.63%       1.000      1.000
-     YR16                  0.150       1.958       0.000   84.98%       0.000      0.000      0.000
-           49146.000       0.128       1.833       1.000   15.02%       0.000      0.000
-     YR17                  0.064       3.550       0.000   93.56%       0.000      0.000      0.000
-           49146.000       0.060      10.602       1.000    6.44%       0.000      0.000
-     YR18                  0.092       2.826       0.000   90.81%       0.000      0.000      0.000
-           49146.000       0.083       5.986       1.000    9.19%       0.000      0.000
-     YR19                  0.094       2.790       0.000   90.64%       0.000      0.000      0.000
-           49146.000       0.085       5.783       1.000    9.36%       0.000      0.000
-     YR20                  0.135       2.131       0.000   86.46%       0.000      0.000      0.000
-           49146.000       0.117       2.543       1.000   13.54%       0.000      0.000
-     YR21                  0.241       1.211       0.000   75.90%       0.000      0.000      0.000
-           49146.000       0.183      -0.534       1.000   24.10%       0.000      1.000
-
-
-THE MODEL ESTIMATION TERMINATED NORMALLY
-
-
-
-MODEL FIT INFORMATION
-
-Number of Free Parameters                      114
-
-Loglikelihood
-
-          H0 Value                     -470631.805
-          H0 Scaling Correction Factor      1.0258
-            for MLR
-
-Information Criteria
-
-          Akaike (AIC)                  941491.610
-          Bayesian (BIC)                942495.101
-          Sample-Size Adjusted BIC      942132.808
-            (n* = (n + 2) / 24)
-
-
-
-MODEL RESULTS
-
-                                                    Two-Tailed
-                    Estimate       S.E.  Est./S.E.    P-Value
-
- EL       BY
-    E1_16              0.703      0.008     85.399      0.000
-    E1_1722            0.703      0.008     85.399      0.000
-    E2_22              0.918      0.016     57.146      0.000
-    E3_1621            0.886      0.012     71.827      0.000
-    E3_22              0.939      0.017     55.986      0.000
-    E4_16              0.962      0.011     90.835      0.000
-    E4_1722            0.962      0.011     90.835      0.000
-    E5_16              1.400      0.013    105.069      0.000
-    E5_1722            1.400      0.013    105.069      0.000
-    E6_22              1.126      0.021     54.642      0.000
-    E7_1621            1.063      0.012     91.454      0.000
-    E7_22              0.843      0.017     48.763      0.000
-    E8_22              0.954      0.016     58.109      0.000
-    E9_22              1.152      0.019     60.791      0.000
-
- EM       BY
-    O1_16              1.348      0.022     61.971      0.000
-    O1_1722            1.348      0.022     61.971      0.000
-    O2_22              0.993      0.021     48.135      0.000
-    O3_22              0.719      0.017     42.236      0.000
-    O4_16              0.680      0.011     64.047      0.000
-    O4_1722            0.680      0.011     64.047      0.000
-    O5_16              0.477      0.008     56.554      0.000
-    O5_1722            0.477      0.008     56.554      0.000
-    O6_22              1.069      0.022     48.581      0.000
-
- EL         ON
-    AGE                0.979      0.009    110.314      0.000
-    MALE              -0.220      0.010    -21.187      0.000
-    YR16               0.307      0.019     16.147      0.000
-    YR17               0.139      0.024      5.869      0.000
-    YR18               0.150      0.021      7.294      0.000
-    YR19               0.142      0.021      6.887      0.000
-    YR20               0.017      0.018      0.938      0.348
-    YR21               0.027      0.016      1.662      0.096
-
- EM         ON
-    AGE                0.329      0.007     44.683      0.000
-    MALE              -0.325      0.011    -28.471      0.000
-    YR16              -0.035      0.024     -1.460      0.144
-    YR17              -0.059      0.026     -2.268      0.023
-    YR18               0.014      0.023      0.593      0.553
-    YR19              -0.029      0.023     -1.283      0.199
-    YR20              -0.086      0.021     -4.177      0.000
-    YR21              -0.103      0.018     -5.725      0.000
-
- EM       WITH
-    EL                 0.657      0.005    120.148      0.000
-
- Intercepts
-    EL                 0.000      0.000    999.000    999.000
-    EM                 0.000      0.000    999.000    999.000
-
- Thresholds
-    E1_16$1            0.611      0.040     15.374      0.000
-    E1_16$2            1.676      0.034     49.912      0.000
-    E1_16$3            2.823      0.032     87.839      0.000
-    E1_1722$1          0.524      0.028     18.926      0.000
-    E1_1722$2          1.382      0.028     48.672      0.000
-    E1_1722$3          1.746      0.029     60.398      0.000
-    E1_1722$4          2.880      0.031     92.797      0.000
-    E2_22$1            1.300      0.051     25.280      0.000
-    E2_22$2            2.256      0.056     40.514      0.000
-    E2_22$3            2.658      0.058     45.927      0.000
-    E2_22$4            3.842      0.065     59.248      0.000
-    E3_1621$1          2.652      0.045     59.313      0.000
-    E3_22$1            2.214      0.059     37.680      0.000
-    E3_22$2            2.866      0.063     45.733      0.000
-    E3_22$3            4.469      0.075     59.294      0.000
-    E4_16$1            0.935      0.051     18.343      0.000
-    E4_16$2            2.729      0.043     64.033      0.000
-    E4_16$3            3.805      0.043     88.244      0.000
-    E4_1722$1          0.921      0.035     26.277      0.000
-    E4_1722$2          2.457      0.038     65.217      0.000
-    E4_1722$3          2.879      0.039     74.268      0.000
-    E4_1722$4          3.779      0.041     91.650      0.000
-    E5_16$1            4.454      0.074     59.873      0.000
-    E5_16$2            5.188      0.077     67.199      0.000
-    E5_16$3            5.752      0.080     72.275      0.000
-    E5_1722$1          4.250      0.068     62.123      0.000
-    E5_1722$2          4.870      0.072     67.951      0.000
-    E5_1722$3          5.118      0.073     69.996      0.000
-    E5_1722$4          5.676      0.076     74.334      0.000
-    E6_22$1            1.770      0.063     28.026      0.000
-    E6_22$2            2.685      0.069     38.871      0.000
-    E6_22$3            3.040      0.072     42.380      0.000
-    E6_22$4            3.915      0.077     50.522      0.000
-    E7_1621$1          0.595      0.041     14.670      0.000
-    E7_1621$2          1.449      0.040     36.047      0.000
-    E7_1621$3          3.015      0.044     67.968      0.000
-    E7_1621$4          4.890      0.052     93.677      0.000
-    E7_1621$5          5.555      0.055    100.441      0.000
-    E7_22$1            0.518      0.047     10.957      0.000
-    E7_22$2            1.201      0.053     22.655      0.000
-    E7_22$3            2.628      0.065     40.479      0.000
-    E7_22$4            3.751      0.074     51.017      0.000
-    E8_22$1            1.318      0.054     24.317      0.000
-    E8_22$2            2.176      0.057     38.046      0.000
-    E8_22$3            2.514      0.059     42.605      0.000
-    E8_22$4            3.587      0.065     55.231      0.000
-    E9_22$1            3.332      0.071     47.106      0.000
-    E9_22$2            4.296      0.077     55.744      0.000
-    E9_22$3            4.681      0.080     58.463      0.000
-    E9_22$4            5.712      0.088     64.552      0.000
-    O1_16$1           -2.211      0.076    -29.171      0.000
-    O1_16$2           -0.757      0.057    -13.270      0.000
-    O1_16$3            1.448      0.053     27.098      0.000
-    O1_1722$1         -1.976      0.048    -41.400      0.000
-    O1_1722$2         -1.129      0.045    -25.285      0.000
-    O1_1722$3         -0.542      0.044    -12.315      0.000
-    O1_1722$4          1.473      0.049     30.071      0.000
-    O2_22$1           -1.716      0.045    -38.000      0.000
-    O2_22$2           -0.550      0.038    -14.615      0.000
-    O2_22$3            0.008      0.038      0.203      0.839
-    O2_22$4            1.719      0.045     38.002      0.000
-    O3_22$1           -2.213      0.051    -43.642      0.000
-    O3_22$2           -0.704      0.029    -24.040      0.000
-    O3_22$3            0.158      0.029      5.367      0.000
-    O3_22$4            1.951      0.038     51.207      0.000
-    O4_16$1           -2.860      0.099    -28.773      0.000
-    O4_16$2           -1.147      0.035    -32.493      0.000
-    O4_16$3            1.105      0.027     41.075      0.000
-    O4_1722$1         -2.617      0.038    -68.156      0.000
-    O4_1722$2         -1.480      0.025    -59.435      0.000
-    O4_1722$3         -0.901      0.023    -38.553      0.000
-    O4_1722$4          1.123      0.025     44.969      0.000
-    O5_16$1           -2.168      0.046    -47.353      0.000
-    O5_16$2           -0.972      0.017    -57.266      0.000
-    O5_16$3            0.838      0.020     42.446      0.000
-    O5_1722$1         -1.934      0.024    -81.856      0.000
-    O5_1722$2         -0.972      0.017    -57.266      0.000
-    O5_1722$3         -0.566      0.017    -33.879      0.000
-    O5_1722$4          0.818      0.018     46.264      0.000
-    O6_22$1           -2.444      0.069    -35.394      0.000
-    O6_22$2           -0.866      0.040    -21.710      0.000
-    O6_22$3           -0.130      0.039     -3.368      0.001
-    O6_22$4            1.692      0.046     36.759      0.000
-
- Residual Variances
-    EL                 1.000      0.000    999.000    999.000
-    EM                 1.000      0.000    999.000    999.000
-
-
-QUALITY OF NUMERICAL RESULTS
-
-     Condition Number for the Information Matrix              0.808E-06
-       (ratio of smallest to largest eigenvalue)
-
-
-RESULTS IN PROBABILITY SCALE
-
-                    Estimate
-
- E1_16
-    Category 1         0.058
-    Category 2         0.159
-    Category 3         0.308
-    Category 4         0.475
- E1_1722
-    Category 1         0.051
-    Category 2         0.108
-    Category 3         0.074
-    Category 4         0.309
-    Category 5         0.458
- E2_22
-    Category 1         0.071
-    Category 2         0.128
-    Category 3         0.080
-    Category 4         0.289
-    Category 5         0.432
- E3_1621
-    Category 1         0.302
-    Category 2         0.698
- E3_22
-    Category 1         0.181
-    Category 2         0.128
-    Category 3         0.386
-    Category 4         0.304
- E4_16
-    Category 1         0.039
-    Category 2         0.226
-    Category 3         0.251
-    Category 4         0.485
- E4_1722
-    Category 1         0.038
-    Category 2         0.174
-    Category 3         0.084
-    Category 4         0.213
-    Category 5         0.492
- E5_16
-    Category 1         0.318
-    Category 2         0.133
-    Category 3         0.106
-    Category 4         0.443
- E5_1722
-    Category 1         0.284
-    Category 2         0.107
-    Category 3         0.046
-    Category 4         0.105
-    Category 5         0.458
- E6_22
-    Category 1         0.070
-    Category 2         0.101
-    Category 3         0.056
-    Category 4         0.171
-    Category 5         0.603
- E7_1621
-    Category 1         0.018
-    Category 2         0.039
-    Category 3         0.200
-    Category 4         0.412
-    Category 5         0.127
-    Category 6         0.204
- E7_22
-    Category 1         0.030
-    Category 2         0.050
-    Category 3         0.251
-    Category 4         0.293
-    Category 5         0.376
- E8_22
-    Category 1         0.066
-    Category 2         0.102
-    Category 3         0.059
-    Category 4         0.242
-    Category 5         0.531
- E9_22
-    Category 1         0.262
-    Category 2         0.196
-    Category 3         0.084
-    Category 4         0.208
-    Category 5         0.250
- O1_16
-    Category 1         0.016
-    Category 2         0.082
-    Category 3         0.394
-    Category 4         0.508
- O1_1722
-    Category 1         0.023
-    Category 2         0.043
-    Category 3         0.055
-    Category 4         0.377
-    Category 5         0.502
- O2_22
-    Category 1         0.026
-    Category 2         0.102
-    Category 3         0.099
-    Category 4         0.442
-    Category 5         0.332
- O3_22
-    Category 1         0.008
-    Category 2         0.108
-    Category 3         0.190
-    Category 4         0.516
-    Category 5         0.177
- O4_16
-    Category 1         0.002
-    Category 2         0.060
-    Category 3         0.553
-    Category 4         0.385
- O4_1722
-    Category 1         0.003
-    Category 2         0.032
-    Category 3         0.055
-    Category 4         0.530
-    Category 5         0.380
- O5_16
-    Category 1         0.008
-    Category 2         0.082
-    Category 3         0.520
-    Category 4         0.390
- O5_1722
-    Category 1         0.014
-    Category 2         0.076
-    Category 3         0.074
-    Category 4         0.439
-    Category 5         0.397
- O6_22
-    Category 1         0.008
-    Category 2         0.079
-    Category 3         0.105
-    Category 4         0.442
-    Category 5         0.366
-
-
-MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES
-
-     el BY e1_16*0.70281 (le1);
-     el BY e1_1722*0.70281 (le1);
-     el BY e2_22*0.91808 (le2);
-     el BY e3_1621*0.88557 (le3_1);
-     el BY e3_22*0.93869 (le3_2);
-     el BY e4_16*0.96170 (le4);
-     el BY e4_1722*0.96170 (le4);
-     el BY e5_16*1.40001 (le5);
-     el BY e5_1722*1.40001 (le5);
-     el BY e6_22*1.12581 (le6);
-     el BY e7_1621*1.06287 (le7_1);
-     el BY e7_22*0.84275 (le7_2);
-     el BY e8_22*0.95357 (le8);
-     el BY e9_22*1.15239 (le9);
-     em BY o1_16*1.34813 (lo1);
-     em BY o1_1722*1.34813 (lo1);
-     em BY o2_22*0.99259 (lo2);
-     em BY o3_22*0.71949 (lo3);
-     em BY o4_16*0.68004 (lo4);
-     em BY o4_1722*0.68004 (lo4);
-     em BY o5_16*0.47739 (lo5);
-     em BY o5_1722*0.47739 (lo5);
-     em BY o6_22*1.06905 (lo6);
-
-     el ON age*0.97903;
-     el ON male*-0.22040;
-     el ON yr16*0.30672;
-     el ON yr17*0.13896;
-     el ON yr18*0.14960;
-     el ON yr19*0.14192;
-     el ON yr20*0.01729;
-     el ON yr21*0.02675;
-     em ON age*0.32857;
-     em ON male*-0.32539;
-     em ON yr16*-0.03483;
-     em ON yr17*-0.05925;
-     em ON yr18*0.01366;
-     em ON yr19*-0.02949;
-     em ON yr20*-0.08569;
-     em ON yr21*-0.10281;
-
-     em WITH el*0.65701;
-
-     [ el@0 ];
-     [ em@0 ];
-
-     [ e1_16$1*0.61142 ] (t1e1_1);
-     [ e1_16$2*1.67578 ] (t2e1_1);
-     [ e1_16$3*2.82330 ] (t3e1_1);
-     [ e1_1722$1*0.52391 ] (t1e1_2);
-     [ e1_1722$2*1.38244 ] (t2e1_2);
-     [ e1_1722$3*1.74609 ] (t3e1_2);
-     [ e1_1722$4*2.88022 ] (t4e1_2);
-     [ e2_22$1*1.30003 ] (t1e2);
-     [ e2_22$2*2.25565 ] (t2e2);
-     [ e2_22$3*2.65805 ] (t3e2);
-     [ e2_22$4*3.84238 ] (t4e2);
-     [ e3_1621$1*2.65183 ] (t1e3_1);
-     [ e3_22$1*2.21362 ] (t1e3_2);
-     [ e3_22$2*2.86574 ] (t2e3_2);
-     [ e3_22$3*4.46912 ] (t3e3_2);
-     [ e4_16$1*0.93525 ] (t1e4_1);
-     [ e4_16$2*2.72903 ] (t2e4_1);
-     [ e4_16$3*3.80466 ] (t3e4_1);
-     [ e4_1722$1*0.92095 ] (t1e4_2);
-     [ e4_1722$2*2.45654 ] (t2e4_2);
-     [ e4_1722$3*2.87932 ] (t3e4_2);
-     [ e4_1722$4*3.77868 ] (t4e4_2);
-     [ e5_16$1*4.45353 ] (t1e5_1);
-     [ e5_16$2*5.18812 ] (t2e5_1);
-     [ e5_16$3*5.75184 ] (t3e5_1);
-     [ e5_1722$1*4.25019 ] (t1e5_2);
-     [ e5_1722$2*4.87015 ] (t2e5_2);
-     [ e5_1722$3*5.11829 ] (t3e5_2);
-     [ e5_1722$4*5.67626 ] (t4e5_2);
-     [ e6_22$1*1.77000 ] (t1e6);
-     [ e6_22$2*2.68517 ] (t2e6);
-     [ e6_22$3*3.03999 ] (t3e6);
-     [ e6_22$4*3.91500 ] (t4e6);
-     [ e7_1621$1*0.59478 ] (t1e7_1);
-     [ e7_1621$2*1.44939 ] (t2e7_1);
-     [ e7_1621$3*3.01515 ] (t3e7_1);
-     [ e7_1621$4*4.89012 ] (t4e7_1);
-     [ e7_1621$5*5.55492 ] (t5e7_1);
-     [ e7_22$1*0.51778 ] (t1e7_2);
-     [ e7_22$2*1.20144 ] (t2e7_2);
-     [ e7_22$3*2.62837 ] (t3e7_2);
-     [ e7_22$4*3.75125 ] (t4e7_2);
-     [ e8_22$1*1.31771 ] (t1e8);
-     [ e8_22$2*2.17558 ] (t2e8);
-     [ e8_22$3*2.51378 ] (t3e8);
-     [ e8_22$4*3.58723 ] (t4e8);
-     [ e9_22$1*3.33157 ] (t1e9);
-     [ e9_22$2*4.29588 ] (t2e9);
-     [ e9_22$3*4.68089 ] (t3e9);
-     [ e9_22$4*5.71156 ] (t4e9);
-     [ o1_16$1*-2.21058 ] (t1o1_1);
-     [ o1_16$2*-0.75702 ] (t2o1_1);
-     [ o1_16$3*1.44783 ] (t3o1_1);
-     [ o1_1722$1*-1.97620 ] (t1o1_2);
-     [ o1_1722$2*-1.12861 ] (t2o1_2);
-     [ o1_1722$3*-0.54238 ] (t3o1_2);
-     [ o1_1722$4*1.47261 ] (t4o1_2);
-     [ o2_22$1*-1.71620 ] (t1o2);
-     [ o2_22$2*-0.55030 ] (t2o2);
-     [ o2_22$3*0.00770 ] (t3o2);
-     [ o2_22$4*1.71925 ] (t4o2);
-     [ o3_22$1*-2.21309 ] (t1o3);
-     [ o3_22$2*-0.70370 ] (t2o3);
-     [ o3_22$3*0.15759 ] (t3o3);
-     [ o3_22$4*1.95135 ] (t4o3);
-     [ o4_16$1*-2.85966 ] (t1o4_1);
-     [ o4_16$2*-1.14706 ] (t2o4_1);
-     [ o4_16$3*1.10541 ] (t3o4_1);
-     [ o4_1722$1*-2.61678 ] (t1o4_2);
-     [ o4_1722$2*-1.48010 ] (t2o4_2);
-     [ o4_1722$3*-0.90126 ] (t3o4_2);
-     [ o4_1722$4*1.12253 ] (t4o4_2);
-     [ o5_16$1*-2.16802 ] (t1o5_1);
-     [ o5_16$2*-0.97195 ] (t2o5_1);
-     [ o5_16$3*0.83830 ] (t3o5_1);
-     [ o5_1722$1*-1.93437 ] (t1o5_2);
-     [ o5_1722$2*-0.97195 ] (t2o5_1);
-     [ o5_1722$3*-0.56593 ] (t3o5_2);
-     [ o5_1722$4*0.81751 ] (t4o5_2);
-     [ o6_22$1*-2.44423 ] (t1o6);
-     [ o6_22$2*-0.86594 ] (t2o6);
-     [ o6_22$3*-0.13009 ] (t3o6);
-     [ o6_22$4*1.69195 ] (t4o6);
-
-     el@1;
-     em@1;
-
-
-
-DIFFERENCE OUTPUT
-
-
-DIAGRAM INFORMATION
-
-  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
-  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
-
-  Diagram output
-    c:\repos\hrtl-2016-2022\dinking.dgm
-
-     Beginning Time:  16:20:51
-        Ending Time:  16:23:43
-       Elapsed Time:  00:02:52
-
+  Number of cases with missing on all variables except x-variables:  892
 
 
 MUTHEN & MUTHEN

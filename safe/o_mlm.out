@@ -1,0 +1,610 @@
+Mplus VERSION 8.10
+MUTHEN & MUTHEN
+04/24/2024   5:47 PM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE:
+  !o1_16 & o1_1722 (ClearExp): How often can this child explain things he or she has seen or
+  !o2_22 (NAMEEMOTIONS): How often can this child recognize and name their own emotions?;
+  !o3_22 (SHARETOYS): How often does this child have difficulty waiting for their turn?;
+  !o4_16 & o4 (PlayWell): How often can this child explain things he or she has seen or done
+  !o5_16 & o5_1722 (HurtSad): How often can this child explain things he or she has seen or
+  !o6_22 (FOCUSON): How often can this child focus on a task you give them for at least a fe
+
+
+  !---------------------------------
+  !        MNLFA item parameters
+  !--------------------------------
+  !o1_1722 on d* (b0);
+  !o4_1722 on d* (b1);
+  !o5_1722 on d* (b2);
+
+  ! MNFLA
+  !b0~ALF(0,1);
+  !b1~ALF(0,1);
+  !b2~ALF(0,1);
+
+  DATA:
+  FILE = dinking.dat;
+
+  VARIABLE:
+  NAMES = recnum year stratfip fipsst stratum hhid fwc age male t d tXd o1_16
+     o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
+  USEV = age male t d tXd o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722
+     o6_22;
+  CATEGORICAL = o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
+  MISSING = .;
+  IDVARIABLE = recnum;
+  !STRATIFICATION = stratfip;
+  !CLUSTER = hhid;
+  WEIGHT = fwc;
+  CLUSTER = fipsst;
+  WITHIN = age male t d txd;
+
+  ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;
+  ESTIMATOR = mlr;
+  ALGORITHM = integration;
+  INTEGRATION = gauss(8);
+  LINK = probit;
+  PROCESSORS = 24;
+
+  MODEL:
+
+  %WITHIN%
+
+      !------------------------------------;
+      !     Measurement parameters;
+      !------------------------------------;
+
+      !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
+         EM by o1_16*1 o1_1722*1 (lo1);
+
+      !o2_22 (NAMEEMOTIONS);
+         EM by o2_22*1 (lo2);
+
+      !o3_22 (SHARETOYS);
+         EM by o3_22*1 (lo3);
+
+      !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+         EM by o4_16*1 o4_1722*1 (lo4);
+
+      !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+         EM by o5_16*1 o5_1722*1 (lo5);
+
+      !o6_22 (FOCUSON);
+         EM by o6_22*1 (lo6);
+
+
+      !------------------------------------;
+      !        Structural parameters;
+      !------------------------------------;
+      !2. Social Emotional Development;
+         EM@1;
+         [EM@0];
+         EM on age male;
+         s1 | EM on t;
+         s2 | EM on d;
+         s3 | EM on tXd;
+
+  %BETWEEN%
+
+      !------------------------------------;
+      !     Measurement parameters;
+      !------------------------------------;
+
+
+      !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
+         [o1_16$1* o1_1722$1*] (t1o1_1 t1o1_2);
+                  [o1_1722$2*]        (t2o1_2);
+         [o1_16$2* o1_1722$3*] (t2o1_1 t3o1_2);
+         [o1_16$3* o1_1722$4*] (t3o1_1 t4o1_2);
+
+      !o2_22 (NAMEEMOTIONS);
+         [o2_22$1*] (t1o2);
+         [o2_22$2*] (t2o2);
+         [o2_22$3*] (t3o2);
+         [o2_22$4*] (t4o2);
+
+      !o3_22 (SHARETOYS);
+         [o3_22$1*] (t1o3);
+         [o3_22$2*] (t2o3);
+         [o3_22$3*] (t3o3);
+         [o3_22$4*] (t4o3);
+
+      !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+         [o4_16$1* o4_1722$1*] (t1o4_1 t1o4_2);
+                  [o4_1722$2*]        (t2o4_2);
+         [o4_16$2* o4_1722$3*] (t2o4_1 t3o4_2);
+         [o4_16$3* o4_1722$4*] (t3o4_1 t4o4_2);
+
+      !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+         [o5_16$1* o5_1722$1*] (t1o5_1 t1o5_2);
+                  [o5_1722$2*]        (t2o5_2);
+         [o5_16$2* o5_1722$3*] (t2o5_1 t3o5_2);
+         [o5_16$3* o5_1722$4*] (t3o5_1 t4o5_2);
+
+      !o6_22 (FOCUSON);
+         [o6_22$1*] (t1o6);
+         [o6_22$2*] (t2o6);
+         [o6_22$3*] (t3o6);
+         [o6_22$4*] (t4o6);
+
+      !------------------------------------;
+      !        Structural parameters;
+      !------------------------------------;
+
+
+      s1 with s2@0 s3@0;
+      s2 with s3@0;
+
+  MODEL PRIORS:
+
+  !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
+     diff(t1o1_1, t1o1_2)~ALF(0,1);
+     diff(t3o1_1, t4o1_2)~ALF(0,1);
+
+  !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+     diff(t1o4_1, t1o4_2)~ALF(0,1);
+     diff(t3o4_1, t4o4_2)~ALF(0,1);
+
+  !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+     diff(t1o5_1, t1o5_2)~ALF(0,1);
+     diff(t3o5_1, t4o5_2)~ALF(0,1);
+
+
+
+  MODEL CONSTRAINT:
+
+  !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
+     new(dt1o1* dt3o1*);
+     dt1o1=t1o1_1-t1o1_2;
+     dt3o1=t3o1_1-t4o1_2;
+
+  !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+     new(dt1o4* dt3o4*);
+     dt1o4=t1o4_1-t1o4_2;
+     dt3o4=t3o4_1-t4o4_2;
+
+  !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+     new(dt1o5* dt3o5*);
+     dt1o5=t1o5_1-t1o5_2;
+     dt3o5=t3o5_1-t4o5_2;
+
+  OUTPUT:
+  svalues;
+  noserror;
+
+
+
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !o5_16 & o5_1722 (HurtSad): How often can this child explain things he or she has seen or d
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !o6_22 (FOCUSON): How often can this child focus on a task you give them for at least a few
+*** WARNING
+  Data set contains cases with missing on all variables except
+  x-variables.  These cases were not included in the analysis.
+  Number of cases with missing on all variables except x-variables:  892
+   3 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                       49102
+
+Number of dependent variables                                    9
+Number of independent variables                                  5
+Number of continuous latent variables                            4
+
+Observed dependent variables
+
+  Binary and ordered categorical (ordinal)
+   O1_16       O1_1722     O2_22       O3_22       O4_16       O4_1722
+   O5_16       O5_1722     O6_22
+
+Observed independent variables
+   AGE         MALE        T           D           TXD
+
+Continuous latent variables
+   EM          S1          S2          S3
+
+Variables with special functions
+
+  Cluster variable      FIPSST
+  Weight variable (cluster-size scaling)
+    FWC
+  ID variable           RECNUM
+
+  Within variables
+   AGE         MALE        T           D           TXD
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Optimization Specifications for the Quasi-Newton Algorithm for
+Continuous Outcomes
+  Maximum number of iterations                                 100
+  Convergence criterion                                  0.100D-05
+Optimization Specifications for the EM Algorithm
+  Maximum number of iterations                                 500
+  Convergence criteria
+    Loglikelihood change                                 0.100D-02
+    Relative loglikelihood change                        0.100D-05
+    Derivative                                           0.100D-02
+Optimization Specifications for the M step of the EM Algorithm for
+Categorical Latent variables
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+Optimization Specifications for the M step of the EM Algorithm for
+Censored, Binary or Ordered Categorical (Ordinal), Unordered
+Categorical (Nominal) and Count Outcomes
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+  Maximum value for logit thresholds                            10
+  Minimum value for logit thresholds                           -10
+  Minimum expected cell size for chi-square              0.100D-01
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Optimization algorithm                                         EMA
+Integration Specifications
+  Type                                                GAUSSHERMITE
+  Number of integration points                                   8
+  Dimensions of numerical integration                            4
+  Adaptive quadrature                                           ON
+Link                                                        PROBIT
+Cholesky                                                        ON
+
+Input data file(s)
+  dinking.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            38
+     Number of y missing data patterns           0
+     Number of u missing data patterns          38
+     Number of clusters                         51
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT FOR U
+
+
+           Covariance Coverage
+              O1_16         O1_1722       O2_22         O3_22         O4_16
+              ________      ________      ________      ________      ________
+ O1_16          0.149
+ O1_1722        0.000         0.844
+ O2_22          0.000         0.219         0.220
+ O3_22          0.000         0.219         0.219         0.222
+ O4_16          0.149         0.000         0.000         0.000         0.149
+ O4_1722        0.000         0.840         0.220         0.219         0.000
+ O5_16          0.149         0.000         0.000         0.000         0.149
+ O5_1722        0.000         0.841         0.219         0.219         0.000
+ O6_22          0.000         0.220         0.220         0.219         0.000
+
+
+           Covariance Coverage
+              O4_1722       O5_16         O5_1722       O6_22
+              ________      ________      ________      ________
+ O4_1722        0.844
+ O5_16          0.000         0.150
+ O5_1722        0.842         0.000         0.844
+ O6_22          0.220         0.000         0.220         0.221
+
+
+UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+
+    O1_16
+      Category 1    0.022          154.437
+      Category 2    0.079          561.580
+      Category 3    0.370         2633.074
+      Category 4    0.529         3759.618
+    O1_1722
+      Category 1    0.027         1125.975
+      Category 2    0.045         1863.696
+      Category 3    0.057         2370.845
+      Category 4    0.369        15391.452
+      Category 5    0.502        20924.860
+    O2_22
+      Category 1    0.042          288.024
+      Category 2    0.099          669.029
+      Category 3    0.086          586.483
+      Category 4    0.418         2837.937
+      Category 5    0.354         2402.785
+    O3_22
+      Category 1    0.015          102.874
+      Category 2    0.113          777.817
+      Category 3    0.186         1271.674
+      Category 4    0.493         3380.892
+      Category 5    0.193         1320.714
+    O4_16
+      Category 1    0.003           24.249
+      Category 2    0.062          441.796
+      Category 3    0.520         3702.838
+      Category 4    0.414         2948.840
+    O4_1722
+      Category 1    0.005          190.026
+      Category 2    0.034         1411.217
+      Category 3    0.053         2223.583
+      Category 4    0.511        21284.796
+      Category 5    0.397        16561.957
+    O5_16
+      Category 1    0.016          113.084
+      Category 2    0.121          862.663
+      Category 3    0.465         3321.923
+      Category 4    0.398         2841.476
+    O5_1722
+      Category 1    0.016          646.871
+      Category 2    0.076         3155.583
+      Category 3    0.075         3139.827
+      Category 4    0.434        18120.465
+      Category 5    0.399        16651.472
+    O6_22
+      Category 1    0.017          114.180
+      Category 2    0.087          594.618
+      Category 3    0.099          674.839
+      Category 4    0.411         2792.846
+      Category 5    0.386         2625.793
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     AGE                   3.976       0.043       3.000   33.34%       3.000      4.000      4.000
+           49102.000       0.652      -1.465       5.000   33.40%       4.000      5.000
+     MALE                  0.508      -0.031       0.000   48.36%       0.000      0.000      1.000
+           49102.000       0.250      -1.999       1.000   51.64%       1.000      1.000
+     T                    -1.025       0.015      -4.000   15.03%      -3.000     -1.000      0.000
+           49102.000       4.019      -1.259       2.000   22.36%       1.000      2.000
+     D                     0.283       0.964       0.000   53.54%       0.000      0.000      0.000
+           49102.000       0.203      -1.071       1.000   46.46%       1.000      1.000
+     TXD                   0.424       1.375       0.000   53.54%       0.000      0.000      0.000
+           49102.000       0.526       0.286       2.000   22.36%       1.000      2.000
+
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       47
+
+Loglikelihood
+
+          H0 Value                     -173218.372
+
+Information Criteria
+
+          Akaike (AIC)                  346530.744
+          Bayesian (BIC)                346944.422
+          Sample-Size Adjusted BIC      346795.055
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                    Estimate
+
+Within Level
+
+ EM       BY
+    O1_16              0.941
+    O1_1722            0.941
+    O2_22              0.983
+    O3_22              0.840
+    O4_16              0.831
+    O4_1722            0.831
+    O5_16              0.569
+    O5_1722            0.569
+    O6_22              1.051
+
+ EM         ON
+    AGE                0.289
+    MALE              -0.328
+
+ Intercepts
+    EM                 0.000
+
+ Residual Variances
+    EM                 1.000
+
+Between Level
+
+ S1       WITH
+    S2                 0.000
+    S3                 0.000
+
+ S2       WITH
+    S3                 0.000
+
+ Means
+    S1                -0.021
+    S2                -0.042
+    S3                 0.040
+
+ Thresholds
+    O1_16$1           -1.859
+    O1_16$2           -0.770
+    O1_16$3            0.905
+    O1_1722$1         -1.801
+    O1_1722$2         -1.102
+    O1_1722$3         -0.626
+    O1_1722$4          0.937
+    O2_22$1           -1.677
+    O2_22$2           -0.586
+    O2_22$3           -0.076
+    O2_22$4            1.534
+    O3_22$1           -2.273
+    O3_22$2           -0.702
+    O3_22$3            0.196
+    O3_22$4            2.005
+    O4_16$1           -2.827
+    O4_16$2           -1.103
+    O4_16$3            1.173
+    O4_1722$1         -2.769
+    O4_1722$2         -1.534
+    O4_1722$3         -0.918
+    O4_1722$4          1.174
+    O5_16$1           -1.896
+    O5_16$2           -0.664
+    O5_16$3            0.907
+    O5_1722$1         -1.932
+    O5_1722$2         -0.980
+    O5_1722$3         -0.557
+    O5_1722$4          0.864
+    O6_22$1           -2.402
+    O6_22$2           -0.893
+    O6_22$3           -0.191
+    O6_22$4            1.498
+
+ Variances
+    S1                 0.001
+    S2                 0.004
+    S3                 0.004
+
+New/Additional Parameters
+    DT1O1             -0.058
+    DT3O1             -0.032
+    DT1O4             -0.057
+    DT3O4             -0.001
+    DT1O5              0.036
+    DT3O5              0.043
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.000E+00
+       (ratio of smallest to largest eigenvalue)
+
+
+MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES
+
+     %WITHIN%
+
+     s1 | em ON t;
+     s2 | em ON d;
+     s3 | em ON txd;
+
+     em BY o1_16*0.94128 (lo1);
+     em BY o1_1722*0.94128 (lo1);
+     em BY o2_22*0.98279 (lo2);
+     em BY o3_22*0.83976 (lo3);
+     em BY o4_16*0.83126 (lo4);
+     em BY o4_1722*0.83126 (lo4);
+     em BY o5_16*0.56876 (lo5);
+     em BY o5_1722*0.56876 (lo5);
+     em BY o6_22*1.05117 (lo6);
+
+     em ON age*0.28882;
+     em ON male*-0.32758;
+
+     [ em@0 ];
+
+     em@1;
+
+     %BETWEEN%
+
+     s1 WITH s2@0;
+     s1 WITH s3@0;
+     s2 WITH s3@0;
+
+     [ s1*-0.02075 ];
+     [ s2*-0.04208 ];
+     [ s3*0.04018 ];
+
+     [ o1_16$1*-1.85943 ] (t1o1_1);
+     [ o1_16$2*-0.77003 ] (t2o1_1);
+     [ o1_16$3*0.90490 ] (t3o1_1);
+     [ o1_1722$1*-1.80122 ] (t1o1_2);
+     [ o1_1722$2*-1.10168 ] (t2o1_2);
+     [ o1_1722$3*-0.62623 ] (t3o1_2);
+     [ o1_1722$4*0.93734 ] (t4o1_2);
+     [ o2_22$1*-1.67670 ] (t1o2);
+     [ o2_22$2*-0.58611 ] (t2o2);
+     [ o2_22$3*-0.07641 ] (t3o2);
+     [ o2_22$4*1.53416 ] (t4o2);
+     [ o3_22$1*-2.27305 ] (t1o3);
+     [ o3_22$2*-0.70158 ] (t2o3);
+     [ o3_22$3*0.19562 ] (t3o3);
+     [ o3_22$4*2.00536 ] (t4o3);
+     [ o4_16$1*-2.82668 ] (t1o4_1);
+     [ o4_16$2*-1.10297 ] (t2o4_1);
+     [ o4_16$3*1.17268 ] (t3o4_1);
+     [ o4_1722$1*-2.76942 ] (t1o4_2);
+     [ o4_1722$2*-1.53357 ] (t2o4_2);
+     [ o4_1722$3*-0.91798 ] (t3o4_2);
+     [ o4_1722$4*1.17372 ] (t4o4_2);
+     [ o5_16$1*-1.89627 ] (t1o5_1);
+     [ o5_16$2*-0.66387 ] (t2o5_1);
+     [ o5_16$3*0.90699 ] (t3o5_1);
+     [ o5_1722$1*-1.93203 ] (t1o5_2);
+     [ o5_1722$2*-0.97972 ] (t2o5_2);
+     [ o5_1722$3*-0.55657 ] (t3o5_2);
+     [ o5_1722$4*0.86356 ] (t4o5_2);
+     [ o6_22$1*-2.40241 ] (t1o6);
+     [ o6_22$2*-0.89280 ] (t2o6);
+     [ o6_22$3*-0.19118 ] (t3o6);
+     [ o6_22$4*1.49798 ] (t4o6);
+
+     s1*0.00104;
+     s2*0.00368;
+     s3*0.00434;
+
+     ! NEW statements in MODEL CONSTRAINT
+     NEW(dt1o1*-0.05821);
+     NEW(dt3o1*-0.03243);
+     NEW(dt1o4*-0.05726);
+     NEW(dt3o4*-0.00104);
+     NEW(dt1o5*0.03575);
+     NEW(dt3o5*0.04344);
+
+
+
+
+DIFFERENCE OUTPUT
+
+
+DIAGRAM INFORMATION
+
+  Mplus diagrams are currently not available for multilevel analysis.
+  No diagram output was produced.
+
+
+     Beginning Time:  17:47:01
+        Ending Time:  19:27:02
+       Elapsed Time:  01:40:01
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2023 Muthen & Muthen

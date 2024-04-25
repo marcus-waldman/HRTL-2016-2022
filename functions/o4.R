@@ -56,8 +56,11 @@ o4<-function(raw_datasets, dprior){ # 4-PLAYWELL
     )
     )
   
-  
+  df_o4 = df_o4 %>% safe_left_join(
+    transfer_never_always(., var_from = "o4_16", var_to = "o4_1722", values_from = c(0,3), values_to = c(0,4)), 
+    by = c("year","hhid")
+  )
 
-  return(list(data = df_o4 %>% dplyr::select(year,hhid,o4_16,o4_1722), syntax = syntax_o4))
+  return(list(data = df_o4 %>% dplyr::select(year,hhid,starts_with("o4"), starts_with("oo4")), syntax = syntax_o4))
   
 }

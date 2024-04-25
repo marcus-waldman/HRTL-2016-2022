@@ -68,8 +68,15 @@ e4<-function(raw_datasets, dprior){ # 4-RECOGABC
     )
   )
   
+  # Let's transfer recode for for similar response options across administrations
+  df_e4 = df_e4 %>% safe_left_join(
+    transfer_never_always(., var_from = "e4_16", var_to = "e4_1722", values_from = c(0,3), values_to = c(0,4)), 
+    by = c("year","hhid")
+  )
   
-  return(list(data = df_e4 %>% dplyr::select(year,hhid,starts_with("e4")), syntax = syntax_e4))
+  
+  
+  return(list(data = df_e4 %>% dplyr::select(year,hhid,starts_with("e4"), starts_with("ee4")), syntax = syntax_e4))
   
 }
 

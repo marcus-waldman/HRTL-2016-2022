@@ -43,7 +43,7 @@ e5<-function(raw_datasets, dprior){ # 5-WRITENAME
   
   #Construct Mplus syntax
   syntax_e5 = list(
-    TITLE = c("!e5_16 & e5 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?"),
+    TITLE = c("!e5_16 & e5_1722 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?"),
     VARIABLE = list(NAMES = c("e5_16", "e5_1722"),
                     USEV = c("e5_16", "e5_1722"), 
                     CATEGORICAL = c("e5_16", "e5_1722")
@@ -55,12 +55,12 @@ e5<-function(raw_datasets, dprior){ # 5-WRITENAME
              "            [e5_1722$3*] (t3e5_2)",
              "   [e5_16$3* e5_1722$4*] (t3e5_1 t4e5_2)"
     ),
-    `MODEL PRIORS` = c("\n!e5_16 & e5 (WriteName)",
+    `MODEL PRIORS` = c("\n!e5_16 & e5_1722 (WriteName)",
                        paste0("   diff(t1e5_1, t1e5_2)~", dprior), 
 #                      paste0("   diff(t2e5_1, t2e5_2)~", dprior),
                        paste0("   diff(t3e5_1, t4e5_2)~", dprior)
     ), 
-    `MODEL CONSTRAINT` = c("\n!e5_16 & e5 (WriteName)", 
+    `MODEL CONSTRAINT` = c("\n!e5_16 & e5_1722 (WriteName)", 
                            "   new(dt1e5* dt3e5*)", 
                            "   dt1e5 = t1e5_1-t1e5_2", 
 #                          "   dt2e5 = t2e5_1-t2e5_2", 
@@ -69,8 +69,14 @@ e5<-function(raw_datasets, dprior){ # 5-WRITENAME
                            
   )
   
+  # Let's transfer recode for for similar response options across administrations
+  df_e5 = df_e5 %>% safe_left_join(
+    transfer_never_always(., var_from = "e5_16", var_to = "e5_1722", values_from = c(0,3), values_to = c(0,4)), 
+    by = c("year","hhid")
+  )
   
-  return(list(data = df_e5 %>% dplyr::select(year,hhid,starts_with("e5")), syntax = syntax_e5))
+  
+  return(list(data = df_e5 %>% dplyr::select(year,hhid,starts_with("e5"), starts_with("ee5")), syntax = syntax_e5))
   
 }
 

@@ -5,6 +5,9 @@ library(haven)
 library(sjlabelled)
 library(stringr)
 library(readxl)
+library(brms)
+library(cmdstanr)
+library(OpenCL)
 
 # Change repo directory
 #repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
@@ -67,18 +70,17 @@ dat = lapply(2016:2022, function(x){
   as.data.frame() %>% 
   dplyr::mutate(stratfip = paste0(stratum,"000",fipsst)) %>% 
   dplyr::relocate(recnum,year,stratfip) %>% 
-#  dplyr::select(-fipsst,-stratum) %>% 
+  #dplyr::select(-fipsst,-stratum) %>% 
   dplyr::mutate(
-                #yr16=as.integer(year==2016),
-                #yr17=as.integer(year==2017),
-                #yr18=as.integer(year==2018),
-                #yr19=as.integer(year==2019), 
-                #yr20=as.integer(year==2020), 
-                #yr21=as.integer(year==2021),
+                # yr16=as.integer(year==2016),
+                # yr17=as.integer(year==2017),
+                # yr18=as.integer(year==2018),
+                # yr19=as.integer(year==2019), 
+                # yr20=as.integer(year==2020), 
+                # yr21=as.integer(year==2021),
                 t = year-2020, 
-                d = as.integer(t>0),
-                tXd = t*d
-  )
+                d = as.integer(t>=2020), 
+                tXd = t*d)
 
 # Create skeleton syntax
 title_list = NULL
@@ -86,7 +88,7 @@ data_list = list(FILE = NULL)
 variable_list = 
   list(
     NAMES = names(dat),
-    USEV = c("age", "male","t","d","tXd"), 
+    USEV = c("age", "male",paste0("yr",16:21)), 
     CATEGORICAL = NULL,
     MISSING = ".",
     IDVARIABLE = "recnum", 
@@ -123,11 +125,11 @@ syntax_list = list(
 
 
 
-# ##### Early Learning Skills ####
+##### Early Learning Skills ####
 #e1-RECOGBEGIN: How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?
   e1_list = e1(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, e1_list$syntax)
+  syntax_list = update_syntax(syntax_list, e1_list$syntax)  
 #e2-SAMESOUND
   e2_list = e2(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e2_list$data, by = c("year","hhid"))
@@ -136,14 +138,14 @@ syntax_list = list(
   e3_list = e3(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e3_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e3_list$syntax)
-#e4-RECOGABC
+#e4-RECOGABC 
   e4_list = e4(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e4_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, e4_list$syntax)
+  syntax_list = update_syntax(syntax_list, e4_list$syntax)  
 #e5-WRITENAME: How often can this child write their first name, even if some of the letters aren't quite right or are backwards?
   e5_list = e5(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e5_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, e5_list$syntax)
+  syntax_list = update_syntax(syntax_list, e5_list$syntax) 
 #e6-READONEDIGIT
   e6_list = e6(raw_datasets,dprior)
   dat = dat %>% safe_left_join(e6_list$data, by = c("year","hhid"))
@@ -161,23 +163,7 @@ syntax_list = list(
   dat = dat %>% safe_left_join(e9_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, e9_list$syntax)
 
-  # require(MplusAutomation)
-  # prepareMplusData(df = dat, filename = "dinking_e.dat")
-  # syntax_list$DATA$FILE = "dinking_e.dat"
-  # syntax_list$MODEL = c(syntax_list$MODEL,
-  #                       "\n!------------------------------------",
-  #                       "!        Structural parameters",
-  #                       "!------------------------------------",
-  #                       "!1. Early Learning Skills",
-  #                       "   EL@1",
-  #                       "   [EL@0]",
-  #                       "   EL on age* male* t* d* tXd**"
-  # )
-  # mplus_syntax = paste_syntax(syntax_list)
-  # writeLines(mplus_syntax, con = "dinking_e.inp")
-
   
-#
 # #### Social Emotional Development ####
 # !o1-CLEAREXP How often can this child explain things he or she has seen or done so that you get a very good idea what happened?
   o1_list = o1(raw_datasets,dprior)
@@ -204,87 +190,102 @@ syntax_list = list(
   dat = dat %>% safe_left_join(o6_list$data, by = c("year","hhid"))
   syntax_list = update_syntax(syntax_list, o6_list$syntax)
 
-  require(MplusAutomation)
-  prepareMplusData(df = dat, filename = "dinking.dat")
-  syntax_list$DATA$FILE = "dinking.dat"
-  syntax_list$MODEL = c(syntax_list$MODEL,
-                        "\n!------------------------------------",
-                        "!        Structural parameters",
-                        "!------------------------------------",
-                        "!1. Early Learning Skills",
-                        "   EL@1",
-                        "   [EL@0]",
-                        "   EL on age* male* t* d* tXd*",
-                        "!2. Social Emotional Development",
-                        "   EM@1",
-                        "   [EM@0]",
-                        "   EM on age* male* t* d* tXd*",
-                        "!Factor covariances",
-                        "   EM with EL*"
-                        )
-  mplus_syntax = paste_syntax(syntax_list)
-  writeLines(mplus_syntax, con = "dinking.inp")
 
-#### Self-Regulation ####
-# !r1-NEWACTIVITY (2016-21): How often does this child have difficulty when asked to end one activity and start a new activity
-#    STARTNEWACT (2022): How often does this child have difficulty when asked to end one activity and start a new activity?
-  r1_list = r1(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r1_list$syntax)
-# r2-: CALMDOWN: How often does this child have trouble calming down?
-  r2_list = r2(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r2_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r2_list$syntax)
-# r3-WAITFORTURN
-  r3_list = r3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r3_list$syntax)
-# !r4-DISTRACTED: How often is this child easily distracted?
-  r4_list = r4(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r4_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r4_list$syntax)
-# r5- :How often does this child lose their temper?
-  r5_list_list = r5(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(r5_list_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, r5_list_list$syntax)
+  
+  
 
-#### Motor Development ####
-  #m1-DRAWACIRCLE
-  m1_list=m1(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m1_list$syntax)
-  #m2-DRAWAFACE
-  m2_list=m2(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m2_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m2_list$syntax)
-  #m3-DRAWAPERSON
-  m3_list=m3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m3_list$syntax)
-  #m4-BOUNCEABALL
-  m4_list=m4(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m4_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m4_list$syntax)
-  #m5-USEPENCIL
-  m5_list=m5(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(m5_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, m5_list$syntax)
+  
+  dat %>% 
+    dplyr::select(fwc, year, recnum, starts_with("e")) %>% 
+    tidyr::pivot_longer(starts_with("e"), names_to = "item", values_to = "y") %>% 
+    dplyr::filter(year>=2020) %>% 
+    dplyr::group_by(item,y) %>% 
+    stats::na.omit() %>% 
+    dplyr::summarise(n =sum(fwc)) %>% 
+    tidyr::pivot_wider(names_from = item, values_from = n) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(across(!starts_with("y"), function(x)x/sum(x,na.rm = T)))
+  
+  
+  
+  dat %>% 
+    dplyr::select(fwc, year, starts_with("o")) %>% 
+    tidyr::pivot_longer(starts_with("o"), names_to = "item", values_to = "y") %>% 
+    dplyr::filter(year>=2020) %>% 
+    dplyr::group_by(item,y) %>% 
+    stats::na.omit() %>% 
+    dplyr::summarise(n =sum(fwc)) %>% 
+    tidyr::pivot_wider(names_from = item, values_from = n) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(across(!starts_with("y"), function(x)x/sum(x,na.rm = T)))
 
-#### Health ####
-# h1-K2Q01
-  h1_list=h1(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h1_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h1_list$syntax)
-# h2-K2Q01_D
-  h2_list=h2(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h2_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h2_list$syntax)
-# h3-DailyAct
-  h3_list=h3(raw_datasets,dprior)
-  dat = dat %>% safe_left_join(h3_list$data, by = c("year","hhid"))
-  syntax_list = update_syntax(syntax_list, h3_list$syntax)
+  
+  
+longdat = dat %>% dplyr::mutate(person = recnum) %>% 
+  dplyr::select(year, person, fipsst, stratfip, fwc, age, male, starts_with("e"), starts_with("o")) %>% 
+  tidyr::pivot_longer(cols = e1_16:o6_22, names_to = "item", values_to = "y") %>% 
+  dplyr::filter(year >2016) %>% 
+  dplyr::filter( !endsWith(item, "_16")) %>% 
+  dplyr::mutate(prefix = str_split_fixed(item, "_",2)[,1],
+                domain = ifelse(startsWith(prefix,"e"), "ELS", "SED")) %>% 
+  na.omit() %>% 
+  dplyr::mutate(fipsst = as.factor(fipsst), person = as.factor(person)) %>% 
+  dplyr::mutate(across(where(is.character), as.factor)) %>% 
+  dplyr::mutate(d = as.numeric(year>=2020), 
+                t = (year-2020), 
+                y = as.ordered(y),
+                age_c = age-4) %>% 
+  dplyr::mutate(svy = as.factor(paste0(year,"000",stratfip)))
 
 
+longdat %>% 
+  dplyr::group_by(item) %>% 
+  dplyr::summarise(levels = paste0(sort(unique(y)), collapse = ", "))
+
+
+mirt_model<- brms::bf(
+  y | thres(gr=item) ~ exp(loglambda)*eta,        # 2PL Graded  Response model
+    
+  eta ~ 0 + (0+domain | person) +                 # Multivariate, correlated latent abilities...
+            (domain*t*d || fipsst) +              #  ...as a function of time and state
+            male + age_c,                         #  ...as a function of gender and age
+  
+  loglambda ~ 0 + prefix,                         # Factor loadings a factor of prefix
+  nl = TRUE, 
+  family = cumulative(link = "logit", link_disc = "log")
+)
+
+mirt_prior<-
+  prior(constant(1), class = "sd", group = "person", nlpar = "eta") 
+# 
+# fit_mirt<-brm(
+#   formula=mirt_model,
+#   data=longdat,
+#   prior=mirt_prior, 
+#   chains = 4, 
+#   cores = 4, 
+#   thread = threading(8),
+#   seed = 123
+# )
+# 
+
+
+fit_mirt<-brm(
+  formula=mirt_model,
+  data=longdat,
+  prior=mirt_prior, 
+  chains = 4,
+  cores = 4, 
+  threads = threading(8),
+  seed = 123,
+)
 
 
 
+
+make_stancode(mirt_model, data = longdat)
+
+
+
+
+  

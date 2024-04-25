@@ -9,6 +9,12 @@ o5<-function(raw_datasets, dprior){ # 5-HURTSAD
               lex = "o5_16", 
               var_cahmi = "HurtSad_16", 
               reverse=T) 
+   #  
+   # value                   label
+   #     1         All of the time
+   #     2        Most of the time
+   #     3        Some of the time
+   #     4        None of the time
   
   #Recode 
   df_o5 = lapply(2017:2022, function(x){
@@ -20,7 +26,13 @@ o5<-function(raw_datasets, dprior){ # 5-HURTSAD
               reverse=T) 
   })  %>% dplyr::bind_rows()
   
-  
+    # value                   label
+    # 1                  Always
+    # 2        Most of the time
+    # 3     About half the time
+    # 4               Sometimes
+    # 5                   Never
+    
   #Bind the recoded item response data
   df_o5 = df_o5_16 %>% 
     dplyr::bind_rows(df_o5) %>% 
@@ -54,8 +66,13 @@ o5<-function(raw_datasets, dprior){ # 5-HURTSAD
     )
   )
   
+  df_o5 = df_o5 %>% safe_left_join(
+    transfer_never_always(., var_from = "o5_16", var_to = "o5_1722", values_from = c(0,3), values_to = c(0,4)), 
+    by = c("year","hhid")
+  )
   
-  return(list(data = df_o5 %>% dplyr::select(year,hhid,o5_16, o5_1722), syntax = syntax_o5))
+  
+  return(list(data = df_o5 %>% dplyr::select(year,hhid,starts_with("o5"), starts_with("oo5")), syntax = syntax_o5))
   
 }
 

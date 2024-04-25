@@ -1,0 +1,242 @@
+Mplus VERSION 8.10
+MUTHEN & MUTHEN
+04/24/2024  11:22 PM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE:
+  !o1_16 & o1_1722 (ClearExp): How often can this child explain things he or she has seen or
+  !o2_22 (NAMEEMOTIONS): How often can this child recognize and name their own emotions?;
+  !o3_22 (SHARETOYS): How often does this child have difficulty waiting for their turn?;
+  !o4_16 & o4 (PlayWell): How often can this child explain things he or she has seen or done
+  !o5_16 & o5_1722 (HurtSad): How often can this child explain things he or she has seen or
+  !o6_22 (FOCUSON): How often can this child focus on a task you give them for at least a fe
+
+
+  !---------------------------------
+  !        MNLFA item parameters
+  !--------------------------------
+  !o1_1722 on d* (b0);
+  !o4_1722 on d* (b1);
+  !o5_1722 on d* (b2);
+
+  ! MNFLA
+  !b0~ALF(0,1);
+  !b1~ALF(0,1);
+  !b2~ALF(0,1);
+
+  DATA:
+  FILE = dinking.dat;
+
+  VARIABLE:
+  NAMES = recnum year stratfip fipsst stratum hhid fwc age male t d tXd o1_16
+     o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
+  USEV = age male t d tXd o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722
+     o6_22;
+  CATEGORICAL = o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
+  MISSING = .;
+  IDVARIABLE = recnum;
+  !STRATIFICATION = stratfip;
+  !CLUSTER = hhid;
+  WEIGHT = fwc;
+  CLUSTER = fipsst;
+  WITHIN = age male t d txd;
+
+  ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;
+  ESTIMATOR = mlr;
+  ALGORITHM = integration;
+  INTEGRATION = gauss(8);
+  LINK = probit;
+  PROCESSORS = 24;
+
+  MODEL:
+
+  %WITHIN%
+
+      !------------------------------------;
+      !     Measurement parameters;
+      !------------------------------------;
+
+      !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
+         W_EM by o1_16*1 o1_1722*1 (lo1);
+
+      !o2_22 (NAMEEMOTIONS);
+         W_EM by o2_22*1 (lo2);
+
+      !o3_22 (SHARETOYS);
+         W_EM by o3_22*1 (lo3);
+
+      !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+         W_EM by o4_16*1 o4_1722*1 (lo4);
+
+      !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+         W_EM by o5_16*1 o5_1722*1 (lo5);
+
+      !o6_22 (FOCUSON);
+         W_EM by o6_22*1 (lo6);
+
+
+      !------------------------------------;
+      !        Structural parameters;
+      !------------------------------------;
+      !2. Social Emotional Development;
+         W_EM*.9 (w_sig);
+         [W_EM@0];
+         W_EM on age male;
+         s1 | W_EM on t;
+         s2 | W_EM on d;
+         s3 | W_EM on tXd;
+
+  %BETWEEN%
+
+      !------------------------------------;
+      !     Measurement parameters;
+      !------------------------------------;
+      ! Loadings
+          !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
+             B_EM by o1_16*1 o1_1722*1 (lo1);
+
+          !o2_22 (NAMEEMOTIONS);
+             B_EM by o2_22*1 (lo2);
+
+          !o3_22 (SHARETOYS);
+             B_EM by o3_22*1 (lo3);
+
+          !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+             B_EM by o4_16*1 o4_1722*1 (lo4);
+
+          !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+             B_EM by o5_16*1 o5_1722*1 (lo5);
+
+          !o6_22 (FOCUSON);
+             B_EM by o6_22*1 (lo6);
+
+      ! Thresholds
+          !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
+             [o1_16$1* o1_1722$1*] (t1o1_1 t1o1_2);
+                      [o1_1722$2*]        (t2o1_2);
+             [o1_16$2* o1_1722$3*] (t2o1_1 t3o1_2);
+             [o1_16$3* o1_1722$4*] (t3o1_1 t4o1_2);
+
+          !o2_22 (NAMEEMOTIONS);
+             [o2_22$1*] (t1o2);
+             [o2_22$2*] (t2o2);
+             [o2_22$3*] (t3o2);
+             [o2_22$4*] (t4o2);
+
+          !o3_22 (SHARETOYS);
+             [o3_22$1*] (t1o3);
+             [o3_22$2*] (t2o3);
+             [o3_22$3*] (t3o3);
+             [o3_22$4*] (t4o3);
+
+          !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+             [o4_16$1* o4_1722$1*] (t1o4_1 t1o4_2);
+                      [o4_1722$2*]        (t2o4_2);
+             [o4_16$2* o4_1722$3*] (t2o4_1 t3o4_2);
+             [o4_16$3* o4_1722$4*] (t3o4_1 t4o4_2);
+
+          !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+             [o5_16$1* o5_1722$1*] (t1o5_1 t1o5_2);
+                      [o5_1722$2*]        (t2o5_2);
+             [o5_16$2* o5_1722$3*] (t2o5_1 t3o5_2);
+             [o5_16$3* o5_1722$4*] (t3o5_1 t4o5_2);
+
+          !o6_22 (FOCUSON);
+             [o6_22$1*] (t1o6);
+             [o6_22$2*] (t2o6);
+             [o6_22$3*] (t3o6);
+             [o6_22$4*] (t4o6);
+
+      !------------------------------------;
+      !        Structural parameters;
+      !------------------------------------;
+
+      B_EM*.1 (b_sig);
+      B_EM with s3@0 s2@0 s1@0;
+      s1 with s2@0 s3@0;
+      s2 with s3@0;
+
+  MODEL PRIORS:
+
+  !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
+     diff(t1o1_1, t1o1_2)~ALF(0,1);
+     diff(t3o1_1, t4o1_2)~ALF(0,1);
+
+  !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+     diff(t1o4_1, t1o4_2)~ALF(0,1);
+     diff(t3o4_1, t4o4_2)~ALF(0,1);
+
+  !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+     diff(t1o5_1, t1o5_2)~ALF(0,1);
+     diff(t3o5_1, t4o5_2)~ALF(0,1);
+
+
+
+  MODEL CONSTRAINT:
+
+  !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
+     new(dt1o1* dt3o1*);
+     dt1o1=t1o1_1-t1o1_2;
+     dt3o1=t3o1_1-t4o1_2;
+
+  !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+     new(dt1o4* dt3o4*);
+     dt1o4=t1o4_1-t1o4_2;
+     dt3o4=t3o4_1-t4o4_2;
+
+  !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+     new(dt1o5* dt3o5*);
+     dt1o5=t1o5_1-t1o5_2;
+     dt3o5=t3o5_1-t4o5_2;
+
+  0 = 1 - b_sig - w_sig;
+
+  OUTPUT:
+  svalues;
+  noserror;
+
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !o5_16 & o5_1722 (HurtSad): How often can this child explain things he or she has seen or d
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !o6_22 (FOCUSON): How often can this child focus on a task you give them for at least a few
+*** ERROR in MODEL command
+  Unknown threshold value 2 for variable O3_22
+*** ERROR in MODEL command
+  Unknown threshold value 3 for variable O3_22
+*** ERROR in MODEL command
+  Unknown threshold value 4 for variable O3_22
+*** ERROR in MODEL command
+  Unknown threshold value 4 for variable O4_1722
+*** ERROR in MODEL command
+  Unknown threshold value 4 for variable O5_1722
+*** ERROR
+  The following MODEL statements are ignored:
+  * Statements in the BETWEEN level:
+    [ O3_22$2 ]
+    [ O3_22$3 ]
+    [ O3_22$4 ]
+    [ O4_1722$4 ]
+    [ O5_1722$4 ]
+*** ERROR
+  Unknown parameter label in MODEL CONSTRAINT:  T4O4_2
+*** WARNING
+  Data set contains cases with missing on all variables except
+  x-variables.  These cases were not included in the analysis.
+  Number of cases with missing on all variables except x-variables:  983
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2023 Muthen & Muthen

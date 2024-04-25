@@ -1,0 +1,155 @@
+
+TITLE:
+!o1_16 & o1_1722 (ClearExp): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?;
+!o2_22 (NAMEEMOTIONS): How often can this child recognize and name their own emotions?;
+!o3_22 (SHARETOYS): How often does this child have difficulty waiting for their turn?;
+!o4_16 & o4 (PlayWell): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?;
+!o5_16 & o5_1722 (HurtSad): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?;
+!o6_22 (FOCUSON): How often can this child focus on a task you give them for at least a few minutes? For example, can this child focus on simple chores?;
+
+
+!---------------------------------
+!        MNLFA item parameters
+!--------------------------------
+!o1_1722 on d* (b0);
+!o4_1722 on d* (b1);
+!o5_1722 on d* (b2);
+
+! MNFLA
+!b0~ALF(0,1);
+!b1~ALF(0,1);
+!b2~ALF(0,1);
+
+DATA:
+FILE = dinking.dat;
+
+VARIABLE:
+NAMES = recnum year stratfip fipsst stratum hhid fwc age male t d tXd o1_16
+   o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
+USEV = age male t d tXd o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722
+   o6_22;
+CATEGORICAL = o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
+MISSING = .;
+IDVARIABLE = recnum;
+!STRATIFICATION = stratfip;
+!CLUSTER = hhid;
+CLUSTER = fipsst;
+WITHIN = age male t d txd;
+
+ANALYSIS:
+TYPE = TWOLEVEL RANDOM;
+ESTIMATOR = bayes;
+ALGORITHM = integration;
+PROCESSORS = 4;
+CHAINS = 4;
+
+MODEL:
+
+%WITHIN%
+
+    !------------------------------------;
+    !     Measurement parameters;
+    !------------------------------------;
+
+    !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
+       EM by o1_16*1 o1_1722*1 (lo1_1 lo1_2);
+
+    !o2_22 (NAMEEMOTIONS);
+       EM by o2_22*1 (lo2);
+
+    !o3_22 (SHARETOYS);
+       EM by o3_22*1 (lo3);
+
+    !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+       EM by o4_16*1 o4_1722*1 (lo4_1 lo4_2);
+
+    !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+       EM by o5_16*1 o5_1722*1 (lo5_1 lo5_2);
+
+    !o6_22 (FOCUSON);
+       EM by o6_22*1 (lo6);
+
+
+    !------------------------------------;
+    !        Structural parameters;
+    !------------------------------------;
+    !2. Social Emotional Development;
+       EM@1;
+       [EM@0];
+       EM on age male;
+       s1 | EM on t;
+       s2 | EM on d;
+       s3 | EM on tXd;
+
+%BETWEEN%
+
+    !------------------------------------;
+    !     Measurement parameters;
+    !------------------------------------;
+
+
+    !o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
+       [o1_16$1* o1_1722$1*] (t1o1_1 t1o1_2);
+                [o1_1722$2*]        (t2o1_2);
+       [o1_16$2* o1_1722$3*] (t2o1_1 t3o1_2);
+       [o1_16$3* o1_1722$4*] (t3o1_1 t4o1_2);
+
+    !o2_22 (NAMEEMOTIONS);
+       [o2_22$1*] (t1o2);
+       [o2_22$2*] (t2o2);
+       [o2_22$3*] (t3o2);
+       [o2_22$4*] (t4o2);
+
+    !o3_22 (SHARETOYS);
+       [o3_22$1*] (t1o3);
+       [o3_22$2*] (t2o3);
+       [o3_22$3*] (t3o3);
+       [o3_22$4*] (t4o3);
+
+    !o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+       [o4_16$1* o4_1722$1*] (t1o4_1 t1o4_2);
+                [o4_1722$2*]        (t2o4_2);
+       [o4_16$2* o4_1722$3*] (t2o4_1 t3o4_2);
+       [o4_16$3* o4_1722$4*] (t3o4_1 t4o4_2);
+
+    !o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+       [o5_16$1* o5_1722$1*] (t1o5_1 t1o5_2);
+                [o5_1722$2*]        (t2o5_2);
+       [o5_16$2* o5_1722$3*] (t2o5_1 t3o5_2);
+       [o5_16$3* o5_1722$4*] (t3o5_1 t4o5_2);
+    
+    !o6_22 (FOCUSON);
+       [o6_22$1*] (t1o6);
+       [o6_22$2*] (t2o6);
+       [o6_22$3*] (t3o6);
+       [o6_22$4*] (t4o6);
+
+    !------------------------------------;
+    !        Structural parameters;
+    !------------------------------------;
+
+
+    s1 with s2@0 s3@0; 
+    s2 with s3@0;
+
+MODEL PRIORS:
+
+!o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
+   diff(lo1_1,lo1_2)~N(0,.001);
+   diff(t1o1_1, t1o1_2)~N(0,.001);
+   diff(t3o1_1, t4o1_2)~N(0,.001);
+
+!o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
+   diff(lo4_1,lo4_2)~N(0,.001);
+   diff(t1o4_1, t1o4_2)~N(0,.001);
+   diff(t3o4_1, t4o4_2)~N(0,.001);
+
+!o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
+   diff(lo5_1,lo5_2)~N(0,.001);
+   diff(t1o5_1, t1o5_2)~N(0,.001);
+   diff(t3o5_1, t4o5_2)~N(0,.001);
+
+
+
+OUTPUT:
+svalues;

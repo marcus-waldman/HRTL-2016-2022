@@ -11,32 +11,26 @@ TITLE:
 !e7_22 (COUNTTO_R): If asked to count objects, how high can this child count correctly?;
 !e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? For example, can this child tell you a group of seven blocks has more than a group of four blocks?;
 !e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For example, can this child tell you that two blocks and three blocks add to a total of five blocks?;
-!o1_16 & o1_1722 (ClearExp): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?;
-!o2_22 (NAMEEMOTIONS): How often can this child recognize and name their own emotions?;
-!o3_22 (SHARETOYS): How often does this child have difficulty waiting for their turn?;
-!o4_16 & o4 (PlayWell): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?;
-!o5_16 & o5_1722 (HurtSad): How often can this child explain things he or she has seen or done so that you get a very good idea what happened?;
-!o6_22 (FOCUSON): How often can this child focus on a task you give them for at least a few minutes? For example, can this child focus on simple chores?;
 
 DATA:
 FILE = dinking.dat;
 
 VARIABLE:
-NAMES = recnum year stratfip hhid fwc age male yr16 yr17 yr18 yr19 yr20 yr21
-   e1_16 e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16 e5_1722 e6_22 e7_1621
-   e7_22 e8_22 e9_22 o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722
-   o6_22;
-USEV = age male yr16 yr17 yr18 yr19 yr20 yr21 e1_16 e1_1722 e2_22 e3_1621 e3_22
-   e4_16 e4_1722 e5_16 e5_1722 e6_22 e7_1621 e7_22 e8_22 e9_22 o1_16 o1_1722
-   o2_22 o3_22 o4_16 o4_1722 o5_16 o5_1722 o6_22;
+NAMES = recnum year stratfip fipsst stratum hhid fwc age male t d tXd e1_16
+   e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16 e5_1722 e6_22 e7_1621 e7_22
+   e8_22 e9_22;
+USEV = age male t d tXd e1_16 e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16
+   e5_1722 e6_22 e7_1621 e7_22 e8_22 e9_22;
 CATEGORICAL = e1_16 e1_1722 e2_22 e3_1621 e3_22 e4_16 e4_1722 e5_16 e5_1722
-   e6_22 e7_1621 e7_22 e8_22 e9_22 o1_16 o1_1722 o2_22 o3_22 o4_16 o4_1722 o5_16
-   o5_1722 o6_22;
+   e6_22 e7_1621 e7_22 e8_22 e9_22;
 MISSING = .;
 IDVARIABLE = recnum;
+STRATIFICATION = stratfip;
+CLUSTER = hhid;
+WEIGHT = fwc;
 
 ANALYSIS:
-TYPE = general;
+TYPE = complex;
 ESTIMATOR = mlr;
 ALGORITHM = integration;
 INTEGRATION = gauss(8);
@@ -112,92 +106,64 @@ MODEL:
    [e9_22$3*] (t3e9);
    [e9_22$4*] (t4e9);
 
-!o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2);
-   EM by o1_16*1 o1_1722*1 (lo1);
-   [o1_16$1* o1_1722$1*] (t1o1_1 t1o1_2);
-            [o1_1722$2*]        (t2o1_2);
-   [o1_16$2* o1_1722$3*] (t2o1_1 t3o1_2);
-   [o1_16$3* o1_1722$4*] (t3o1_1 t4o1_2);
-
-!o2_22 (NAMEEMOTIONS);
-   EM by o2_22*1 (lo2);
-   [o2_22$1*] (t1o2);
-   [o2_22$2*] (t2o2);
-   [o2_22$3*] (t3o2);
-   [o2_22$4*] (t4o2);
-
-!o3_22 (SHARETOYS);
-   EM by o3_22*1 (lo3);
-   [o3_22$1*] (t1o3);
-   [o3_22$2*] (t2o3);
-   [o3_22$3*] (t3o3);
-   [o3_22$4*] (t4o3);
-
-!o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
-   EM by o4_16*1 o4_1722*1 (lo4);
-   [o4_16$1* o4_1722$1*] (t1o4_1 t1o4_2);
-            [o4_1722$2*]        (t2o4_2);
-   [o4_16$2* o4_1722$3*] (t2o4_1 t3o4_2);
-   [o4_16$3* o4_1722$4*] (t3o4_1 t4o4_2);
-
-!o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
-   EM by o5_16*1 o5_1722*1 (lo5);
-   [o5_16$1* o5_1722$1*] (t1o5_1 t1o5_2);
-            [o5_1722$2*]          (t2o5_1);
-   [o5_16$2* o5_1722$3*] (t2o5_1 t3o5_2);
-   [o5_16$3* o5_1722$4*] (t3o5_1 t4o5_2);
-!o6_22 (FOCUSON);
-   EM by o6_22*1 (lo6);
-   [o6_22$1*] (t1o6);
-   [o6_22$2*] (t2o6);
-   [o6_22$3*] (t3o6);
-   [o6_22$4*] (t4o6);
-
 !------------------------------------;
 !        Structural parameters;
 !------------------------------------;
 !1. Early Learning Skills;
    EL@1;
    [EL@0];
-   EL on age-yr21*;
-!2. Social Emotional Development;
-   EM@1;
-   [EM@0];
-   EM on age-yr21*;
-!Factor covariances;
-   EM with EL*;
+   EL on age* male* t* d* tXd**;
 
 MODEL PRIORS:
 
 !e1_16 & e1_1722 (RecogBegin);
+   diff(t1e1_1, t1e1_2)~ALF(0,1);
    diff(t3e1_1, t4e1_2)~ALF(0,1);
 
+!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+   diff(le3_1,le3_2)~ALF(0,1);
+
 !e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2;
+   diff(t1e4_1, t1e4_2)~ALF(0,1);
    diff(t3e4_1, t4e4_2)~ALF(0,1);
 
 !e5_16 & e5 (WriteName);
+   diff(t1e5_1, t1e5_2)~ALF(0,1);
    diff(t3e5_1, t4e5_2)~ALF(0,1);
 
-!o1_16 & o1_1722 (ClearExp; 2016:_1, 2017-22:_2): ;
-   diff(t3o1_1, t4o1_2)~ALF(0,1);
+!e7: COUNTTO (2016-2021) & COUNTTO_R (2022);
+   diff(le7_1,le7_2)~ALF(0,1);
+   diff(t1e7_1, t1e7_2)~ALF(0,1);
+   diff(t2e7_1, t2e7_2)~ALF(0,1);
+   diff(t3e7_1, t3e7_2)~ALF(0,1);
 
-!o4_16 & o4_1722 (PlayWell; 2016: _1, 2017-22: _2);
-   diff(t3o4_1, t4o4_2)~ALF(0,1);
+MODEL CONSTRAINT:
 
-!o5_16 & o5_1722 (HurtSad; 2016: _1; 2017-2022: _2);
-   diff(t3o5_1, t4o5_2)~ALF(0,1);
+!e1_16 & e1_1722 (RecogBegin);
+   new(dt1e1* dt3e1*);
+   dt1e1 = t1e1_1-t1e1_2;
+   dt3e1 = t3e1_1-t4e1_2;
 
-MODEL CONSTRAINT: 
+!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+   new(dle3*0);
+   dle3 = le3_1-le3_2;
 
-0 = (t3e1_1 - t4e1_2)/le1 + 
-    (t3e4_1 - t4e4_2)/le4 + 
-    (t3e5_1 - t4e5_2)/le5;
-0 = (t3o1_1 - t4o1_2)/lo1 + 
-    (t3o4_1 - t4o4_2)/lo4 + 
-    (t3o5_1 - t4o5_2)/lo5;
-    
+!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2;
+   new(dt1e4* dt3e4*);
+   dt1e4 = t1e4_1-t1e4_2;
+   dt3e4 = t3e4_1-t4e4_2;
 
+!e5_16 & e5 (WriteName);
+   new(dt1e5* dt3e5*);
+   dt1e5 = t1e5_1-t1e5_2;
+   dt3e5 = t3e5_1-t4e5_2;
 
+!e7: COUNTTO (2016-2021) & COUNTTO_R (2022);
+   new(dle7* dt1e7* dt2e7* dt3e7*);
+   dle7 = le7_1-le7_2;
+   dt1e7 = t1e7_1-t1e7_2;
+   dt2e7 = t2e7_1-t2e7_2;
+   dt3e7 = t3e7_1-t3e7_2;
 
 OUTPUT:
 svalues;

@@ -67,7 +67,14 @@ o1<-function(raw_datasets, dprior){ # 1-CLEAREXP
                            )
   )
   
-  return(list(data = df_o1 %>% dplyr::select(year,hhid,o1_16,o1_1722), syntax = syntax_o1))
+  
+  df_o1 = df_o1 %>% safe_left_join(
+    transfer_never_always(., var_from = "o1_16", var_to = "o1_1722", values_from = c(0,3), values_to = c(0,4)), 
+    by = c("year","hhid")
+  )
+  
+  
+  return(list(data = df_o1 %>% dplyr::select(year,hhid,starts_with("o1"), starts_with("oo1")), syntax = syntax_o1))
   
 }
 
