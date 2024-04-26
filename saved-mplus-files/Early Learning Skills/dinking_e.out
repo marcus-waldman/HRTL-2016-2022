@@ -1,0 +1,714 @@
+Mplus VERSION 8.10
+MUTHEN & MUTHEN
+04/25/2024   7:49 PM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE:
+  !e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a
+  !e2_22 (SAMESOUND): How often can this child come up with words that start with the same s
+  !e3_1621 (RHYMEWORD): How well can this child come up with words that rhyme? For example,
+  !e3_22 (RHYMEWORD_R): Can this child rhyme words?;
+  !e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recogni
+  !e5_16 & e5_1722 (WriteName): How often can this child write their first name, even if som
+  !e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can t
+  !e7a_1621 (COUNTTO): How high can this child count?;
+  !e7b_22 (COUNTTO_R): If asked to count objects, how high can this child count correctly?;
+  !e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? Fo
+  !e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For exampl
+
+  DATA:
+  FILE = dinking_e.dat;
+
+  VARIABLE:
+  NAMES = recnum year stratfip fipsst stratum hhid fwc age male yr16 yr17 yr18
+     yr19 yr20 yr21 e1_16 e1_1722 ee1_16 ee1_1722 e2_22 e3_1621 e3_22 e4_16
+     e4_1722 ee4_16 ee4_1722 e5_16 e5_1722 ee5_16 ee5_1722 e6_22 e7a_1621 e7b_22
+     e8_22 e9_22;
+  USEV = age male yr17 yr18 yr19 yr20 yr21 ee1_1722 e2_22 e3_1621
+     e3_22 ee4_1722 ee5_1722 e6_22 e7a_1621 e7b_22 e8_22 e9_22;
+  CATEGORICAL = ee1_1722 e2_22 e3_1621 e3_22 ee4_1722
+     ee5_1722 e6_22 e7a_1621 e7b_22 e8_22 e9_22;
+  MISSING = .;
+  IDVARIABLE = recnum;
+  USEOBS = yr16 EQ 0;
+
+
+  ANALYSIS:
+  TYPE = general;
+  ESTIMATOR = mlr;
+  ALGORITHM = integration;
+  INTEGRATION = gauss(16);
+  LINK = logit;
+  PROCESSORS = 4;
+
+  MODEL:
+
+  !------------------------------------;
+  !     Measurement parameters;
+  !------------------------------------;
+
+  !ee1_16 & ee1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2);
+     EL by ee1_1722*1 (lee1);
+     [ee1_1722$1*] (t1ee1_2);
+     [ee1_1722$2*] (t2ee1_2);
+     [ee1_1722$3*] (t3ee1_2);
+     [ee1_1722$4*] (t4ee1_2);
+
+  !e2_22 (SAMESOUND);
+     EL by e2_22*1 (le2);
+     [e2_22$1*] (t1e2);
+     [e2_22$2*] (t2e2);
+     [e2_22$3*] (t3e2);
+     [e2_22$4*] (t4e2);
+
+  !e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+     EL by e3_1621*1 e3_22*1 (le3_1 le3_2);
+     [e3_1621$1* e3_22$1*] (t1e3_1 t1e3_2);
+                [e3_22$2*] (t2e3_2);
+                [e3_22$3*] (t3e3_2);
+
+  !e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2);
+     EL by ee4_1722*1 (lee4);
+     [ee4_1722$1*] (t1ee4_2);
+     [ee4_1722$2*] (t2ee4_2);
+     [ee4_1722$3*] (t3ee4_2);
+     [ee4_1722$4*] (t4ee4_2);
+
+  !e5_16 & e5 (WriteName):;
+     EL by ee5_1722*1 (lee5);
+     [ee5_1722$1*] (t1ee5_2);
+     [ee5_1722$2*] (t2ee5_2);
+     [ee5_1722$3*] (t3ee5_2);
+     [ee5_1722$4*] (t4ee5_2);
+
+  !e6_22 (READONEDIGIT);
+     EL by e6_22*1 (le6);
+     [e6_22$1*] (t1e6);
+     [e6_22$2*] (t2e6);
+     [e6_22$3*] (t3e6);
+     [e6_22$4*] (t4e6);
+
+  !e7: COUNTTO (2016-2021) COUNTTO_R (2022);
+     EL by e7a_1621*1 e7b_22*1 (le7_1 le7_2);
+     [e7a_1621$1* e7b_22$1*] (t1e7_1 t1e7_2);
+     [e7a_1621$2* e7b_22$2*] (t2e7_1 t2e7_2);
+     [e7a_1621$3* e7b_22$3*] (t3e7_1 t3e7_2);
+     [e7a_1621$4* e7b_22$4*] (t4e7_1 t4e7_2);
+     [e7a_1621$5*] (t5e7_1);
+
+  !e8_22 (GROUPOFOBJECTS);
+     EL by e8_22*1 (le8);
+     [e8_22$1*] (t1e8);
+     [e8_22$2*] (t2e8);
+     [e8_22$3*] (t3e8);
+     [e8_22$4*] (t4e8);
+
+  !e9 (SIMPLEADDITION);
+     EL by e9_22*1 (le9);
+     [e9_22$1*] (t1e9);
+     [e9_22$2*] (t2e9);
+     [e9_22$3*] (t3e9);
+     [e9_22$4*] (t4e9);
+
+  !------------------------------------;
+  !        Structural parameters;
+  !------------------------------------;
+  !1. Early Learning Skills;
+     EL@1;
+     [EL@0];
+     EL on age* male* yr17-yr21*;;
+
+
+  OUTPUT:
+  svalues;
+
+  MODEL CONSTRAINT:
+
+  !e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+     new(dle3*0);
+     dle3 = le3_1-le3_2;
+
+
+
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e2_22 (SAMESOUND): How often can this child come up with words that start with the same so
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e3_1621 (RHYMEWORD): How well can this child come up with words that rhyme? For example, c
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recogniz
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e5_16 & e5_1722 (WriteName): How often can this child write their first name, even if some
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can th
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? For
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+  !e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For example
+*** WARNING
+  Data set contains cases with missing on all variables except
+  x-variables.  These cases were not included in the analysis.
+  Number of cases with missing on all variables except x-variables:  785
+   8 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                       41644
+
+Number of dependent variables                                   11
+Number of independent variables                                  7
+Number of continuous latent variables                            1
+
+Observed dependent variables
+
+  Binary and ordered categorical (ordinal)
+   EE1_1722    E2_22       E3_1621     E3_22       EE4_1722    EE5_1722
+   E6_22       E7A_1621    E7B_22      E8_22       E9_22
+
+Observed independent variables
+   AGE         MALE        YR17        YR18        YR19        YR20
+   YR21
+
+Continuous latent variables
+   EL
+
+Variables with special functions
+
+  ID variable           RECNUM
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Optimization Specifications for the Quasi-Newton Algorithm for
+Continuous Outcomes
+  Maximum number of iterations                                 100
+  Convergence criterion                                  0.100D-05
+Optimization Specifications for the EM Algorithm
+  Maximum number of iterations                                 500
+  Convergence criteria
+    Loglikelihood change                                 0.100D-02
+    Relative loglikelihood change                        0.100D-05
+    Derivative                                           0.100D-02
+Optimization Specifications for the M step of the EM Algorithm for
+Categorical Latent variables
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+Optimization Specifications for the M step of the EM Algorithm for
+Censored, Binary or Ordered Categorical (Ordinal), Unordered
+Categorical (Nominal) and Count Outcomes
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+  Maximum value for logit thresholds                            15
+  Minimum value for logit thresholds                           -15
+  Minimum expected cell size for chi-square              0.100D-01
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Optimization algorithm                                         EMA
+Integration Specifications
+  Type                                                GAUSSHERMITE
+  Number of integration points                                  16
+  Dimensions of numerical integration                            1
+  Adaptive quadrature                                           ON
+Link                                                         LOGIT
+Cholesky                                                        ON
+
+Input data file(s)
+  dinking_e.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            73
+     Number of y missing data patterns           0
+     Number of u missing data patterns          73
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT FOR U
+
+
+           Covariance Coverage
+              EE1_1722      E2_22         E3_1621       E3_22         EE4_1722
+              ________      ________      ________      ________      ________
+ EE1_1722       0.996
+ E2_22          0.259         0.260
+ E3_1621        0.732         0.000         0.734
+ E3_22          0.259         0.259         0.000         0.260
+ EE4_1722       0.994         0.259         0.733         0.259         0.997
+ EE5_1722       0.993         0.260         0.731         0.260         0.993
+ E6_22          0.259         0.259         0.000         0.259         0.259
+ E7A_1621       0.734         0.000         0.733         0.000         0.735
+ E7B_22         0.259         0.259         0.000         0.259         0.259
+ E8_22          0.259         0.258         0.000         0.259         0.259
+ E9_22          0.259         0.259         0.000         0.259         0.259
+
+
+           Covariance Coverage
+              EE5_1722      E6_22         E7A_1621      E7B_22        E8_22
+              ________      ________      ________      ________      ________
+ EE5_1722       0.996
+ E6_22          0.260         0.260
+ E7A_1621       0.734         0.000         0.737
+ E7B_22         0.260         0.259         0.000         0.260
+ E8_22          0.259         0.259         0.000         0.259         0.260
+ E9_22          0.260         0.259         0.000         0.259         0.259
+
+
+           Covariance Coverage
+              E9_22
+              ________
+ E9_22          0.260
+
+
+UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+
+    EE1_1722
+      Category 1    0.056         2322.000
+      Category 2    0.105         4343.000
+      Category 3    0.071         2934.000
+      Category 4    0.317        13142.000
+      Category 5    0.452        18745.000
+    E2_22
+      Category 1    0.083          900.000
+      Category 2    0.126         1368.000
+      Category 3    0.079          850.000
+      Category 4    0.299         3234.000
+      Category 5    0.413         4471.000
+    E3_1621
+      Category 1    0.301         9203.000
+      Category 2    0.699        21377.000
+    E3_22
+      Category 1    0.195         2105.000
+      Category 2    0.132         1427.000
+      Category 3    0.389         4210.000
+      Category 4    0.285         3080.000
+    EE4_1722
+      Category 1    0.042         1738.000
+      Category 2    0.170         7068.000
+      Category 3    0.082         3421.000
+      Category 4    0.222         9204.000
+      Category 5    0.484        20080.000
+    EE5_1722
+      Category 1    0.289        11994.000
+      Category 2    0.111         4623.000
+      Category 3    0.046         1925.000
+      Category 4    0.106         4412.000
+      Category 5    0.447        18523.000
+    E6_22
+      Category 1    0.081          875.000
+      Category 2    0.102         1106.000
+      Category 3    0.055          595.000
+      Category 4    0.176         1909.000
+      Category 5    0.586         6343.000
+    E7A_1621
+      Category 1    0.018          561.000
+      Category 2    0.036         1118.000
+      Category 3    0.200         6147.000
+      Category 4    0.419        12852.000
+      Category 5    0.125         3845.000
+      Category 6    0.201         6161.000
+    E7B_22
+      Category 1    0.034          364.000
+      Category 2    0.055          594.000
+      Category 3    0.264         2855.000
+      Category 4    0.291         3152.000
+      Category 5    0.357         3869.000
+    E8_22
+      Category 1    0.076          821.000
+      Category 2    0.105         1140.000
+      Category 3    0.059          637.000
+      Category 4    0.248         2677.000
+      Category 5    0.512         5532.000
+    E9_22
+      Category 1    0.279         3016.000
+      Category 2    0.198         2146.000
+      Category 3    0.084          911.000
+      Category 4    0.208         2246.000
+      Category 5    0.231         2501.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     AGE                   4.000      -0.001       3.000   33.38%       3.000      4.000      4.000
+           41644.000       0.668      -1.503       5.000   33.42%       4.000      5.000
+     MALE                  0.515      -0.060       0.000   48.51%       0.000      0.000      1.000
+           41644.000       0.250      -1.996       1.000   51.49%       1.000      1.000
+     YR17                  0.076       3.201       0.000   92.40%       0.000      0.000      0.000
+           41644.000       0.070       8.244       1.000    7.60%       0.000      0.000
+     YR18                  0.108       2.521       0.000   89.17%       0.000      0.000      0.000
+           41644.000       0.097       4.357       1.000   10.83%       0.000      0.000
+     YR19                  0.110       2.487       0.000   88.96%       0.000      0.000      0.000
+           41644.000       0.098       4.183       1.000   11.04%       0.000      0.000
+     YR20                  0.160       1.858       0.000   84.03%       0.000      0.000      0.000
+           41644.000       0.134       1.452       1.000   15.97%       0.000      0.000
+     YR21                  0.284       0.956       0.000   71.57%       0.000      0.000      0.000
+           41644.000       0.203      -1.085       1.000   28.43%       0.000      1.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+  ERROR OCCURRED IN THE BRANT WALD TEST FOR PROPORTIONAL ODDS FOR E2_22.
+
+  ERROR OCCURRED IN THE BRANT WALD TEST FOR PROPORTIONAL ODDS FOR E3_22.
+
+  ERROR OCCURRED IN THE BRANT WALD TEST FOR PROPORTIONAL ODDS FOR E6_22.
+
+  ERROR OCCURRED IN THE BRANT WALD TEST FOR PROPORTIONAL ODDS FOR E8_22.
+
+  ERROR OCCURRED IN THE BRANT WALD TEST FOR PROPORTIONAL ODDS FOR E9_22.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       59
+
+Loglikelihood
+
+          H0 Value                     -261504.993
+          H0 Scaling Correction Factor      1.0037
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                  523127.985
+          Bayesian (BIC)                523637.563
+          Sample-Size Adjusted BIC      523450.061
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ EL       BY
+    EE1_1722           1.180      0.016     74.690      0.000
+    E2_22              1.568      0.030     52.534      0.000
+    E3_1621            1.483      0.024     62.543      0.000
+    E3_22              1.660      0.030     54.624      0.000
+    EE4_1722           1.811      0.023     80.021      0.000
+    EE5_1722           2.363      0.025     93.260      0.000
+    E6_22              2.145      0.042     51.556      0.000
+    E7A_1621           2.027      0.025     80.045      0.000
+    E7B_22             1.647      0.031     52.662      0.000
+    E8_22              1.614      0.030     53.734      0.000
+    E9_22              2.030      0.035     57.279      0.000
+
+ EL         ON
+    AGE                0.953      0.009    101.600      0.000
+    MALE              -0.208      0.011    -18.510      0.000
+    YR17               0.147      0.024      6.231      0.000
+    YR18               0.158      0.020      7.743      0.000
+    YR19               0.151      0.021      7.327      0.000
+    YR20               0.025      0.018      1.361      0.173
+    YR21               0.037      0.016      2.322      0.020
+
+ Intercepts
+    EL                 0.000      0.000    999.000    999.000
+
+ Thresholds
+    EE1_1722$1         0.747      0.052     14.411      0.000
+    EE1_1722$2         2.255      0.052     42.949      0.000
+    EE1_1722$3         2.870      0.053     53.656      0.000
+    EE1_1722$4         4.765      0.058     81.533      0.000
+    E2_22$1            2.107      0.093     22.763      0.000
+    E2_22$2            3.759      0.099     37.795      0.000
+    E2_22$3            4.439      0.104     42.858      0.000
+    E2_22$4            6.437      0.118     54.560      0.000
+    E3_1621$1          4.279      0.084     51.056      0.000
+    E3_22$1            3.783      0.104     36.474      0.000
+    E3_22$2            4.922      0.110     44.549      0.000
+    E3_22$3            7.707      0.134     57.314      0.000
+    EE4_1722$1         1.746      0.069     25.395      0.000
+    EE4_1722$2         4.584      0.074     61.760      0.000
+    EE4_1722$3         5.350      0.077     69.642      0.000
+    EE4_1722$4         6.975      0.083     84.201      0.000
+    EE5_1722$1         6.941      0.128     54.382      0.000
+    EE5_1722$2         7.993      0.134     59.594      0.000
+    EE5_1722$3         8.414      0.137     61.417      0.000
+    EE5_1722$4         9.361      0.143     65.265      0.000
+    E6_22$1            3.349      0.120     28.008      0.000
+    E6_22$2            5.070      0.131     38.558      0.000
+    E6_22$3            5.724      0.137     41.767      0.000
+    E6_22$4            7.315      0.150     48.876      0.000
+    E7A_1621$1         1.102      0.084     13.041      0.000
+    E7A_1621$2         2.711      0.082     33.041      0.000
+    E7A_1621$3         5.609      0.091     61.885      0.000
+    E7A_1621$4         9.060      0.110     82.406      0.000
+    E7A_1621$5        10.307      0.117     87.749      0.000
+    E7B_22$1           0.966      0.094     10.279      0.000
+    E7B_22$2           2.386      0.098     24.247      0.000
+    E7B_22$3           5.055      0.116     43.427      0.000
+    E7B_22$4           7.087      0.133     53.421      0.000
+    E8_22$1            2.072      0.097     21.374      0.000
+    E8_22$2            3.566      0.101     35.226      0.000
+    E8_22$3            4.138      0.104     39.630      0.000
+    E8_22$4            5.941      0.116     51.268      0.000
+    E9_22$1            5.700      0.130     43.981      0.000
+    E9_22$2            7.371      0.142     51.952      0.000
+    E9_22$3            8.034      0.148     54.422      0.000
+    E9_22$4            9.831      0.164     59.999      0.000
+
+ Residual Variances
+    EL                 1.000      0.000    999.000    999.000
+
+New/Additional Parameters
+    DLE3              -0.177      0.037     -4.806      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.169E-05
+       (ratio of smallest to largest eigenvalue)
+
+
+RESULTS IN PROBABILITY SCALE
+
+                    Estimate
+
+ EE1_1722
+    Category 1         0.057
+    Category 2         0.114
+    Category 3         0.076
+    Category 4         0.311
+    Category 5         0.443
+ E2_22
+    Category 1         0.078
+    Category 2         0.133
+    Category 3         0.081
+    Category 4         0.288
+    Category 5         0.421
+ E3_1621
+    Category 1         0.307
+    Category 2         0.693
+ E3_22
+    Category 1         0.186
+    Category 2         0.130
+    Category 3         0.386
+    Category 4         0.299
+ EE4_1722
+    Category 1         0.041
+    Category 2         0.181
+    Category 3         0.086
+    Category 4         0.214
+    Category 5         0.478
+ EE5_1722
+    Category 1         0.291
+    Category 2         0.109
+    Category 3         0.046
+    Category 4         0.106
+    Category 5         0.448
+ E6_22
+    Category 1         0.074
+    Category 2         0.106
+    Category 3         0.057
+    Category 4         0.171
+    Category 5         0.591
+ E7A_1621
+    Category 1         0.019
+    Category 2         0.040
+    Category 3         0.203
+    Category 4         0.413
+    Category 5         0.128
+    Category 6         0.198
+ E7B_22
+    Category 1         0.029
+    Category 2         0.054
+    Category 3         0.255
+    Category 4         0.288
+    Category 5         0.374
+ E8_22
+    Category 1         0.071
+    Category 2         0.107
+    Category 3         0.060
+    Category 4         0.243
+    Category 5         0.520
+ E9_22
+    Category 1         0.270
+    Category 2         0.196
+    Category 3         0.083
+    Category 4         0.206
+    Category 5         0.244
+
+
+BRANT WALD TEST FOR PROPORTIONAL ODDS
+
+                                   Degrees of
+                      Chi-Square     Freedom   P-Value
+
+  EE1_1722
+    Overall test         490.939        21      0.000
+    AGE                  427.354         3      0.000
+    MALE                  24.417         3      0.000
+    YR17                   6.013         3      0.111
+    YR18                  25.672         3      0.000
+    YR19                  22.947         3      0.000
+    YR20                  15.658         3      0.001
+    YR21                  12.082         3      0.007
+
+  EE4_1722
+    Overall test         344.234        21      0.000
+    AGE                  278.061         3      0.000
+    MALE                  60.783         3      0.000
+    YR17                   3.758         3      0.289
+    YR18                   1.066         3      0.785
+    YR19                   1.391         3      0.708
+    YR20                   1.197         3      0.754
+    YR21                   5.263         3      0.153
+
+  EE5_1722
+    Overall test         137.947        21      0.000
+    AGE                   83.519         3      0.000
+    MALE                  15.373         3      0.002
+    YR17                   6.954         3      0.073
+    YR18                   1.133         3      0.769
+    YR19                   1.293         3      0.731
+    YR20                  12.293         3      0.006
+    YR21                   9.122         3      0.028
+
+  E7A_1621
+    Overall test         539.763        28      0.000
+    AGE                  345.538         4      0.000
+    MALE                 175.812         4      0.000
+    YR17                   0.083         4      0.999
+    YR18                   0.089         4      0.999
+    YR19                   0.090         4      0.999
+    YR20                   0.086         4      0.999
+    YR21                   0.083         4      0.999
+
+  E7B_22
+    Overall test         120.085        21      0.000
+    AGE                   79.834         3      0.000
+    MALE                  39.241         3      0.000
+    YR17                   0.002         3      1.000
+    YR18                   0.003         3      1.000
+    YR19                   0.003         3      1.000
+    YR20                   0.004         3      1.000
+    YR21                   0.007         3      1.000
+
+
+MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES
+
+     el BY ee1_1722*1.17955 (lee1);
+     el BY e2_22*1.56827 (le2);
+     el BY e3_1621*1.48260 (le3_1);
+     el BY e3_22*1.65958 (le3_2);
+     el BY ee4_1722*1.81079 (lee4);
+     el BY ee5_1722*2.36275 (lee5);
+     el BY e6_22*2.14521 (le6);
+     el BY e7a_1621*2.02693 (le7_1);
+     el BY e7b_22*1.64734 (le7_2);
+     el BY e8_22*1.61392 (le8);
+     el BY e9_22*2.03008 (le9);
+
+     el ON age*0.95274;
+     el ON male*-0.20771;
+     el ON yr17*0.14722;
+     el ON yr18*0.15819;
+     el ON yr19*0.15070;
+     el ON yr20*0.02498;
+     el ON yr21*0.03729;
+
+     [ el@0 ];
+
+     [ ee1_1722$1*0.74678 ] (t1ee1_2);
+     [ ee1_1722$2*2.25459 ] (t2ee1_2);
+     [ ee1_1722$3*2.87034 ] (t3ee1_2);
+     [ ee1_1722$4*4.76517 ] (t4ee1_2);
+     [ e2_22$1*2.10719 ] (t1e2);
+     [ e2_22$2*3.75896 ] (t2e2);
+     [ e2_22$3*4.43853 ] (t3e2);
+     [ e2_22$4*6.43688 ] (t4e2);
+     [ e3_1621$1*4.27919 ] (t1e3_1);
+     [ e3_22$1*3.78287 ] (t1e3_2);
+     [ e3_22$2*4.92223 ] (t2e3_2);
+     [ e3_22$3*7.70677 ] (t3e3_2);
+     [ ee4_1722$1*1.74568 ] (t1ee4_2);
+     [ ee4_1722$2*4.58449 ] (t2ee4_2);
+     [ ee4_1722$3*5.35003 ] (t3ee4_2);
+     [ ee4_1722$4*6.97509 ] (t4ee4_2);
+     [ ee5_1722$1*6.94149 ] (t1ee5_2);
+     [ ee5_1722$2*7.99283 ] (t2ee5_2);
+     [ ee5_1722$3*8.41354 ] (t3ee5_2);
+     [ ee5_1722$4*9.36080 ] (t4ee5_2);
+     [ e6_22$1*3.34905 ] (t1e6);
+     [ e6_22$2*5.06969 ] (t2e6);
+     [ e6_22$3*5.72394 ] (t3e6);
+     [ e6_22$4*7.31469 ] (t4e6);
+     [ e7a_1621$1*1.10184 ] (t1e7_1);
+     [ e7a_1621$2*2.71109 ] (t2e7_1);
+     [ e7a_1621$3*5.60938 ] (t3e7_1);
+     [ e7a_1621$4*9.05966 ] (t4e7_1);
+     [ e7a_1621$5*10.30724 ] (t5e7_1);
+     [ e7b_22$1*0.96621 ] (t1e7_2);
+     [ e7b_22$2*2.38615 ] (t2e7_2);
+     [ e7b_22$3*5.05453 ] (t3e7_2);
+     [ e7b_22$4*7.08697 ] (t4e7_2);
+     [ e8_22$1*2.07162 ] (t1e8);
+     [ e8_22$2*3.56562 ] (t2e8);
+     [ e8_22$3*4.13831 ] (t3e8);
+     [ e8_22$4*5.94078 ] (t4e8);
+     [ e9_22$1*5.69994 ] (t1e9);
+     [ e9_22$2*7.37084 ] (t2e9);
+     [ e9_22$3*8.03355 ] (t3e9);
+     [ e9_22$4*9.83079 ] (t4e9);
+
+     el@1;
+
+     ! NEW statements in MODEL CONSTRAINT
+     NEW(dle3*-0.17698);
+
+
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\repos\hrtl-2016-2022\dinking_e.dgm
+
+     Beginning Time:  19:49:30
+        Ending Time:  19:49:50
+       Elapsed Time:  00:00:20
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2023 Muthen & Muthen

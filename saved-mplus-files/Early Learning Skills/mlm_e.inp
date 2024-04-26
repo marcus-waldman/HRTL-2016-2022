@@ -1,0 +1,165 @@
+
+TITLE:
+!e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?;
+!e2_22 (SAMESOUND): How often can this child come up with words that start with the same sound? For example, can this child come up with 'sock' and 'sun'?;
+!e3_1621 (RHYMEWORD): How well can this child come up with words that rhyme? For example, can this child come up with 'cat' and 'mat?;
+!e3_22 (RHYMEWORD_R): Can this child rhyme words?;
+!e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recognize?;
+!e5_16 & e5_1722 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?;
+!e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can this child read the numbers 2 or 8?;
+!e7a_1621 (COUNTTO): How high can this child count?;
+!e7b_22 (COUNTTO_R): If asked to count objects, how high can this child count correctly?;
+!e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? For example, can this child tell you a group of seven blocks has more than a group of four blocks?;
+!e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For example, can this child tell you that two blocks and three blocks add to a total of five blocks?;
+
+DATA:
+FILE = dinking_e.dat;
+
+VARIABLE:
+NAMES = recnum year stratfip fipsst stratum hhid fwc age male yr16 yr17 yr18
+   yr19 yr20 yr21 e1_16 e1_1722 ee1_16 ee1_1722 e2_22 e3_1621 e3_22 e4_16
+   e4_1722 ee4_16 ee4_1722 e5_16 e5_1722 ee5_16 ee5_1722 e6_22 e7a_1621 e7b_22
+   e8_22 e9_22;
+USEV = age male yr17 yr18 yr19 yr20 yr21 ee1_1722 e2_22 e3_1621
+   e3_22 ee4_1722 ee5_1722 e6_22 e7a_1621 e7b_22 e8_22 e9_22;
+CATEGORICAL = ee1_1722 e2_22 e3_1621 e3_22 ee4_1722 
+   ee5_1722 e6_22 e7a_1621 e7b_22 e8_22 e9_22;
+MISSING = .;
+IDVARIABLE = recnum;
+USEOBS = yr16 EQ 0;
+CLUSTER = fipsst;
+WITHIN = age male yr17-yr21;
+
+
+ANALYSIS:
+TYPE = random twolevel;
+ESTIMATOR = mlr;
+ALGORITHM = integration;
+INTEGRATION = gauss(10);
+LINK = logit;
+PROCESSORS = 32;
+MITERATIONS = 1500;
+
+MODEL:
+
+%WITHIN%
+!------------------------------------;
+!     Measurement parameters;
+!------------------------------------;
+
+!ee1_16 & ee1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2);
+   W_EL by ee1_1722*1 (lee1);
+
+!e2_22 (SAMESOUND);
+   W_EL by e2_22*1 (le2);
+
+!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+   W_EL by e3_1621*1 e3_22*1 (le3_1 le3_2);
+
+!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2);
+   W_EL by ee4_1722*1 (lee4);
+
+!e5_16 & e5 (WriteName):;
+   W_EL by ee5_1722*1 (lee5);
+
+!e6_22 (READONEDIGIT);
+   W_EL by e6_22*1 (le6);
+
+!e7: COUNTTO (2016-2021) COUNTTO_R (2022);
+   W_EL by e7a_1621*1 e7b_22*1 (le7_1 le7_2);
+
+!e8_22 (GROUPOFOBJECTS);
+   W_EL by e8_22*1 (le8);
+
+!e9 (SIMPLEADDITION);
+   W_EL by e9_22*1 (le9);
+
+
+!------------------------------------;
+!        Structural parameters;
+!------------------------------------;
+!1. Early Learning Skills;
+   W_EL@1;
+   [W_EL@0];
+   W_EL on age* male* yr17-yr21*;
+
+
+%BETWEEN%
+!------------------------------------;
+!     Measurement parameters;
+!------------------------------------;
+
+!ee1_16 & ee1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2);
+   B_EL by ee1_1722*.1 ;
+   [ee1_1722$1*] ;
+   [ee1_1722$2*] ;
+   [ee1_1722$3*] ;
+   [ee1_1722$4*] ;
+
+!e2_22 (SAMESOUND);
+   B_EL by e2_22*.1 ;
+   [e2_22$1*] (t1e2);
+   [e2_22$2*] (t2e2);
+   [e2_22$3*] (t3e2);
+   [e2_22$4*] (t4e2);
+
+!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
+   B_EL by e3_1621*.1 e3_22*.1;
+   [e3_1621$1* e3_22$1*] (t1e3_1 t1e3_2);
+              [e3_22$2*] (t2e3_2);
+              [e3_22$3*] (t3e3_2);
+
+!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2);
+   B_EL by ee4_1722*.1;
+   [ee4_1722$1*] (t1ee4_2);
+   [ee4_1722$2*] (t2ee4_2);
+   [ee4_1722$3*] (t3ee4_2);
+   [ee4_1722$4*] (t4ee4_2);
+
+!e5_16 & e5 (WriteName):;
+   B_EL by ee5_1722*.1 ;
+   [ee5_1722$1*] (t1ee5_2);
+   [ee5_1722$2*] (t2ee5_2);
+   [ee5_1722$3*] (t3ee5_2);
+   [ee5_1722$4*] (t4ee5_2);
+
+!e6_22 (READONEDIGIT);
+   B_EL by e6_22*.1 ;
+   [e6_22$1*] (t1e6);
+   [e6_22$2*] (t2e6);
+   [e6_22$3*] (t3e6);
+   [e6_22$4*] (t4e6);
+
+!e7: COUNTTO (2016-2021) COUNTTO_R (2022);
+   B_EL by e7a_1621*.1 e7b_22*.1;
+   [e7a_1621$1* e7b_22$1*] (t1e7_1 t1e7_2);
+   [e7a_1621$2* e7b_22$2*] (t2e7_1 t2e7_2);
+   [e7a_1621$3* e7b_22$3*] (t3e7_1 t3e7_2);
+   [e7a_1621$4* e7b_22$4*] (t4e7_1 t4e7_2);
+   [e7a_1621$5*] (t5e7_1);
+
+!e8_22 (GROUPOFOBJECTS);
+   B_EL by e8_22*.1 ;
+   [e8_22$1*] (t1e8);
+   [e8_22$2*] (t2e8);
+   [e8_22$3*] (t3e8);
+   [e8_22$4*] (t4e8);
+
+!e9 (SIMPLEADDITION);
+   B_EL by e9_22*.1;
+   [e9_22$1*] (t1e9);
+   [e9_22$2*] (t2e9);
+   [e9_22$3*] (t3e9);
+   [e9_22$4*] (t4e9);
+
+!------------------------------------;
+!        Structural parameters;
+!------------------------------------;
+!1. Early Learning Skills;
+   B_EL@1;
+   [B_EL@0];
+
+
+OUTPUT:
+svalues;
+

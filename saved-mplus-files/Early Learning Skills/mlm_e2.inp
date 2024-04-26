@@ -1,0 +1,133 @@
+
+TITLE:
+!e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?;
+!e2_22 (SAMESOUND): How often can this child come up with words that start with the same sound? For example, can this child come up with 'sock' and 'sun'?;
+!e3_1621 (RHYMEWORD): How well can this child come up with words that rhyme? For example, can this child come up with 'cat' and 'mat?;
+!e3_22 (RHYMEWORD_R): Can this child rhyme words?;
+!e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recognize?;
+!e5_16 & e5_1722 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?;
+!e6_22 (READONEDIGIT): How often can this child read one-digit numbers? For example, can this child read the numbers 2 or 8?;
+!e7a_1621 (COUNTTO): How high can this child count?;
+!e7b_22 (COUNTTO_R): If asked to count objects, how high can this child count correctly?;
+!e8_22 (GROUPOFOBJECTS): How often can this child tell which group of objects has more? For example, can this child tell you a group of seven blocks has more than a group of four blocks?;
+!e9_22 (SIMPLEADDITION): How often can this child correctly do simple addition? For example, can this child tell you that two blocks and three blocks add to a total of five blocks?;
+
+DATA:
+FILE = dinking_e.dat;
+
+VARIABLE:
+NAMES = recnum year stratfip fipsst stratum hhid fwc age male yr16 yr17 yr18
+   yr19 yr20 yr21 e1_16 e1_1722 ee1_16 ee1_1722 e2_22 e3_1621 e3_22 e4_16
+   e4_1722 ee4_16 ee4_1722 e5_16 e5_1722 ee5_16 ee5_1722 e6_22 e7a_1621 e7b_22
+   e8_22 e9_22;
+USEV = age male yr17 yr18 yr19 yr20 yr21 ee1_1722 e2_22 e3_1621
+   e3_22 ee4_1722 ee5_1722 e6_22 e7a_1621 e7b_22 e8_22 e9_22;
+CATEGORICAL = ee1_1722 e2_22 e3_1621 e3_22 ee4_1722 
+   ee5_1722 e6_22 e7a_1621 e7b_22 e8_22 e9_22;
+MISSING = .;
+IDVARIABLE = recnum;
+USEOBS = yr16 EQ 0;
+CLUSTER = fipsst;
+WITHIN = age male yr17-yr21;
+
+
+ANALYSIS:
+TYPE = random twolevel;
+ESTIMATOR = mlr;
+ALGORITHM = fs;
+INTEGRATION = gauss(10);
+LINK = logit;
+PROCESSORS = 16;
+
+MODEL:
+     %WITHIN%
+
+     w_el BY ee1_1722*1.19396 (lee1);
+     w_el BY e2_22*1.58011 (le2);
+     w_el BY e3_1621*1.49729 (le3_1);
+     w_el BY e3_22*1.66772 (le3_2);
+     w_el BY ee4_1722*1.84072 (lee4);
+     w_el BY ee5_1722*2.35026 (lee5);
+     w_el BY e6_22*2.16898 (le6);
+     w_el BY e7a_1621*2.05033 (le7_1);
+     w_el BY e7b_22*1.65689 (le7_2);
+     w_el BY e8_22*1.62220 (le8);
+     w_el BY e9_22*2.03605 (le9);
+
+     w_el ON age*0.90973;
+     w_el ON male*-0.21634;
+     w_el ON yr17*0.12470;
+     w_el ON yr18*0.13633;
+     w_el ON yr19*0.12498;
+     w_el ON yr20*0.00193;
+     w_el ON yr21*0.01903;
+
+     [ w_el@0 ];
+
+     w_el@1;
+
+     %BETWEEN%
+
+     b_el BY ee1_1722*1.19396 (lee1);
+     b_el BY e2_22*1.58011 (le2);
+     b_el BY e3_1621*1.49729 (le3_1);
+     b_el BY e3_22*1.66772 (le3_2);
+     b_el BY ee4_1722*1.84072 (lee4);
+     b_el BY ee5_1722*2.35026 (lee5);
+     b_el BY e6_22*2.16898 (le6);
+     b_el BY e7a_1621*2.05033 (le7_1);
+     b_el BY e7b_22*1.65689 (le7_2);
+     b_el BY e8_22*1.62220 (le8);
+     b_el BY e9_22*2.03605 (le9);
+
+     [ b_el@0 ];
+
+     [ ee1_1722$1*0.45964 ] (t1ee1_2);
+     [ ee1_1722$2*1.97114 ] (t2ee1_2);
+     [ ee1_1722$3*2.58835 ] (t3ee1_2);
+     [ ee1_1722$4*4.48783 ] (t4ee1_2);
+     [ e2_22$1*1.71660 ] (t1e2);
+     [ e2_22$2*3.36940 ] (t2e2);
+     [ e2_22$3*4.04961 ] (t3e2);
+     [ e2_22$4*6.05061 ] (t4e2);
+     [ e3_1621$1*3.91359 ] (t1e3_1);
+     [ e3_22$1*3.35941 ] (t1e3_2);
+     [ e3_22$2*4.49780 ] (t2e3_2);
+     [ e3_22$3*7.28198 ] (t3e3_2);
+     [ ee4_1722$1*1.31306 ] (t1ee4_2);
+     [ ee4_1722$2*4.17034 ] (t2ee4_2);
+     [ ee4_1722$3*4.94043 ] (t3ee4_2);
+     [ ee4_1722$4*6.57552 ] (t4ee4_2);
+     [ ee5_1722$1*6.25932 ] (t1ee5_2);
+     [ ee5_1722$2*7.30031 ] (t2ee5_2);
+     [ ee5_1722$3*7.71669 ] (t3ee5_2);
+     [ ee5_1722$4*8.65456 ] (t4ee5_2);
+     [ e6_22$1*2.82901 ] (t1e6);
+     [ e6_22$2*4.55484 ] (t2e6);
+     [ e6_22$3*5.21130 ] (t3e6);
+     [ e6_22$4*6.80782 ] (t4e6);
+     [ e7a_1621$1*0.58909 ] (t1e7_1);
+     [ e7a_1621$2*2.20685 ] (t2e7_1);
+     [ e7a_1621$3*5.11810 ] (t3e7_1);
+     [ e7a_1621$4*8.57689 ] (t4e7_1);
+     [ e7a_1621$5*9.82764 ] (t5e7_1);
+     [ e7b_22$1*0.54998 ] (t1e7_2);
+     [ e7b_22$2*1.96995 ] (t2e7_2);
+     [ e7b_22$3*4.63831 ] (t3e7_2);
+     [ e7b_22$4*6.67113 ] (t4e7_2);
+     [ e8_22$1*1.66191 ] (t1e8);
+     [ e8_22$2*3.15486 ] (t2e8);
+     [ e8_22$3*3.72704 ] (t3e8);
+     [ e8_22$4*5.52862 ] (t4e8);
+     [ e9_22$1*5.17021 ] (t1e9);
+     [ e9_22$2*6.83693 ] (t2e9);
+     [ e9_22$3*7.49842 ] (t3e9);
+     [ e9_22$4*9.29474 ] (t4e9);
+
+     b_el*0.02202;
+
+
+
+OUTPUT:
+svalues;
+

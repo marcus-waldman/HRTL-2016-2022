@@ -42,37 +42,34 @@ e1<-function(raw_datasets, dprior){ # e1-RECOGBEGIN
     as.data.frame() %>% 
     dplyr::rename_all(tolower)
   
-  #Construct Mplus syntax
-  syntax_e1 = list(
-    TITLE = c("!e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?" ),
-    VARIABLE = list(NAMES = c("e1_16", "e1_1722"),
-                    USEV = c("e1_16", "e1_1722"), 
-                    CATEGORICAL = c("e1_16", "e1_1722")
-    ),
-    MODEL= c("\n!e1_16 & e1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2)",
-             "   EL by e1_16*1 e1_1722*1 (le1)",
-             "   [e1_16$1* e1_1722$1*] (t1e1_1 t1e1_2)", 
-             "   [e1_16$2* e1_1722$2*] (t2e1_1 t2e1_2)", 
-             "            [e1_1722$3*] (t3e1_2)",
-             "   [e1_16$3* e1_1722$4*] (t3e1_1 t4e1_2)"
-    ),
-    `MODEL PRIORS` = c("\n!e1_16 & e1_1722 (RecogBegin)" ,
-                       paste0("   diff(t1e1_1, t1e1_2)~", dprior), 
-#                      paste0("   diff(t2e1_1, t2e1_2)~", dprior), 
-                       paste0("   diff(t3e1_1, t4e1_2)~", dprior)
-    ),
-    `MODEL CONSTRAINT` = c("\n!e1_16 & e1_1722 (RecogBegin)",
-                           "   new(dt1e1* dt3e1*)",
-                           "   dt1e1 = t1e1_1-t1e1_2",
-#                          "   dt2e1 = t2e1_1-t2e1_2", 
-                           "   dt3e1 = t3e1_1-t4e1_2")
-  )
-  
   
   # Let's transfer recode for for similar response options across administrations
   df_e1 = df_e1 %>% safe_left_join(
     transfer_never_always(., var_from = "e1_16", var_to = "e1_1722", values_from = c(0,3), values_to = c(0,4)), 
     by = c("year","hhid")
+  )
+  
+  
+  #Construct Mplus syntax
+  syntax_e1 = list(
+    TITLE = c("!e1_16 & e1_1722 (RECOGBEGIN): How often can this child recognize the beginning sound of a word? For example, can this child tell you that the word 'ball' starts with the 'buh' sound?" ),
+    VARIABLE = list(NAMES = c("e1_16", "e1_1722", "ee1_16","ee1_1722"),
+                    USEV = c("ee1_16","ee1_1722"), 
+                    CATEGORICAL = c("ee1_16", "ee1_1722")
+    ),
+    MODEL= c("\n!ee1_16 & ee1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2)",
+             "   EL by ee1_16*1 ee1_1722*1 (lee1)",
+             "   [ee1_16$1*]   (t1ee1_1)",
+             "   [ee1_1722$1*] (t1ee1_2)", 
+             "   [ee1_1722$2*] (t2ee1_2)", 
+             "   [ee1_1722$3*] (t3ee1_2)",
+             "   [ee1_1722$4*] (t4ee1_2)"
+    ),
+    `MODEL PRIORS` =c("\n!ee1_16 & ee1_1722 (RECOGBEGIN; 2016: _1, 2017-22: _2)",
+                      paste0("   diff(t1ee1_1, t2ee1_2)~",dprior), 
+                      paste0("   diff(t1ee1_1, t3ee1_2)~",dprior)
+                      ),
+    `MODEL CONSTRAINT` = NULL
   )
   
   

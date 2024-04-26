@@ -41,37 +41,34 @@ e4<-function(raw_datasets, dprior){ # 4-RECOGABC
     as.data.frame() %>% 
     dplyr::rename_all(tolower)
   
-  #Construct Mplus syntax
-  syntax_e4 = list(
-    TITLE = c("!e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recognize?"),
-    VARIABLE = list(NAMES = c("e4_16", "e4_1722"),
-                    USEV = c("e4_16", "e4_1722"), 
-                    CATEGORICAL = c("e4_16", "e4_1722")
-    ),
-    MODEL= c("\n!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2)",
-             "   EL by e4_16*1 e4_1722*1 (le4)",
-             "   [e4_16$1* e4_1722$1*] (t1e4_1 t1e4_2)", 
-             "   [e4_16$2* e4_1722$2*] (t2e4_1 t2e4_2)", 
-             "            [e4_1722$3*] (t3e4_2)",
-             "   [e4_16$3* e4_1722$4*] (t3e4_1 t4e4_2)"
-    ),
-    `MODEL PRIORS` = c("\n!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2",
-                       paste0("   diff(t1e4_1, t1e4_2)~", dprior), 
-#                      paste0("   diff(t2e4_1, t2e4_2)~", dprior),
-                       paste0("   diff(t3e4_1, t4e4_2)~", dprior)
-    ), 
-    `MODEL CONSTRAINT` = c("\n!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2",
-                           "   new(dt1e4* dt3e4*)",
-                           "   dt1e4 = t1e4_1-t1e4_2", 
-#                          "   dt2e4 = t2e4_1-t2e4_2", 
-                           "   dt3e4 = t3e4_1-t4e4_2"
-    )
-  )
-  
+
   # Let's transfer recode for for similar response options across administrations
   df_e4 = df_e4 %>% safe_left_join(
     transfer_never_always(., var_from = "e4_16", var_to = "e4_1722", values_from = c(0,3), values_to = c(0,4)), 
     by = c("year","hhid")
+  )
+  
+
+  #Construct Mplus syntax
+  syntax_e4 = list(
+    TITLE = c("!e4_16 & e4_1722 (RECOGABC): About how many letters of the alphabet can this child recognize?"),
+    VARIABLE = list(NAMES = c("e4_16", "e4_1722", "ee4_16","ee4_1722"),
+                    USEV = c("ee4_16","ee4_1722"), 
+                    CATEGORICAL = c("ee4_16", "ee4_1722")
+    ),
+    MODEL= c("\n!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2)",
+             "   EL by ee4_16*1 ee4_1722*1 (lee4)",
+             "   [ee4_16$1*]   (t1ee4_1)",
+             "   [ee4_1722$1*] (t1ee4_2)", 
+             "   [ee4_1722$2*] (t2ee4_2)", 
+             "   [ee4_1722$3*] (t3ee4_2)",
+             "   [ee4_1722$4*] (t4ee4_2)"
+    ),
+    `MODEL PRIORS` =c("\n!e4_16 & e4_1722 (RECOGABC: 2016: _1, 2017-22: _2)",
+                      paste0("   diff(t1ee4_1, t2ee4_2)~",dprior), 
+                      paste0("   diff(t1ee4_1, t3ee4_2)~",dprior)
+    ),
+    `MODEL CONSTRAINT` = NULL
   )
   
   

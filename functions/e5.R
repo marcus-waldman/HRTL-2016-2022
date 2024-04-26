@@ -40,39 +40,36 @@ e5<-function(raw_datasets, dprior){ # 5-WRITENAME
     dplyr::mutate(across(everything(), zap_all)) %>% 
     as.data.frame() %>% 
     dplyr::rename_all(tolower)
-  
-  #Construct Mplus syntax
-  syntax_e5 = list(
-    TITLE = c("!e5_16 & e5_1722 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?"),
-    VARIABLE = list(NAMES = c("e5_16", "e5_1722"),
-                    USEV = c("e5_16", "e5_1722"), 
-                    CATEGORICAL = c("e5_16", "e5_1722")
-    ),
-    MODEL= c("\n!e5_16 & e5 (WriteName):",
-             "   EL by e5_16*1 e5_1722*1 (le5)",
-             "   [e5_16$1* e5_1722$1*] (t1e5_1 t1e5_2)", 
-             "   [e5_16$2* e5_1722$2*] (t2e5_1 t2e5_2)", 
-             "            [e5_1722$3*] (t3e5_2)",
-             "   [e5_16$3* e5_1722$4*] (t3e5_1 t4e5_2)"
-    ),
-    `MODEL PRIORS` = c("\n!e5_16 & e5_1722 (WriteName)",
-                       paste0("   diff(t1e5_1, t1e5_2)~", dprior), 
-#                      paste0("   diff(t2e5_1, t2e5_2)~", dprior),
-                       paste0("   diff(t3e5_1, t4e5_2)~", dprior)
-    ), 
-    `MODEL CONSTRAINT` = c("\n!e5_16 & e5_1722 (WriteName)", 
-                           "   new(dt1e5* dt3e5*)", 
-                           "   dt1e5 = t1e5_1-t1e5_2", 
-#                          "   dt2e5 = t2e5_1-t2e5_2", 
-                           "   dt3e5 = t3e5_1-t4e5_2"
-    )
-                           
-  )
+
   
   # Let's transfer recode for for similar response options across administrations
   df_e5 = df_e5 %>% safe_left_join(
     transfer_never_always(., var_from = "e5_16", var_to = "e5_1722", values_from = c(0,3), values_to = c(0,4)), 
     by = c("year","hhid")
+  )
+  
+  
+  
+  #Construct Mplus syntax
+  syntax_e5 = list(
+    TITLE = c("!e5_16 & e5_1722 (WriteName): How often can this child write their first name, even if some of the letters aren't quite right or are backwards?"),
+    VARIABLE = list(NAMES = c("e5_16", "e5_1722", "ee5_16","ee5_1722"),
+                    USEV = c("ee5_16","ee5_1722"), 
+                    CATEGORICAL = c("ee5_16", "ee5_1722")
+    ),
+    MODEL= c("\n!e5_16 & e5 (WriteName):",
+             "   EL by ee5_16*1 ee5_1722*1 (lee5)",
+             "   [ee5_16$1*]   (t1ee5_1)",
+             "   [ee5_1722$1*] (t1ee5_2)", 
+             "   [ee5_1722$2*] (t2ee5_2)", 
+             "   [ee5_1722$3*] (t3ee5_2)",
+             "   [ee5_1722$4*] (t4ee5_2)"
+    ),
+    `MODEL PRIORS` =c("\n!e5_16 & e5 (WriteName):",
+                      paste0("   diff(t1ee5_1, t2ee5_2)~",dprior), 
+                      paste0("   diff(t1ee5_1, t3ee5_2)~",dprior)
+    ),
+    `MODEL CONSTRAINT` = NULL
   )
   
   
