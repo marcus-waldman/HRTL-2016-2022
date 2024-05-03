@@ -43,11 +43,11 @@ raw_datasets = read_rds(file = "datasets/intermediate/raw_datasets.rds")
 
 dprior = "N(0,1)"
 estimator = "mlr"
-type = "general"
+type = "mixture"
 link = "logit"
 algorithm = "integration"
 integration = "gauss(16)"
-ncores = 4;
+ncores = 8;
 
 # Construct skeleton of analytic dataset
 dat = lapply(2017:2022, function(x){
@@ -85,9 +85,11 @@ variable_list =
     CATEGORICAL = NULL,
     MISSING = ".",
     IDVARIABLE = "recnum", 
-    STRATIFICATION = "stratfip", 
-    CLUSTER = "hhid", 
-    WEIGHT = "fwc"
+#    STRATIFICATION = "stratfip", 
+#    CLUSTER = "hhid", 
+#    WEIGHT = "fwc"
+    CLASSES = "c(6)",
+    KNOWNCLASS = "c(year=2017-2022)"
 )
 analysis_list = 
   list(
@@ -100,7 +102,9 @@ analysis_list =
 )
 model_list = list(MODEL = c("\n!------------------------------------",
                             "!     Measurement parameters",
-                            "!------------------------------------")
+                            "!------------------------------------", 
+                            "%OVERALL%"
+                            )
 )
 
 syntax_list = list(
@@ -163,12 +167,33 @@ syntax_list = list(
                         "\n!------------------------------------",
                         "!        Structural parameters",
                         "!------------------------------------",
-                        "!1. Early Learning Skills",
+                        "   EL on age* male* fips_2-fips_56*0",
+                        "%c#1%",
+                        "   EL*1",
+                        "   [EL*0]",
+                        "   EL on age* male* fips_2-fips_56*0", 
+                        "%c#2%",
+                        "   EL*1",
+                        "   [EL*0]",
+                        "   EL on age* male* fips_2-fips_56*0", 
+                        "%c#3%",
+                        "   EL*1",
+                        "   [EL*0]",
+                        "   EL on age* male* fips_2-fips_56*0",
+                        "%c#4%",
+                        "   EL*1",
+                        "   [EL*0]",
+                        "   EL on age* male* fips_2-fips_56*0", 
+                        "%c#5%",
+                        "   EL*1",
+                        "   [EL*0]",
+                        "   EL on age* male* fips_2-fips_56*0",
+                        "%c#6%",
                         "   EL@1",
                         "   [EL@0]",
                         "   EL on age* male* fips_2-fips_56*0"
   )
-  mplus_syntax = paste_syntax(syntax_list)
+  mplus_syntax = paste_syntax(syntax_list) 
   writeLines(mplus_syntax, con = "dinking_e.inp")
 
 #   

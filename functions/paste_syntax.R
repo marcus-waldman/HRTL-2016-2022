@@ -27,6 +27,7 @@ paste_syntax<-function(syntax_list){
     
   }
   
+  out = out %>% stringr::str_replace_all("%;","%")
   return(out)
   
 }

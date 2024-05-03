@@ -35,23 +35,23 @@ CATEGORICAL = e1_1722 e2_22 e3_1621 e3_22 e4_1722 e5_1722 e6_22 e7a_1621 e7b_22
    e8_22 e9_22;
 MISSING = .;
 IDVARIABLE = recnum;
-STRATIFICATION = stratfip;
-CLUSTER = hhid;
-WEIGHT = fwc;
+CLASSES = c(6);
+KNOWNCLASS = c(year=2017-2022);
 
 ANALYSIS:
-TYPE = general;
+TYPE = mixture;
 ESTIMATOR = mlr;
 ALGORITHM = integration;
 INTEGRATION = gauss(16);
 LINK = logit;
-PROCESSORS = 4;
+PROCESSORS = 8;
 
 MODEL:
 
 !------------------------------------;
 !     Measurement parameters;
 !------------------------------------;
+%OVERALL%
 
 !e1_1722 (RECOGBEGIN);
    EL by e1_1722*1 (le1);
@@ -119,7 +119,28 @@ MODEL:
 !------------------------------------;
 !        Structural parameters;
 !------------------------------------;
-!1. Early Learning Skills;
+   EL on age* male* fips_2-fips_56*0;
+%c#1%
+   EL*1;
+   [EL*0];
+   EL on age* male* fips_2-fips_56*0;
+%c#2%
+   EL*1;
+   [EL*0];
+   EL on age* male* fips_2-fips_56*0;
+%c#3%
+   EL*1;
+   [EL*0];
+   EL on age* male* fips_2-fips_56*0;
+%c#4%
+   EL*1;
+   [EL*0];
+   EL on age* male* fips_2-fips_56*0;
+%c#5%
+   EL*1;
+   [EL*0];
+   EL on age* male* fips_2-fips_56*0;
+%c#6%
    EL@1;
    [EL@0];
    EL on age* male* fips_2-fips_56*0;
