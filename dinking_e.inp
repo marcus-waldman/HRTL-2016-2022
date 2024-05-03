@@ -44,7 +44,7 @@ ESTIMATOR = mlr;
 ALGORITHM = integration;
 INTEGRATION = gauss(16);
 LINK = logit;
-PROCESSORS = 8;
+PROCESSORS = 16;
 
 MODEL:
 
