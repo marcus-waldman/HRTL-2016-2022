@@ -6,6 +6,9 @@ library(sjlabelled)
 library(stringr)
 library(readxl)
 library(MplusAutomation)
+library(recipes)
+
+
 
 # Change repo directory
 #repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
@@ -66,20 +69,12 @@ dat = lapply(2016:2022, function(x){
   dplyr::mutate(recnum = 1:nrow(.)) %>% 
   dplyr::relocate(recnum) %>% 
   as.data.frame() %>% 
-  dplyr::mutate(stratfip = paste0(stratum,"000",fipsst)) %>% 
+  dplyr::mutate(stratfip = paste0(stratum,"000",fipsst) %>% as.integer()) %>% 
   dplyr::relocate(recnum,year,stratfip) %>% 
-#  dplyr::select(-fipsst,-stratum) %>% 
-  dplyr::mutate(
-                yr16=as.integer(year==2016),
-                yr17=as.integer(year==2017),
-                yr18=as.integer(year==2018),
-                yr19=as.integer(year==2019), 
-                yr20=as.integer(year==2020), 
-                yr21=as.integer(year==2021)#,
-                #t = year-2020, 
-                #d = as.integer(t>0),
-                #tXd = t*d
-  )
+  dplyr::select(-stratum) %>% 
+  dplyr::mutate(fips = as.factor(fipsst)) %>% 
+  fastDummies::dummy_cols(select_columns = c("fips"), remove_first_dummy  = T) %>% 
+  dplyr::select(-fipsst)
 
 # Create skeleton syntax
 title_list = NULL
@@ -87,13 +82,13 @@ data_list = list(FILE = NULL)
 variable_list = 
   list(
     NAMES = names(dat),
-    USEV = c("age", "male",paste0("yr",16:21)), 
+    USEV = c("age", "male",names(dat)[startsWith(names(dat),"fips_")]), 
     CATEGORICAL = NULL,
     MISSING = ".",
-    IDVARIABLE = "recnum" #, 
-    #STRATIFICATION = "stratfip", 
-    #CLUSTER = "hhid", 
-    #WEIGHT = "fwc"
+    IDVARIABLE = "recnum", 
+    STRATIFICATION = "stratfip", 
+    CLUSTER = "hhid", 
+    WEIGHT = "fwc"
 )
 analysis_list = 
   list(
@@ -172,7 +167,7 @@ syntax_list = list(
                         "!1. Early Learning Skills",
                         "   EL@1",
                         "   [EL@0]",
-                        "   EL on age* male* yr16-yr21*;"
+                        "   EL on age* male* fips_2-fips_56*0*;"
   )
   mplus_syntax = paste_syntax(syntax_list)
   writeLines(mplus_syntax, con = "dinking_e.inp")
