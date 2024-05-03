@@ -38,7 +38,7 @@ e1<-function(raw_datasets, dprior){ # e1-RECOGBEGIN
                     CATEGORICAL = c("e1_1722")
     ),
     MODEL= c("\n!e1_1722 (RECOGBEGIN)",
-             "   EL by e1_1722*1 (lee1)",
+             "   EL by e1_1722*1 (le1)",
              "   [e1_1722$1*] (t1e1)", 
              "   [e1_1722$2*] (t2e1)", 
              "   [e1_1722$3*] (t3e1)",

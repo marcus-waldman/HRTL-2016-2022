@@ -6,13 +6,12 @@ library(sjlabelled)
 library(stringr)
 library(readxl)
 library(MplusAutomation)
-library(recipes)
-
+library(fastDummies)
 
 
 # Change repo directory
-#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-repo_wd = "C:/repos/HRTL-2016-2022"
+repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+#repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
@@ -51,7 +50,7 @@ integration = "gauss(16)"
 ncores = 4;
 
 # Construct skeleton of analytic dataset
-dat = lapply(2016:2022, function(x){
+dat = lapply(2017:2022, function(x){
   raw_datasets[[as.character(x)]] %>% 
     dplyr::select(FIPSST,STRATUM,HHID,FWC,SC_AGE_YEARS, SC_SEX) %>% 
     dplyr::filter(SC_AGE_YEARS == 3 | SC_AGE_YEARS == 4 | SC_AGE_YEARS == 5) %>% 
@@ -167,7 +166,7 @@ syntax_list = list(
                         "!1. Early Learning Skills",
                         "   EL@1",
                         "   [EL@0]",
-                        "   EL on age* male* fips_2-fips_56*0*;"
+                        "   EL on age* male* fips_2-fips_56*0"
   )
   mplus_syntax = paste_syntax(syntax_list)
   writeLines(mplus_syntax, con = "dinking_e.inp")
