@@ -40,11 +40,12 @@ KNOWNCLASS = c(year=2017-2022);
 
 ANALYSIS:
 TYPE = mixture;
-ESTIMATOR = mlr;
-ALGORITHM = integration;
-INTEGRATION = gauss(16);
-LINK = logit;
-PROCESSORS = 8;
+ESTIMATOR = bayes;
+PROCESSORS = 4;
+CHAINS = 4;
+BITERATIONS = 50000 20000;
+THIN = 10;
+STVALUES = ML;
 
 MODEL:
 
@@ -125,8 +126,8 @@ MODEL:
    [EL*0];
    EL on age* male* fips_2-fips_56*0;
 %c#2%
-   EL*1;
-   [EL@0];
+   EL@1;
+   [EL*0];
    EL on age* male* fips_2-fips_56*0;
 %c#3%
    EL@1;
@@ -148,13 +149,4 @@ MODEL:
 OUTPUT:
 svalues;
 
-MODEL PRIORS:
 
-!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
-!   diff(le3_1,le3_2)~N(0,1);
-
-MODEL CONSTRAINT:
-
-!e3: RHYMEWORD (2016-2021; _1) & RHYMEWORD_R (2022; _2);
-   new(dle3*0);
-   dle3 = le3_1-le3_2;

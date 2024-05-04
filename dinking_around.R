@@ -11,8 +11,8 @@ library(brms)
 
 
 # Change repo directory
-repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
-#repo_wd = "C:/repos/HRTL-2016-2022"
+#repo_wd = "C:/cloned-directories/HRTL-2016-2022/HRTL-2016-2022"
+repo_wd = "C:/repos/HRTL-2016-2022"
 setwd(repo_wd)
 
 # Initalize functions
