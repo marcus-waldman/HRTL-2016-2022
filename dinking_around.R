@@ -7,6 +7,7 @@ library(stringr)
 library(readxl)
 library(MplusAutomation)
 library(fastDummies)
+library(brms)
 
 
 # Change repo directory
@@ -169,23 +170,23 @@ syntax_list = list(
                         "!------------------------------------",
                         "   EL on age* male* fips_2-fips_56*0",
                         "%c#1%",
-                        "   EL*1",
+                        "   EL@1",
                         "   [EL*0]",
                         "   EL on age* male* fips_2-fips_56*0", 
                         "%c#2%",
                         "   EL*1",
-                        "   [EL*0]",
+                        "   [EL@0]",
                         "   EL on age* male* fips_2-fips_56*0", 
                         "%c#3%",
-                        "   EL*1",
+                        "   EL@1",
                         "   [EL*0]",
                         "   EL on age* male* fips_2-fips_56*0",
                         "%c#4%",
-                        "   EL*1",
+                        "   EL@1",
                         "   [EL*0]",
                         "   EL on age* male* fips_2-fips_56*0", 
                         "%c#5%",
-                        "   EL*1",
+                        "   EL@1",
                         "   [EL*0]",
                         "   EL on age* male* fips_2-fips_56*0",
                         "%c#6%",
@@ -195,6 +196,41 @@ syntax_list = list(
   )
   mplus_syntax = paste_syntax(syntax_list) 
   writeLines(mplus_syntax, con = "dinking_e.inp")
+
+  
+
+  
+  long_e = dat %>% 
+    dplyr::select(-starts_with("fips_")) %>% 
+    tidyr::pivot_longer(cols = e1_1722:e9_22, names_to = "item", values_to = "y") %>% 
+    dplyr::mutate(fips = as.factor(fips), 
+                  age_c = age-4, 
+                  year_c = year-2020, 
+                  y = as.ordered(y),
+                  person = as.factor(recnum)) %>% 
+    dplyr::mutate(across(where(is.character), as.factor))
+  
+  
+  mirt_model<- brms::bf(
+    y | thres(gr=item) ~ exp(loglambda)*eta,        # 2PL Graded  Response model
+    eta ~ 0 + male + age_c + fips + year_c + fips*year_c + (1|person),    
+    loglambda ~ 0 + item,                         # Factor loadings a factor of prefix
+    nl = TRUE, 
+    family = cumulative(link = "logit", link_disc = "log")
+  )
+  
+  mirt_prior<- prior(constant(1), class = "sd", group = "person", nlpar = "eta") 
+  
+  fit_mirt<-brm(
+    formula=mirt_model,
+    data=long_e %>% dplyr::filter(!is.na(y)),
+    prior=mirt_prior,
+    chains = 4,
+    cores = 4,
+    thread = threading(4),
+    seed = 123
+  )
+  
 
 #   
 # #

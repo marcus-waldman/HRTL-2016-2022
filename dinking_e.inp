@@ -44,7 +44,7 @@ ESTIMATOR = mlr;
 ALGORITHM = integration;
 INTEGRATION = gauss(16);
 LINK = logit;
-PROCESSORS = 16;
+PROCESSORS = 8;
 
 MODEL:
 
@@ -121,23 +121,23 @@ MODEL:
 !------------------------------------;
    EL on age* male* fips_2-fips_56*0;
 %c#1%
-   EL*1;
+   EL@1;
    [EL*0];
    EL on age* male* fips_2-fips_56*0;
 %c#2%
    EL*1;
-   [EL*0];
+   [EL@0];
    EL on age* male* fips_2-fips_56*0;
 %c#3%
-   EL*1;
+   EL@1;
    [EL*0];
    EL on age* male* fips_2-fips_56*0;
 %c#4%
-   EL*1;
+   EL@1;
    [EL*0];
    EL on age* male* fips_2-fips_56*0;
 %c#5%
-   EL*1;
+   EL@1;
    [EL*0];
    EL on age* male* fips_2-fips_56*0;
 %c#6%
